@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content'
+
+import Layout from '@/layouts/Layout.astro'
+import HeroSection from '@/components/sections/hero-section'
+import FeaturesSection from '@/components/sections/features-section'
+import WorksFeaturesSectionPage from '@/components/sections/works-features-section'
+import UseCasesSection from '@/components/sections/use-cases-section'
+import TestimonialsSection from '@/components/sections/testimonials-section'
+import PricingSectionPage from '@/components/sections/pricing-section'
+import FAQSectionPage from '@/components/sections/faq-section'
+import CTASection from '@/components/sections/cta-section'
+import FooterSection from '@/components/sections/footer-section'
+import DynamicFormRenderer from '@/components/forms/DynamicFormRenderer'
+
+const landingEntries = await getCollection('landing')
+const landingEntry = landingEntries.find(entry => entry.id === 'index.md') ?? landingEntries[0]
+
+if (!landingEntry) {
+  throw new Error('Missing landing content entry at src/content/landing/index.md')
+}
+
+const landing = landingEntry.data
+
+const pageTitle = landing.seo.title
+const pageDescription = landing.seo.description
+const pageKeywords = landing.seo.keywords
+const formId = landing.integrations?.formId
+const bookingCalendarId = landing.integrations?.bookingCalendarId
+const bookingEventId = landing.integrations?.bookingEventId
+const standaloneBookingUrl = landing.integrations?.standaloneBookingUrl
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${Astro.site}#website`,
+      name: landing.seo.siteName,
+      description: pageDescription,
+      url: `${Astro.site}`,
+      inLanguage: 'en-US'
+    }
+  ]
+}
+---
+
+<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords} schema={schema}>
+  <HeroSection content={landing.hero} client:load />
+  <FeaturesSection content={landing.features} client:load />
+  <WorksFeaturesSectionPage content={landing.worksFeatures} client:load />
+  <UseCasesSection content={landing.useCases} client:load />
+  <TestimonialsSection content={landing.testimonials} client:load />
+  <PricingSectionPage content={landing.pricing} client:load />
+  <FAQSectionPage content={landing.faq} client:load />
+  <CTASection content={landing.cta} client:load />
+  {formId ? (
+    <DynamicFormRenderer
+      formId={formId}
+      bookingCalendarId={bookingCalendarId}
+      bookingEventId={bookingEventId}
+      bookingUrl={standaloneBookingUrl}
+      client:load
+    />
+  ) : null}
+  <FooterSection content={landing.footer} newsletter={true} client:load />
+</Layout>

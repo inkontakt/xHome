@@ -1,0 +1,86 @@
+---
+import '@/styles/global.css'
+
+import { ClientRouter } from 'astro:transitions'
+
+import HeadSeo from '@/layouts/HeadSeo.astro'
+import HeaderSection from '@/components/sections/header-section'
+
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+  type?: 'website' | 'article'
+  keywords?: string
+  author?: string
+  publishedTime?: string
+  modifiedTime?: string
+  noindex?: boolean
+  nofollow?: boolean
+  schema?: Record<string, any>
+}
+
+const seoProps = Astro.props as Props
+---
+
+<!doctype html>
+<html lang='en' class='scroll-smooth'>
+  <head>
+    <HeadSeo {...seoProps} />
+    <ClientRouter />
+    <script is:inline>
+      ;(function () {
+        const getTheme = () => {
+          if (typeof localStorage !== 'undefined') {
+            const stored = localStorage.getItem('theme')
+            if (stored === 'light' || stored === 'dark') {
+              return stored
+            }
+          }
+          return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        }
+
+        const applyTheme = () => {
+          const theme = getTheme()
+          if (theme === 'dark') {
+            document.documentElement.classList.add('dark')
+          } else {
+            document.documentElement.classList.remove('dark')
+          }
+        }
+
+        // Apply theme immediately on initial load
+        applyTheme()
+
+        // Re-apply theme on Astro page transitions
+        document.addEventListener('astro:page-load', applyTheme)
+        // #region agent log
+        fetch('http://localhost:7433/ingest/2b9349a0-c0a1-4e81-9aa0-918008adcca8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c66fb0'},body:JSON.stringify({sessionId:'c66fb0',runId:'slow-homepage-1',hypothesisId:'H4',location:'Layout.astro:inline-script',message:'theme_script_initialized',data:{pathname:location.pathname},timestamp:Date.now()})}).catch(()=>{})
+        // #endregion
+        window.addEventListener('load', () => {
+          const sections = document.querySelectorAll('section').length
+          const images = Array.from(document.images)
+          const completedImages = images.filter(image => image.complete).length
+          // #region agent log
+          fetch('http://localhost:7433/ingest/2b9349a0-c0a1-4e81-9aa0-918008adcca8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c66fb0'},body:JSON.stringify({sessionId:'c66fb0',runId:'slow-homepage-1',hypothesisId:'H4',location:'Layout.astro:window-load',message:'window_load_state',data:{pathname:location.pathname,sections,images:images.length,completedImages},timestamp:Date.now()})}).catch(()=>{})
+          // #endregion
+        }, { once: true })
+      })()
+    </script>
+    <style>
+      /* Disable all view transitions while keeping client-side navigation */
+      ::view-transition-group(*),
+      ::view-transition-old(*),
+      ::view-transition-new(*) {
+        animation-duration: 0ms !important;
+      }
+    </style>
+  </head>
+  <body class='flex min-h-full w-full flex-auto flex-col'>
+    <div class='flex flex-col'>
+      <HeaderSection client:load pathname={Astro.url.pathname} />
+
+      <main class='flex flex-col'><slot /></main>
+    </div>
+  </body>
+</html>

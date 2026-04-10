@@ -1,0 +1,13 @@
+---
+import BlankLayout from '@/layouts/BlankLayout.astro'
+import LoginPage from '@/components/sections/login-section'
+
+// Page-specific SEO configuration
+const pageTitle = 'Sign In - Welcome Back | Orion'
+const pageDescription =
+  'Sign in to your account to access your personal AI agent. Continue where you left off with automated tasks and workflows.'
+---
+
+<BlankLayout title={pageTitle} description={pageDescription} noindex nofollow>
+  <LoginPage client:load />
+</BlankLayout>

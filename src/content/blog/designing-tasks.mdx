@@ -1,0 +1,128 @@
+---
+id: 7
+slug: 'designing-tasks'
+title: 'Designing Tasks Your AI Agent Can Handle Consistently'
+description: 'Learn how to break down workflows into clear, repeatable tasks your AI agent can handle consistently, efficiently, and at scale.'
+category: 'Workflow Automation'
+imageUrl: '/images/blog/7.webp'
+imageAlt: 'Designing Tasks Your AI Agent Can Handle Consistently'
+pubDate: '2024-10-18'
+author: 'Diana Morgan'
+avatarUrl: '/images/avatar/6.webp'
+tags: ['Workflow Automation', 'AI Agents', 'Task Management']
+featured: false
+---
+
+Consistency is key when working with AI agents. Here's how to design tasks that produce reliable results.
+
+## Task Design Fundamentals
+
+Every task should include:
+
+- **Clear Input Requirements** - What data is needed
+- **Specific Instructions** - Step-by-step guidance
+- **Expected Output Format** - What the result should look like
+- **Error Conditions** - How to handle failures
+- **Success Criteria** - How to know it worked
+
+## Structuring Instructions
+
+Good instructions are:
+
+- **Explicit** - Leave nothing to interpretation
+- **Ordered** - Follow a logical sequence
+- **Complete** - Include all necessary information
+- **Testable** - Have clear pass/fail criteria
+
+## Common Task Types
+
+### Data Processing
+
+- Extraction and classification
+- Validation and cleaning
+- Transformation and formatting
+
+### Communication Tasks
+
+- Email composition
+- Message generation
+- Report creation
+
+### Decision Tasks
+
+- Categorization
+- Prioritization
+- Routing and assignment
+
+## Quality Assurance
+
+1. Test with sample data
+2. Document any edge cases
+3. Create fallback procedures
+4. Monitor results for consistency
+5. Refine based on outcomes
+
+## Task Design Template
+
+Here's a practical template for designing any task:
+
+```
+Task Name: [Clear, descriptive name]
+
+Purpose: [Why this task matters]
+
+Trigger: [What causes the task to start]
+
+Input Requirements:
+- [What data/information is needed]
+
+Step-by-Step Instructions:
+1. [First action]
+2. [Second action]
+3. [Continue...]
+
+Decision Points:
+- If [condition], then [action]
+
+Expected Output:
+- [Format and content]
+
+Error Handling:
+- If [error occurs], [action]
+
+Success Criteria:
+- [How to know it worked]
+
+Edge Cases:
+- [Unusual scenarios to handle]
+```
+
+## Real Example: Data Extraction Task
+
+**Task:** Extract customer contact information from emails
+
+**Input:** Raw customer email text
+
+**Instructions:**
+
+1. Identify name (look for "Hello [Name]" or signature)
+2. Extract email (look for standard email format)
+3. Find phone (look for ### format)
+4. Identify company (mentioned in body or signature)
+5. Note any mentions of needs or concerns
+
+**Output Format:** JSON with name, email, phone, company, needs
+
+**Error Handling:** If name missing, mark as "REVIEW REQUIRED"
+
+**Success:** All fields populated or clearly flagged as unavailable
+
+## Common Pitfalls
+
+- **Too Vague:** "Handle customer inquiries" → Too ambiguous
+- **Too Complex:** Trying to handle every edge case → Overwhelms the agent
+- **Missing Context:** Not explaining why each step matters
+- **No Fallback:** Not defining what to do when something unexpected happens
+- **Untested:** Not validating with real data before deployment
+
+By investing time in proper task design, you'll get consistent, predictable results from your AI agents.

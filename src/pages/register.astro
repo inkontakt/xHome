@@ -1,0 +1,13 @@
+---
+import BlankLayout from '@/layouts/BlankLayout.astro'
+import RegisterPage from '@/components/sections/register-section'
+
+// Page-specific SEO configuration
+const pageTitle = 'Sign Up - Create Your Account | Orion'
+const pageDescription =
+  'Create your account to get started with your personal AI agent. Automate tasks, organize your routines, and stay connected across all devices.'
+---
+
+<BlankLayout title={pageTitle} description={pageDescription} noindex nofollow>
+  <RegisterPage client:load />
+</BlankLayout>
