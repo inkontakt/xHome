@@ -1,43 +1,50 @@
-# Astro Starter Kit: Minimal
+# xHome
 
-```sh
-npm create astro@latest -- --template minimal
-```
+This repository now contains the full app workspace under a single canonical folder on the server:
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+`/home/xhome/xHome`
 
-## 🚀 Project Structure
+The Astro frontend lives at the repository root. Supporting app assets and the WordPress stack live in subfolders so the project can be operated from one place.
 
-Inside of your Astro project, you'll see the following folders and files:
+## Project Structure
 
 ```text
 /
 ├── public/
+├── resources/
+│   ├── exports/
+│   └── templates/
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+├── wordpress-cms/
+│   ├── .env.example
+│   └── docker-compose.yml
+├── .env.example
+├── package.json
+└── README.md
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Commands
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Run Astro from the repository root:
 
-Any static assets, like images, can be placed in the `public/` directory.
+| Command | Action |
+| :------ | :----- |
+| `npm install` | Installs frontend dependencies |
+| `npm run dev` | Starts the Astro dev server |
+| `npm run build` | Builds the frontend into `dist/` |
+| `npm run preview` | Previews the built frontend |
+| `npm run lint` | Runs ESLint |
+| `npm run check-types` | Runs TypeScript checks |
 
-## 🧞 Commands
+Run WordPress from `wordpress-cms/`:
 
-All commands are run from the root of the project, from a terminal:
+| Command | Action |
+| :------ | :----- |
+| `docker compose up -d` | Starts WordPress and MySQL |
+| `docker compose down` | Stops the WordPress stack |
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## Notes
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- The real frontend `.env` and `wordpress-cms/.env` stay local on the server and are not committed.
+- `resources/templates/` stores the source Orion template archive.
+- `resources/exports/` stores exported JSON files used for app reference data.

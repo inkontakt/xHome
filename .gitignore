@@ -30,6 +30,7 @@ pnpm-debug.log*
 .env
 .env.production
 .env*.local
+wordpress-cms/.env
 
 # testing
 coverage/
