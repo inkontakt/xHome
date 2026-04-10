@@ -73,9 +73,9 @@ source:
 
 ## Full Index
 
-**Copy the command from the Install column** and paste it into your terminal/Cursor to install the skill. The security badges are now visual (🟢 = Success, 🟡 = Review, 🔴 = Danger). 
+**Prefer the install block in each per-skill note** ([[skills/Index]]): those use the canonical **`npx skills add https://github.com/OWNER/REPO --skill <name>`** line copied from [skills.sh](https://skills.sh/). The **Install Command** column below is the older shorthand (`cursor install skill …`) from the original scrape and may not match the website.
 
-The commands are derived from the standard pattern shown on each skill page (as seen in the local `obsidian-*` SKILL.md files and the `create-skill` skill). Note that the new **WordPress skills** use the specific command `npx skills add https://github.com/wordpress/agent-skills --skill <name>`.
+The security badges are visual (🟢 = Success, 🟡 = Review, 🔴 = Danger). WordPress skills use `npx skills add https://github.com/WordPress/agent-skills --skill <name>` (see per-skill files for exact lines).
 
 | Skill                                                                                                                 | Session Match        | Weekly Installs | Security   | Install Command                                         | Upstream Repo                                                                                                   |
 | --------------------------------------------------------------------------------------------------------------------- | -------------------- | --------------: | ---------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -285,5 +285,5 @@ The commands are derived from the standard pattern shown on each skill page (as 
 - The merged note now tracks `41` unique links.
 - The new WordPress skills are maintained by the WordPress organisation and integrate well with the existing `wordpress-*` tooling in this workspace.
 - Several skill pages point to well-known organizations, but that alone is not a substitute for manual review.
-- If you want, this note can be split next into one note per skill using wikilinks from this index.
+- Per-skill markdown files live under `skills/`; see [[skills/Index]].
 - All new WordPress skills use the install command: `npx skills add https://github.com/wordpress/agent-skills --skill <skill-name>` (preferred over generic `cursor install skill` for this repo).

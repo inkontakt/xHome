@@ -1,0 +1,45 @@
+---
+title: "wp-abilities-api"
+tags:
+  - skills
+  - security-audit
+  - onetab
+audited: 2026-04-10
+---
+
+# wp-abilities-api
+
+> [!note] About this snapshot
+> Public `skills.sh` security snapshot dated **2026-04-10** in the parent audit. Install commands mirror the skills.sh **Installation** block (`npx skills add …`). This is **not** a manual source-code audit of the repository.
+
+**Skill page (skills.sh):** [wp-abilities-api](https://skills.sh/wordpress/agent-skills/wp-abilities-api)
+
+**Upstream repository:** [WordPress/agent-skills](https://github.com/WordPress/agent-skills)
+
+**Session match:** No
+
+> [!success] Overall security signal
+> Snapshot: **Success** — clean pass across all three auditors at extraction time.
+
+> [!abstract] Summary
+> Official WordPress organisation skill: Abilities API usage for agent workflows.
+
+### INSTALLATION
+
+---
+
+```bash
+npx skills add https://github.com/WordPress/agent-skills --skill wp-abilities-api
+```
+
+### SECURITY AUDITS
+
+---
+
+Order: **Gen Agent Trust Hub** → **Socket** → **Snyk**.
+
+| Audit | Result |
+| :--- | :--- |
+| Gen Agent Trust Hub | **PASS** [Details](https://skills.sh/wordpress/agent-skills/wp-abilities-api/security/agent-trust-hub) |
+| Socket | **PASS** [Details](https://skills.sh/wordpress/agent-skills/wp-abilities-api/security/socket) |
+| Snyk | **PASS** [Details](https://skills.sh/wordpress/agent-skills/wp-abilities-api/security/snyk) |

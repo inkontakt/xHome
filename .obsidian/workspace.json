@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Obsidian/Skills Audit/OneTab Skills Audit.md",
+                "file": "Obsidian/Skills Audit/skills/mcp-builder.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "OneTab Skills Audit"
+              "title": "mcp-builder"
             }
           }
         ]
@@ -185,6 +185,33 @@
   },
   "active": "ba4410d6de17d162",
   "lastOpenFiles": [
-    "Obsidian/Index.md"
+    "Obsidian/Skills Audit/skills/brand-guidelines.md",
+    "Obsidian/Skills Audit/skills/writing-skills.md",
+    "Obsidian/Skills Audit/skills/design-md.md",
+    "Obsidian/Skills Audit/skills/better-auth-best-practices.md",
+    "Obsidian/Skills Audit/skills/audit-website.md",
+    "Obsidian/Skills Audit/skills/agent-browser.md",
+    "Obsidian/Skills Audit/OneTab Skills Audit.md",
+    "Obsidian/Skills Audit/skills/Index.md",
+    "Obsidian/Skills Audit/skills/the-agent-skills-directory.md",
+    "Obsidian/Skills Audit/skills/ralph-loop.md",
+    "Obsidian/Skills Audit/skills/continual-learning.md",
+    "Obsidian/Skills Audit/skills/wp-abilities-api.md",
+    "Obsidian/Skills Audit/skills/wp-interactivity-api.md",
+    "Obsidian/Skills Audit/skills/wp-wpcli-and-ops.md",
+    "Obsidian/Skills Audit/skills/wp-project-triage.md",
+    "Obsidian/Skills Audit/skills/wp-rest-api.md",
+    "Obsidian/Skills Audit/skills/wordpress-router.md",
+    "Obsidian/Skills Audit/skills/playwright-best-practices.md",
+    "Obsidian/Skills Audit/skills/shadcn-ui.md",
+    "Obsidian/Skills Audit/skills/use-my-browser.md",
+    "Obsidian/Skills Audit/skills/critique.md",
+    "Obsidian/Skills Audit/skills/frontend-design-impeccable.md",
+    "Obsidian/Skills Audit/skills/secure-linux-web-hosting.md",
+    "Obsidian/Skills Audit/skills/soultrace.md",
+    "Obsidian/Skills Audit/skills/browser-use.md",
+    "Obsidian/Skills Audit/skills/tailwind-design-system.md",
+    "Obsidian/Skills Audit/skills/_build_skills.py",
+    "Obsidian/Skills Audit/skills"
   ]
 }
