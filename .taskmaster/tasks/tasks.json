@@ -1,0 +1,586 @@
+{
+  "master": {
+    "tasks": [],
+    "metadata": {
+      "description": "Tasks for master context",
+      "created": "2026-04-13T09:09:48.679Z",
+      "updated": "2026-04-13T09:09:48.679Z"
+    }
+  },
+  "landing-markdown-cms-phase1": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Add landingSettings and landingSections collections",
+        "description": "Update Astro content configuration to support the new structured Markdown content sources for Phase 1.",
+        "complexity": 4,
+        "details": "Complexity: 4/10. Modify src/content.config.ts to add strict zod schemas for landingSettings and landingSections while keeping the old landing collection temporarily during migration. Enforce the exact section contracts from the plan, including enum-like values, exact lengths where required, and the three-digit filename pattern assumptions used by the loader.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define landingSettings schema in src/content.config.ts",
+            "description": "Add the zod schema for the new landingSettings collection, covering seo and optional integrations fields exactly as specified in the plan.",
+            "details": "Complexity: 2/10. Add the landingSettings collection schema with required seo fields and optional integrations fields using zod.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 1,
+            "complexity": 2
+          },
+          {
+            "id": 2,
+            "title": "Define landingSections schema with exact section contracts",
+            "description": "Add the zod schema for the landingSections collection, including required section IDs, nested field shapes, enums, and exact-length arrays where required.",
+            "details": "Complexity: 4/10. Encode the per-section frontmatter contracts from the plan into zod schemas in src/content.config.ts.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 1,
+            "complexity": 4
+          },
+          {
+            "id": 3,
+            "title": "Keep the legacy landing collection during migration",
+            "description": "Preserve the old landing collection temporarily so the migration can proceed without immediately breaking the live page.",
+            "details": "Complexity: 1/10. Leave the existing landing collection in place while introducing the new collections.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 1,
+            "complexity": 1
+          },
+          {
+            "id": 4,
+            "title": "Verify schema exports and collection registration",
+            "description": "Ensure the new collections are exported correctly and available to Astro content APIs.",
+            "details": "Complexity: 1/10. Confirm the collections object includes landingSettings and landingSections alongside any temporary legacy collection.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "parentTaskId": 1,
+            "complexity": 1
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Implement landing content loader and cross-file validation",
+        "description": "Create the loader that assembles global settings and ordered section files into the exact LandingContent shape consumed by the live landing page.",
+        "complexity": 7,
+        "details": "Complexity: 7/10. Create src/lib/loaders/landing-sections-loader.ts. Read landingSettings and landingSections, sort by numeric filename prefix, validate required sections, validate filename-slug to id matching, validate duplicate prefixes and duplicate ids, validate required image paths under public/images, and return the exact LandingContent shape defined in the plan. Use Astro collection data plus custom loader validation for cross-file rules.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create loader scaffold and exports",
+            "description": "Create src/lib/loaders/landing-sections-loader.ts with the public loadLandingContent export and supporting internal helpers.",
+            "details": "Complexity: 2/10. Add the loader module structure and public function signature.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 2,
+            "complexity": 2
+          },
+          {
+            "id": 2,
+            "title": "Load landing settings and section entries from Astro collections",
+            "description": "Read landingSettings and landingSections data through Astro content APIs.",
+            "details": "Complexity: 3/10. Fetch the new collection entries and prepare them for assembly.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 2,
+            "complexity": 3
+          },
+          {
+            "id": 3,
+            "title": "Sort section files by numeric filename prefix",
+            "description": "Extract numeric prefixes from filenames and sort section entries in ascending order.",
+            "details": "Complexity: 2/10. Use the filename prefix as the only ordering source in Phase 1.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 2,
+            "complexity": 2
+          },
+          {
+            "id": 4,
+            "title": "Assemble the exact LandingContent object shape",
+            "description": "Map global settings and section entries into the same shape currently consumed by src/pages/index.astro.",
+            "details": "Complexity: 4/10. Return the exact LandingContent structure defined in the plan so the live page can switch without redesign.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "parentTaskId": 2,
+            "complexity": 4
+          },
+          {
+            "id": 5,
+            "title": "Add cross-file validation and image-path checks",
+            "description": "Fail fast on duplicate prefixes, duplicate ids, filename/id mismatches, missing required sections, and missing image assets.",
+            "details": "Complexity: 5/10. Implement the loader-only validation rules that cannot be handled by collection schemas alone.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "parentTaskId": 2,
+            "complexity": 5
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Create global landing settings Markdown file",
+        "description": "Split page-level SEO and integration settings out of the monolithic landing file into the new landing-settings source.",
+        "complexity": 3,
+        "details": "Complexity: 3/10. Create src/content/landing-settings/index.md and migrate the current seo and integrations data exactly from src/content/landing/index.md. Keep field names and value types aligned with the current landing page consumption. Do not introduce new SEO behavior in Phase 1.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create landing-settings file scaffold",
+            "description": "Create src/content/landing-settings/index.md with clean YAML frontmatter and no extra Phase 1 behavior.",
+            "details": "Complexity: 1/10. Create the file and structure it for frontmatter-first editing.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 3,
+            "complexity": 1
+          },
+          {
+            "id": 2,
+            "title": "Migrate current seo values into landing-settings",
+            "description": "Move the existing seo object from the monolithic landing content into the new global settings file.",
+            "details": "Complexity: 2/10. Preserve field names and value types exactly.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 3,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Migrate current integrations values into landing-settings",
+            "description": "Move the current integrations object into the new global settings file with optional fields preserved.",
+            "details": "Complexity: 2/10. Preserve numeric IDs and optional booking URL fields without introducing defaults.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 3,
+            "complexity": 2
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Migrate hero, features, and works sections into Markdown files",
+        "description": "Create the first three landing section files and move their current content into structured frontmatter.",
+        "complexity": 5,
+        "details": "Complexity: 5/10. Create 010-hero.md, 020-features.md, and 030-works-features.md under src/content/landing-sections. Preserve the current data shape exactly, including hero title array length, allowed hero tab values, feature card count, and allowed works step IDs. Keep the files clean and readable for Obsidian editing.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create 010-hero.md with current hero data",
+            "description": "Move the current hero content into structured frontmatter in the new hero section file.",
+            "details": "Complexity: 3/10. Preserve the two-line title array, CTAs, badge, stats text, and allowed tab values exactly.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 4,
+            "complexity": 3
+          },
+          {
+            "id": 2,
+            "title": "Create 020-features.md with current features data",
+            "description": "Move the current features section title, description, and five cards into structured frontmatter.",
+            "details": "Complexity: 2/10. Preserve the exact five-card structure expected by the current component.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 4,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Create 030-works-features.md with current workflow steps",
+            "description": "Move the current worksFeatures section into structured frontmatter with the exact allowed step IDs.",
+            "details": "Complexity: 2/10. Preserve the exact three steps and their IDs.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 4,
+            "complexity": 2
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Migrate use-cases and testimonials sections into Markdown files",
+        "description": "Create the use-cases and testimonials section files and move their current content into structured frontmatter.",
+        "complexity": 5,
+        "details": "Complexity: 5/10. Create 040-use-cases.md and 050-testimonials.md. Preserve the current use-case tab shape, allowed tab values, nested testimonial reviews, image paths, and testimonial card fields exactly as used by the current components. Keep root-relative image paths such as /images/... and ensure the referenced assets already exist.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create 040-use-cases.md with current tabbed use-case data",
+            "description": "Move the current useCases section, tab metadata, nested reviews, and image paths into structured frontmatter.",
+            "details": "Complexity: 4/10. Preserve the exact three tabs, allowed values, nested review items, and root-relative image paths.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 5,
+            "complexity": 4
+          },
+          {
+            "id": 2,
+            "title": "Create 050-testimonials.md with current testimonial cards",
+            "description": "Move the current testimonials section items into structured frontmatter.",
+            "details": "Complexity: 3/10. Preserve avatars, fallbacks, company logos, optional dark logos, and message fields exactly.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 5,
+            "complexity": 3
+          },
+          {
+            "id": 3,
+            "title": "Verify migrated use-case and testimonial asset paths",
+            "description": "Check that all referenced images for the use-cases and testimonials sections are still valid root-relative paths.",
+            "details": "Complexity: 2/10. Confirm that the migrated paths point to existing public assets.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 5,
+            "complexity": 2
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Migrate pricing, FAQ, CTA, and footer sections into Markdown files",
+        "description": "Create the remaining landing section files and move their current content into structured frontmatter.",
+        "complexity": 6,
+        "details": "Complexity: 6/10. Create 060-pricing.md, 070-faq.md, 080-cta.md, and 090-footer.md. Preserve pricing plan field types, FAQ button/link structure, CTA stats shape, footer link groups, and all currently used root-relative image or href values. Do not introduce freeform Markdown rendering in these sections.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          1
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create 060-pricing.md with current pricing plans",
+            "description": "Move the pricing section data into structured frontmatter.",
+            "details": "Complexity: 3/10. Preserve labels, plan fields, numeric prices, button variants, and plan feature arrays exactly.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 6,
+            "complexity": 3
+          },
+          {
+            "id": 2,
+            "title": "Create 070-faq.md with current FAQ content",
+            "description": "Move the FAQ section data and items into structured frontmatter.",
+            "details": "Complexity: 2/10. Preserve button objects, column titles, and FAQ question/answer items exactly.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 6,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Create 080-cta.md with current CTA stats and actions",
+            "description": "Move the CTA section data into structured frontmatter.",
+            "details": "Complexity: 2/10. Preserve CTA buttons and stat objects including optional pointNumber values.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 6,
+            "complexity": 2
+          },
+          {
+            "id": 4,
+            "title": "Create 090-footer.md with current footer groups and newsletter content",
+            "description": "Move the footer section data into structured frontmatter.",
+            "details": "Complexity: 3/10. Preserve newsletter copy, grouped footer links, and copyright suffix exactly.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "parentTaskId": 6,
+            "complexity": 3
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Switch the live landing page to the new loader",
+        "description": "Update the live landing route to consume the Markdown-backed landing content source instead of the monolithic landing collection.",
+        "complexity": 4,
+        "details": "Complexity: 4/10. Modify src/pages/index.astro to replace direct getCollection('landing') usage with loadLandingContent(). Preserve the existing component tree, prop names, structured data schema generation, and live page layout. Once this task is done, the live page must no longer read from the old monolithic landing content source.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          2,
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Replace direct landing collection fetch with loadLandingContent()",
+            "description": "Update src/pages/index.astro to consume the new loader instead of reading the monolithic landing entry directly.",
+            "details": "Complexity: 2/10. Swap the data source while preserving existing variable names and page behavior.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 7,
+            "complexity": 2
+          },
+          {
+            "id": 2,
+            "title": "Preserve current component tree and schema generation behavior",
+            "description": "Keep the existing component structure, prop passing, and page-level schema output intact after the switch.",
+            "details": "Complexity: 2/10. Ensure the page still renders the same components in the same order and still builds the current schema object.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 7,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Ensure the live route no longer reads the monolithic landing source",
+            "description": "Confirm the live page is exclusively driven by the new settings and section files after the switch.",
+            "details": "Complexity: 1/10. Remove or bypass old landing reads from the route while leaving final cleanup for Task 10.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 7,
+            "complexity": 1
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Document Obsidian editing workflow for landing content",
+        "description": "Create editor guidance for maintaining the new Markdown-based landing content structure.",
+        "complexity": 2,
+        "details": "Complexity: 2/10. Add documentation that explains the purpose of landing-settings and landing-sections, required filename conventions, frontmatter-first editing, allowed optional Markdown body notes, root-relative image path usage, and the fact that Phase 1 ignores freeform Markdown bodies for live rendering.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          3,
+          "4",
+          "5",
+          "6"
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Draft the editing guide structure",
+            "description": "Create the document outline for editing landing settings and section files in Obsidian.",
+            "details": "Complexity: 1/10. Define the guide sections and intended audience.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 8,
+            "complexity": 1
+          },
+          {
+            "id": 2,
+            "title": "Document filename, frontmatter, and image-path rules",
+            "description": "Explain the naming convention, frontmatter-first editing pattern, and root-relative image path rules.",
+            "details": "Complexity: 2/10. Capture the Phase 1 rules that editors must follow to avoid breaking the build.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 8,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Document optional Markdown body usage and deferred features",
+            "description": "Explain that Markdown bodies are optional notes only in Phase 1 and list the deferred CMS capabilities.",
+            "details": "Complexity: 1/10. Make it clear what editors can do now versus what is intentionally postponed.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 8,
+            "complexity": 1
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Validate the new landing content pipeline and failure modes",
+        "description": "Verify that the migrated landing page builds cleanly, preserves the current design, and fails correctly on invalid content.",
+        "complexity": 6,
+        "details": "Complexity: 6/10. Run the project build after the live switch, manually compare the landing page output before and after migration, test one section reorder by changing a numeric prefix, test one intentional validation failure for a required field, and confirm that at least one migrated image path resolves correctly. If the new live page fails, temporarily point the route back to the monolithic source until the mismatch is fixed.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          7
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Run the project build and resolve integration issues",
+            "description": "Build the project after switching the route and fix any schema or loader integration errors.",
+            "details": "Complexity: 3/10. Use the build as the first end-to-end validation of the new content pipeline.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 9,
+            "complexity": 3
+          },
+          {
+            "id": 2,
+            "title": "Manually compare landing page output before and after migration",
+            "description": "Check that the visible landing page layout and content rendering remain effectively unchanged after the switch.",
+            "details": "Complexity: 2/10. Perform a manual visual comparison on the live page output.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 9,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Test section ordering by changing one numeric prefix",
+            "description": "Confirm that changing a section filename prefix changes live ordering as intended.",
+            "details": "Complexity: 2/10. Rename one section temporarily to verify ordering behavior, then restore the intended order.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 9,
+            "complexity": 2
+          },
+          {
+            "id": 4,
+            "title": "Test validation failure messaging with one intentional content error",
+            "description": "Break one required field on purpose to confirm that validation fails with a useful error.",
+            "details": "Complexity: 2/10. Validate that schema or loader failure messages identify the exact file and field.",
+            "status": "pending",
+            "dependencies": [
+              3
+            ],
+            "parentTaskId": 9,
+            "complexity": 2
+          },
+          {
+            "id": 5,
+            "title": "Verify image-path resolution and rollback procedure",
+            "description": "Confirm at least one migrated image path resolves correctly and record the rollback path if the live switch fails.",
+            "details": "Complexity: 2/10. Check one real image path on the live page and confirm the temporary rollback rule is practical.",
+            "status": "pending",
+            "dependencies": [
+              4
+            ],
+            "parentTaskId": 9,
+            "complexity": 2
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Retire the monolithic landing content source after successful migration",
+        "description": "Remove split-source ambiguity by archiving or deleting the old landing content file once the new system is verified.",
+        "complexity": 3,
+        "details": "Complexity: 3/10. After the new loader has been validated, archive or remove src/content/landing/index.md and any now-unused monolithic landing collection logic so the repo has a single source of truth for landing content. Do not do this until validation is complete.",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          9
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Archive or remove src/content/landing/index.md",
+            "description": "Retire the old monolithic landing content file after the new system has been validated.",
+            "details": "Complexity: 1/10. Remove the split-source ambiguity by retiring the old content file only after validation passes.",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 10,
+            "complexity": 1
+          },
+          {
+            "id": 2,
+            "title": "Remove obsolete monolithic landing collection logic",
+            "description": "Clean up any no-longer-used collection code or route assumptions related to the monolithic landing source.",
+            "details": "Complexity: 2/10. Remove temporary migration-only code paths once the new source is stable.",
+            "status": "pending",
+            "dependencies": [
+              1
+            ],
+            "parentTaskId": 10,
+            "complexity": 2
+          },
+          {
+            "id": 3,
+            "title": "Confirm the repo has a single landing content source of truth",
+            "description": "Make a final check that only the new settings and section files remain as the maintained landing content source.",
+            "details": "Complexity: 1/10. Ensure there is no lingering ambiguity about where landing content should be edited going forward.",
+            "status": "pending",
+            "dependencies": [
+              2
+            ],
+            "parentTaskId": 10,
+            "complexity": 1
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2026-04-13T09:09:48.680Z",
+      "updated": "2026-04-13T09:14:59.188Z",
+      "description": "Phase 1 structured Markdown CMS migration for the existing landing page"
+    }
+  }
+}
