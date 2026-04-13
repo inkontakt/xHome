@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Obsidian/Skills Audit/skills/mcp-builder.md",
+                "file": "src/content/landing-sections/030-works-features.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "mcp-builder"
+              "title": "030-works-features"
             }
           }
         ]
@@ -185,17 +185,36 @@
   },
   "active": "ba4410d6de17d162",
   "lastOpenFiles": [
-    "node_modules/@babel/core/src/config/files/index.ts",
-    "node_modules/@babel/core/src/config/files/index-browser.ts",
-    "node_modules/@babel/core/src/config/resolve-targets.ts",
-    "node_modules/@babel/core/src/config/resolve-targets-browser.ts",
-    "node_modules/@babel/core/src/config/files",
-    "node_modules/@babel/core/src/transform-file.ts",
-    "node_modules/@babel/core/src/transform-file-browser.ts",
-    "node_modules/@babel/core/src/config",
-    "node_modules/@babel/core/src",
-    "node_modules/@tailwindcss/vite/dist/index.mjs",
-    "node_modules/@tailwindcss/vite/dist/index.d.mts",
+    "dist/client/images/features/25.webp",
+    "dist/client/images/features/24.webp",
+    "dist/client/images/features/23.webp",
+    "dist/client/images/features/22.webp",
+    "dist/client/images/features/21.webp",
+    "dist/client/images/features/20.webp",
+    "dist/client/images/features/19.webp",
+    "dist/client/images/features/18.webp",
+    "dist/client/images/features/17.webp",
+    "dist/client/images/features/16.webp",
+    "dist/client/images/features/15.webp",
+    "dist/client/images/features",
+    "dist/client/images/blog",
+    "dist/client/images/avatar",
+    "dist/client/images/app-integration",
+    "dist/client/favicon/favicon.ico",
+    "dist/client/images",
+    "dist/client/favicon.ico",
+    "dist/client/favicon",
+    "dist/client",
+    "dist/server/chunks/_astro_data-layer-content_B8ohK5Ub.mjs",
+    "src/content/landing-sections/040-use-cases.md",
+    "src/content/landing-sections/030-works-features.md",
+    "src/content/landing-sections/020-features.md",
+    "src/content/landing-sections/010-hero.md",
+    "src/content/landing-sections/050-testimonials.md",
+    "src/content/landing-sections/060-pricing.md",
+    "src/content/landing-sections/070-faq.md",
+    "src/content/landing-sections/090-footer.md",
+    "Obsidian/Skills Audit/skills/mcp-builder.md",
     "node_modules/@babel/compat-data/README.md",
     "node_modules/vfile-message/readme.md",
     "node_modules/@astrojs/internal-helpers/readme.md",
@@ -211,15 +230,6 @@
     "node_modules/csso/node_modules/css-tree/README.md",
     "node_modules/@astrojs/compiler/README.md",
     "node_modules/zod/README.md",
-    "node_modules/@astrojs/rss/README.md",
-    "node_modules/@astrojs/prism/README.md",
-    "node_modules/@babel/runtime/README.md",
-    "node_modules/micromatch/node_modules/picomatch/README.md",
-    "node_modules/axobject-query/README.md",
-    "node_modules/@emmetio/css-abbreviation/README.md",
-    "node_modules/@eslint/eslintrc/README.md",
-    "node_modules/@babel/generator/README.md",
-    "node_modules/@babel/helpers/README.md",
-    "node_modules/@emmetio/html-matcher/README.md"
+    "node_modules/@astrojs/rss/README.md"
   ]
 }

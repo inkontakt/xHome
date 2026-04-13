@@ -311,7 +311,8 @@ updated: 2026-04-10
 - `src/content/blog/reduce-operational.mdx`
 - `src/content/blog/understanding-ai-agents.mdx`
 - `src/content/blog/what-ai-agent-does.mdx`
-- `src/content/landing/index.md`
+- `src/content/landing-sections/010-hero.md`
+- `src/content/landing-settings/index.md`
 - `src/hooks/use-active-section.ts`
 - `src/hooks/use-media.ts`
 - `src/layouts/BlankLayout.astro`
