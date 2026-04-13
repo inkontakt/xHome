@@ -1,4 +1,5 @@
 import CTA from '@/components/blocks/cta-section/cta-section'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type CTASectionContent = {
   heading: string
@@ -9,14 +10,16 @@ type CTASectionContent = {
 }
 
 const CTASection = ({ content }: { content: CTASectionContent }) => {
+  const freshContent = useFreshLandingContent(content, 'cta')
+
   return (
     <CTA
-      stats={content.stats}
+      stats={freshContent.stats}
       content={{
-        heading: content.heading,
-        description: content.description,
-        primaryCta: content.primaryCta,
-        secondaryCta: content.secondaryCta
+        heading: freshContent.heading,
+        description: freshContent.description,
+        primaryCta: freshContent.primaryCta,
+        secondaryCta: freshContent.secondaryCta
       }}
     />
   )

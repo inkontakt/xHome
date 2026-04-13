@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { FolderSyncIcon, PencilIcon, WorkflowIcon } from 'lucide-react'
 import WorksFeaturesSection from '@/components/blocks/works-features-section/works-features-section'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type StepId = 'describe-workflow' | 'connect-tools' | 'review-and-refine'
 
@@ -21,12 +22,14 @@ const iconByStepId: Record<StepId, ReactNode> = {
 }
 
 const WorksFeaturesSectionPage = ({ content }: { content: WorksFeaturesContent }) => {
-  const data = content.steps.map(step => ({
+  const freshContent = useFreshLandingContent(content, 'worksFeatures')
+
+  const data = freshContent.steps.map(step => ({
     ...step,
     icon: iconByStepId[step.id]
   }))
 
-  return <WorksFeaturesSection data={data} content={{ title: content.title, description: content.description }} />
+  return <WorksFeaturesSection data={data} content={{ title: freshContent.title, description: freshContent.description }} />
 }
 
 export default WorksFeaturesSectionPage

@@ -1,4 +1,5 @@
 import FAQSection from '@/components/blocks/faq-section/faq-section'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type FAQItem = {
   question: string
@@ -18,18 +19,20 @@ type FAQSectionContent = {
 }
 
 const FAQSectionPage = ({ content }: { content: FAQSectionContent }) => {
+  const freshContent = useFreshLandingContent(content, 'faq')
+
   return (
     <FAQSection
-      faqs={content.items}
+      faqs={freshContent.items}
       content={{
-        title: content.title,
-        description: content.description,
-        heading: content.heading,
-        subheading: content.subheading,
-        docsButton: content.docsButton,
-        contactButton: content.contactButton,
-        leftColumnTitle: content.leftColumnTitle,
-        rightColumnTitle: content.rightColumnTitle
+        title: freshContent.title,
+        description: freshContent.description,
+        heading: freshContent.heading,
+        subheading: freshContent.subheading,
+        docsButton: freshContent.docsButton,
+        contactButton: freshContent.contactButton,
+        leftColumnTitle: freshContent.leftColumnTitle,
+        rightColumnTitle: freshContent.rightColumnTitle
       }}
     />
   )

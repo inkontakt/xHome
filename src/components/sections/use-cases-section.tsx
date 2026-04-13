@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { useEffect } from 'react'
 import { BadgePercentIcon, TrendingUpIcon, CrownIcon } from 'lucide-react'
 import UseCases from '@/components/blocks/use-cases-section/use-cases-section'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type UseCaseValue = 'sales' | 'marketing' | 'founders'
 
@@ -94,13 +95,15 @@ const defaultContent: UseCasesSectionContent = {
 }
 
 const UseCasesSection = ({ content = defaultContent }: { content?: UseCasesSectionContent }) => {
+  const freshContent = useFreshLandingContent(content, 'useCases')
+
   useEffect(() => {
     // #region agent log
     fetch('http://localhost:7433/ingest/2b9349a0-c0a1-4e81-9aa0-918008adcca8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c66fb0'},body:JSON.stringify({sessionId:'c66fb0',runId:'slow-homepage-1',hypothesisId:'H1',location:'use-cases-section.tsx:UseCasesSection',message:'section_mounted',data:{section:'use-cases'},timestamp:Date.now()})}).catch(()=>{})
     // #endregion
   }, [])
 
-  const tabs = content.tabs.map(tab => ({
+  const tabs = freshContent.tabs.map(tab => ({
     ...tab,
     icon: iconByUseCase[tab.value]
   }))
@@ -109,10 +112,10 @@ const UseCasesSection = ({ content = defaultContent }: { content?: UseCasesSecti
     <UseCases
       tabs={tabs}
       content={{
-        title: content.title,
-        description: content.description,
-        heading: content.heading,
-        learnMoreLabel: content.learnMoreLabel
+        title: freshContent.title,
+        description: freshContent.description,
+        heading: freshContent.heading,
+        learnMoreLabel: freshContent.learnMoreLabel
       }}
     />
   )

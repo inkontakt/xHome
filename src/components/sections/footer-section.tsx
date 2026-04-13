@@ -1,4 +1,5 @@
 import Footer from '@/components/layout/footer'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type FooterSectionContent = {
   newsletterTitle: string
@@ -73,7 +74,9 @@ const defaultContent: FooterSectionContent = {
 }
 
 const FooterSection = ({ newsletter = false, content = defaultContent }: { newsletter?: boolean; content?: FooterSectionContent }) => {
-  return <Footer newsletter={newsletter} content={content} />
+  const freshContent = useFreshLandingContent(content, 'footer')
+
+  return <Footer newsletter={newsletter} content={freshContent} />
 }
 
 export default FooterSection

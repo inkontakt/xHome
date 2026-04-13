@@ -30,19 +30,19 @@ Here's a quick look at how the AI agent effectively operates.
 
 ## Workflow Steps
 
-### 1. Describe your workflow test sumaiya
+### 1. Describe your workflow djhhj kkkk lklkd
 
 **Step ID:** `describe-workflow`
 
 Inform the agent about what you wish to automate, ranging from daily team summaries to lead follow-ups, ensuring clarity in your request.
 
-### 2. Connect your tools
+### 2. Connect your tools test sumaiya
 
 **Step ID:** `connect-tools`
 
 Link Gmail, Slack, Notion, or any app your team already uses. The agent syncs data between them and builds context automatically.
 
-### 3. Review and refine
+### 3. Review and refine 1211 test
 
 **Step ID:** `review-and-refine`
 

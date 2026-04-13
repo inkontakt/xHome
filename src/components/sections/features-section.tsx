@@ -1,5 +1,6 @@
 import Features from '@/components/blocks/features-bento-grid/features-bento-grid'
 import { useEffect } from 'react'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type FeaturesContent = {
   title: string
@@ -8,13 +9,15 @@ type FeaturesContent = {
 }
 
 const FeaturesSection = ({ content }: { content: FeaturesContent }) => {
+  const freshContent = useFreshLandingContent(content, 'features')
+
   useEffect(() => {
     // #region agent log
     fetch('http://localhost:7433/ingest/2b9349a0-c0a1-4e81-9aa0-918008adcca8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c66fb0'},body:JSON.stringify({sessionId:'c66fb0',runId:'slow-homepage-1',hypothesisId:'H1',location:'features-section.tsx:FeaturesSection',message:'section_mounted',data:{section:'features'},timestamp:Date.now()})}).catch(()=>{})
     // #endregion
   }, [])
 
-  return <Features content={content} />
+  return <Features content={freshContent} />
 }
 
 export default FeaturesSection

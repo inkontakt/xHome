@@ -1,5 +1,6 @@
 import PricingSection from '@/components/blocks/pricing-section/pricing-section'
 import { useEffect } from 'react'
+import { useFreshLandingContent } from '@/hooks/useFreshLandingContent'
 
 type PricingPlan = {
   name: string
@@ -25,6 +26,8 @@ type PricingSectionContent = {
 }
 
 const PricingSectionPage = ({ content }: { content: PricingSectionContent }) => {
+  const freshContent = useFreshLandingContent(content, 'pricing')
+
   useEffect(() => {
     // #region agent log
     fetch('http://localhost:7433/ingest/2b9349a0-c0a1-4e81-9aa0-918008adcca8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c66fb0'},body:JSON.stringify({sessionId:'c66fb0',runId:'slow-homepage-1',hypothesisId:'H1',location:'pricing-section.tsx:PricingSectionPage',message:'section_mounted',data:{section:'pricing'},timestamp:Date.now()})}).catch(()=>{})
@@ -33,15 +36,15 @@ const PricingSectionPage = ({ content }: { content: PricingSectionContent }) => 
 
   return (
     <PricingSection
-      plans={content.plans}
+      plans={freshContent.plans}
       content={{
-        title: content.title,
-        description: content.description,
-        heading: content.heading,
-        subheading: content.subheading,
-        monthlyLabel: content.monthlyLabel,
-        yearlyLabel: content.yearlyLabel,
-        yearlySaveLabel: content.yearlySaveLabel
+        title: freshContent.title,
+        description: freshContent.description,
+        heading: freshContent.heading,
+        subheading: freshContent.subheading,
+        monthlyLabel: freshContent.monthlyLabel,
+        yearlyLabel: freshContent.yearlyLabel,
+        yearlySaveLabel: freshContent.yearlySaveLabel
       }}
     />
   )
