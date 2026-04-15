@@ -60,16 +60,16 @@ const Header = ({ navigationData, className, pathname: serverPathname }: HeaderP
   return (
     <header
       className={cn(
-        'sticky top-0 z-50 h-16 w-full border-b px-4 transition-all duration-300 sm:px-6 lg:px-8',
+        'header-menu sticky top-0 z-50 w-full border-b bg-background/92 px-2 backdrop-blur supports-[backdrop-filter]:bg-background/78 sm:px-4',
         {
-          'bg-card/75 shadow-xl backdrop-blur': isScrolled
+          'shadow-sm': isScrolled
         },
         className
       )}
     >
-      <div className='mx-auto flex h-full max-w-7xl items-center justify-between gap-4 border-x px-4 sm:px-6 lg:px-8'>
+      <div className='mx-auto flex h-16 max-w-5xl items-center justify-between gap-2 border-x px-2 sm:px-4 lg:px-6'>
         {/* Logo */}
-        <a href='/#home' aria-label={`${COMPANY_INFO.name} Home`}>
+        <a href='/#home' aria-label={`${COMPANY_INFO.name} Home`} className='shrink-0'>
           <Logo />
         </a>
 
@@ -81,16 +81,18 @@ const Header = ({ navigationData, className, pathname: serverPathname }: HeaderP
         />
 
         {/* Actions */}
-        <div className='flex items-center gap-3'>
-          <ThemeToggle />
-          <SecondaryOrionButton size='lg' className='max-sm:hidden' asChild>
+        <div className='flex shrink-0 items-center gap-1.5 sm:gap-2'>
+          <div className='hidden min-[430px]:block'>
+            <ThemeToggle />
+          </div>
+          <SecondaryOrionButton size='sm' className='hidden rounded-md sm:inline-flex' asChild>
             <a href='/register'>Sign up</a>
           </SecondaryOrionButton>
 
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <SecondaryOrionButton size='icon-lg' className='sm:hidden' asChild>
+                <SecondaryOrionButton size='icon-sm' className='hidden min-[430px]:inline-flex sm:hidden' asChild>
                   <a href='/register'>
                     <LogInIcon />
                     <span className='sr-only'>register</span>

@@ -53,19 +53,19 @@ const UseCases = ({ tabs, content }: { tabs: UseCaseTab[]; content: UseCasesCont
   return (
     <section id='use-cases' className='scroll-mt-16'>
       <SectionHeader title={content.title} description={content.description} />
-      <div className='px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto max-w-7xl border-x'>
+      <div className='px-3 sm:px-4'>
+        <div className='mx-auto max-w-5xl border-x'>
           <Tabs value={activeTab} onValueChange={setActiveTab} className='w-full'>
             <div className='grid lg:grid-cols-3'>
               <div className='flex flex-col justify-between lg:col-span-2'>
-                <h2 className='px-4 py-9 text-3xl font-medium sm:px-6 md:text-4xl lg:px-8 lg:text-5xl'>{content.heading}</h2>
+                <h2 className='px-3 py-8 text-3xl font-medium leading-tight sm:px-4 md:text-4xl lg:px-6'>{content.heading}</h2>
                 <Separator />
                 {tabs.map(tab => (
-                  <TabsContent key={tab.value} value={tab.value} className='px-4 pt-8 sm:px-6 lg:px-8'>
+                  <TabsContent key={tab.value} value={tab.value} className='px-3 pt-7 sm:px-4 lg:px-6'>
                     <MotionPreset fade blur transition={{ duration: 0.5 }}>
                       <div className='space-y-4'>
-                        <h3 className='text-3xl font-medium'>{tab.title}</h3>
-                        <p className='text-muted-foreground line-clamp-7 text-lg'>{tab.description}</p>
+                        <h3 className='text-2xl font-medium leading-tight sm:text-3xl'>{tab.title}</h3>
+                        <p className='line-clamp-7 text-base leading-7 text-muted-foreground'>{tab.description}</p>
                         <Button variant='link' className='group' asChild>
                           <a href={tab.link}>
                             {content.learnMoreLabel}
@@ -94,7 +94,7 @@ const UseCases = ({ tabs, content }: { tabs: UseCaseTab[]; content: UseCasesCont
 
               {tabs.map(tab => (
                 <TabsContent key={tab.value} value={tab.value} asChild className='border-l max-lg:hidden'>
-                  <div className='relative h-140 w-full'>
+                  <div className='relative h-[32rem] w-full'>
                     <img src={tab.image} alt={`${tab.name} Image`} className='size-full object-cover' loading='lazy' />
                     <div className='absolute inset-x-6 bottom-6'>
                       <TestimonialStack testimonials={tab.testimonials} />

@@ -37,8 +37,8 @@ const Features = ({
   return (
     <section id="works-features" className="scroll-mt-16">
       <SectionHeader title={content.title} description={content.description} />
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-7xl border-x">
+      <div className="px-3 sm:px-4">
+        <div className="mx-auto max-w-5xl border-x">
           <div className="grid max-lg:divide-y max-lg:divide-y-reverse lg:grid-cols-2 lg:divide-x">
             <div className="grid h-full grid-rows-3 divide-y max-lg:order-2">
               {data.map((tab) => {
@@ -49,7 +49,7 @@ const Features = ({
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      "focus-visible:ring-ring/50 relative flex cursor-pointer flex-col gap-5 px-4 py-9 text-left transition-colors duration-300 outline-none focus-visible:z-1 focus-visible:ring-3 sm:px-6 lg:px-8",
+                      "focus-visible:ring-ring/50 relative flex cursor-pointer flex-col gap-4 px-3 py-7 text-left transition-colors duration-300 outline-none hover:bg-muted/40 focus-visible:z-1 focus-visible:ring-3 sm:px-4 lg:px-6",
                     )}
                   >
                     <div className="flex items-center gap-5">

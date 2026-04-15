@@ -36,23 +36,23 @@ const FAQSection = ({ faqs, content }: FAQSectionProps) => {
   return (
     <section id='faq' className='scroll-mt-16'>
       <SectionHeader title={content.title} description={content.description} />
-      <div className='border-b px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto max-w-7xl border-x'>
-          <div className='flex flex-col items-center gap-5 border-b px-4 py-8 text-center md:py-16 lg:py-24'>
+      <div className='border-b px-3 sm:px-4'>
+        <div className='mx-auto max-w-5xl border-x'>
+          <div className='flex flex-col items-center gap-5 border-b px-3 py-10 text-center sm:px-4 md:py-16 lg:px-6'>
             <h3 className='text-2xl font-semibold sm:text-3xl lg:text-4xl'>{content.heading}</h3>
-            <p className='text-muted-foreground text-lg'>{content.subheading}</p>
+            <p className='max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg'>{content.subheading}</p>
 
             <div className='flex flex-wrap items-center justify-center gap-3 sm:gap-4'>
-              <PrimaryOrionButton size='lg' className='rounded-lg' asChild>
+              <PrimaryOrionButton size='lg' className='rounded-md' asChild>
                 <a href={content.docsButton.href}>{content.docsButton.label}</a>
               </PrimaryOrionButton>
-              <SecondaryOrionButton size='lg' className='rounded-lg' asChild>
+              <SecondaryOrionButton size='lg' className='rounded-md' asChild>
                 <a href={content.contactButton.href}>{content.contactButton.label}</a>
               </SecondaryOrionButton>
             </div>
           </div>
 
-          <div className='grid grid-cols-1 gap-0 px-4 py-4 sm:px-8 md:py-16 lg:grid-cols-2 lg:gap-9 lg:py-24'>
+          <div className='grid grid-cols-1 gap-0 px-3 py-6 sm:px-4 md:py-12 lg:grid-cols-2 lg:gap-9 lg:px-6'>
             <div>
               <p className='text-primary pb-2.5 text-lg font-semibold lg:text-xl'>{content.leftColumnTitle}</p>
               <Accordion type='single' collapsible className='w-full' defaultValue='item-1'>

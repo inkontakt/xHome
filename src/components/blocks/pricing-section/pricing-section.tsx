@@ -43,11 +43,11 @@ const PricingSection = ({ plans, content }: PricingSectionProps) => {
   return (
     <section id='pricing' className='scroll-mt-16'>
       <SectionHeader title={content.title} description={content.description} />
-      <div className='px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto max-w-7xl border-x'>
-          <div className='flex flex-col items-center gap-5 px-4 py-8 text-center md:py-16 lg:py-24'>
+      <div className='px-3 sm:px-4'>
+        <div className='mx-auto max-w-5xl border-x'>
+          <div className='flex flex-col items-center gap-5 px-3 py-10 text-center sm:px-4 md:py-16 lg:px-6'>
             <h3 className='text-2xl font-semibold sm:text-3xl lg:text-4xl'>{content.heading}</h3>
-            <p className='text-muted-foreground text-lg'>{content.subheading}</p>
+            <p className='max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg'>{content.subheading}</p>
 
             <div className='bg-muted inline-flex items-center gap-1 rounded-md p-1'>
               <button
@@ -83,12 +83,12 @@ const PricingSection = ({ plans, content }: PricingSectionProps) => {
                   key={plan.name + '-' + index}
                   className='bg-background flex flex-col rounded-none border-0 border-t shadow-none last:border-r-0 md:border-r'
                 >
-                  <CardHeader className='space-y-4 border-b px-4 pb-6 sm:px-6 lg:px-8'>
+                  <CardHeader className='space-y-4 border-b px-3 pb-6 sm:px-4 lg:px-6'>
                     <div className='space-y-3'>
                       <CardTitle className='text-2xl leading-tight font-semibold lg:text-3xl'>{plan.name}</CardTitle>
                       <CardDescription className='text-muted-foreground'>{plan.description}</CardDescription>
                     </div>
-                    <div className='flex items-baseline gap-1'>
+                    <div className='flex flex-wrap items-baseline gap-1'>
                       <span className='text-muted-foreground mb-auto text-lg font-medium'>{plan.currency}</span>
                       <span className='text-5xl font-bold'>
                         <NumberTicker value={Math.floor(displayPrice)} />
@@ -96,18 +96,18 @@ const PricingSection = ({ plans, content }: PricingSectionProps) => {
                       <span className='text-muted-foreground text-lg'>/{plan.period}</span>
                     </div>
                     {plan.buttonVariant === 'primary' && (
-                      <PrimaryOrionButton size='lg' className='cursor-pointer rounded-lg'>
+                      <PrimaryOrionButton size='lg' className='cursor-pointer rounded-md'>
                         {plan.buttonText}
                       </PrimaryOrionButton>
                     )}
                     {plan.buttonVariant === 'secondary' && (
-                      <SecondaryOrionButton size='lg' className='cursor-pointer rounded-lg'>
+                      <SecondaryOrionButton size='lg' className='cursor-pointer rounded-md'>
                         {plan.buttonText}
                       </SecondaryOrionButton>
                     )}
                   </CardHeader>
 
-                  <CardContent className='px-8'>
+                  <CardContent className='px-3 sm:px-4 lg:px-6'>
                     <ul className='space-y-4'>
                       {plan.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className='flex gap-2 py-1'>

@@ -161,8 +161,8 @@ const HeroSection = ({ content }: { content: HeroContent }) => {
 
   return (
     <section id='home' className='relative -mt-15.75 flex scroll-mt-16 flex-col overflow-hidden pt-15.75'>
-      <div className='border-b px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto flex max-w-7xl flex-col gap-6 border-x px-4 py-8 sm:px-6 sm:py-16 lg:px-8 lg:py-24'>
+      <div className='border-b px-3 sm:px-4'>
+        <div className='mx-auto flex max-w-5xl flex-col gap-6 border-x px-3 py-10 sm:px-4 sm:py-16 lg:px-6 lg:py-20'>
           <div className='flex flex-col items-center gap-6 text-center'>
             <MotionPreset fade blur transition={{ duration: 0.5 }} className='space-y-4'>
               <Badge variant='outline' className='bg-muted relative gap-2.5 px-1.5 py-1'>
@@ -173,24 +173,24 @@ const HeroSection = ({ content }: { content: HeroContent }) => {
                 <BorderBeam colorFrom='var(--primary)' colorTo='var(--primary)' size={35} />
               </Badge>
 
-              <h1 className='text-2xl font-semibold sm:text-3xl lg:text-5xl lg:leading-[1.29167]'>
+              <h1 className='text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl lg:leading-[1.15]'>
                 {content.title[0]}
                 <br />
                 {content.title[1]}
               </h1>
 
-              <p className='text-muted-foreground max-w-3xl text-xl'>{content.description}</p>
+              <p className='mx-auto max-w-3xl text-base leading-7 text-muted-foreground sm:text-lg'>{content.description}</p>
             </MotionPreset>
 
             <MotionPreset fade blur delay={0.1} transition={{ duration: 0.5 }}>
               <div className='flex flex-wrap items-center justify-center gap-4'>
-                <PrimaryOrionButton size='lg' className='rounded-lg max-[425px]:has-[>svg]:px-4' asChild>
+                <PrimaryOrionButton size='lg' className='rounded-md max-[425px]:has-[>svg]:px-4' asChild>
                   <a href={content.primaryCta.href}>
                     <ArrowUpRightIcon />
                     {content.primaryCta.label}
                   </a>
                 </PrimaryOrionButton>
-                <SecondaryOrionButton size='lg' className='rounded-lg max-[425px]:has-[>svg]:px-4' asChild>
+                <SecondaryOrionButton size='lg' className='rounded-md max-[425px]:has-[>svg]:px-4' asChild>
                   <a href={content.secondaryCta.href}>
                     <DollarSignIcon />
                     {content.secondaryCta.label}
@@ -230,15 +230,15 @@ const HeroSection = ({ content }: { content: HeroContent }) => {
       </div>
 
       <Tabs value={activeTab} onValueChange={value => setActiveTab(value as HeroTabValue)} className='block w-full gap-0'>
-        <div className='border-b px-4 sm:px-6 lg:px-8'>
-          <div className='mx-auto max-w-7xl border-x'>
+        <div className='border-b px-3 sm:px-4'>
+          <div className='mx-auto max-w-5xl border-x'>
             <ScrollArea className='-m-px'>
               <TabsList className='w-full -space-x-px rounded-none bg-transparent p-0'>
                 {tabs.map(({ icon: Icon, name, value }) => (
                   <TabsTrigger
                     key={value}
                     value={value}
-                    className='border-border text-foreground focus-visible:outline-primary/20 data-[state=active]:border-primary/60! data-[state=active]:bg-muted! h-15 flex-1 cursor-pointer rounded-none px-4 py-2.5 text-base focus-visible:ring-0 focus-visible:outline-[3px] focus-visible:-outline-offset-4 data-[state=active]:z-1'
+                    className='border-border h-14 flex-1 cursor-pointer rounded-none px-4 py-2.5 text-sm text-foreground focus-visible:outline-primary/20 focus-visible:ring-0 focus-visible:outline-[3px] focus-visible:-outline-offset-4 data-[state=active]:z-1 data-[state=active]:border-primary/60! data-[state=active]:bg-muted!'
                   >
                     <Icon />
                     {name}
@@ -250,8 +250,8 @@ const HeroSection = ({ content }: { content: HeroContent }) => {
           </div>
         </div>
 
-        <div className='px-4 sm:px-6 lg:px-8'>
-          <div className='relative mx-auto h-151 max-w-7xl border-x'>
+        <div className='px-3 sm:px-4'>
+          <div className='relative mx-auto h-[34rem] max-w-5xl border-x sm:h-151'>
             <div className='pointer-events-none absolute inset-0 -z-2 bg-[radial-gradient(color-mix(in_oklab,var(--primary)10%,transparent)_2px,transparent_2px)] bg-size-[20px_20px] bg-fixed' />
             <div className='bg-background pointer-events-none absolute inset-0 -z-1 flex items-center justify-center mask-[radial-gradient(ellipse_at_center,transparent_20%,black)]' />
 

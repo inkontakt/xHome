@@ -24,14 +24,14 @@ type CTAProps = {
 
 const CTA = ({ stats, content }: CTAProps) => {
   return (
-    <section className='px-4 sm:px-6 lg:px-8'>
-      <div className='mx-auto max-w-7xl border-x'>
+    <section className='px-3 sm:px-4'>
+      <div className='mx-auto max-w-5xl border-x'>
         <div className='grid grid-cols-1 gap-0 md:grid-cols-2'>
-          <div className='p-4'>
+          <div className='p-3 sm:p-4'>
             <Card className='relative z-1 flex h-full items-center justify-center overflow-hidden shadow-none'>
-              <CardContent className='lg:px-3.5'>
-                <h2 className='mb-4 text-2xl leading-tight font-semibold md:text-3xl lg:text-4xl'>{content.heading}</h2>
-                <p className='text-muted-foreground mb-8 text-lg'>{content.description}</p>
+              <CardContent className='px-3 sm:px-4 lg:px-6'>
+                <h2 className='mb-4 text-2xl leading-tight font-semibold md:text-3xl'>{content.heading}</h2>
+                <p className='mb-8 text-base leading-7 text-muted-foreground'>{content.description}</p>
                 <div className='flex flex-col gap-3 sm:flex-row sm:gap-4'>
                   <PrimaryOrionButton size='lg' asChild>
                     <a href={content.primaryCta.href}>{content.primaryCta.label}</a>

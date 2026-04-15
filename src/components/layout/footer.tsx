@@ -28,18 +28,18 @@ const Footer = ({ newsletter = true, content }: { newsletter?: boolean; content:
     <>
       <Separator />
 
-      <footer className='px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto max-w-7xl space-y-8 border-x px-4 py-8 sm:px-6 sm:py-16 md:py-24 lg:px-8'>
+      <footer className='footer-menu px-3 sm:px-4'>
+        <div className='mx-auto max-w-5xl space-y-10 border-x px-3 py-10 sm:px-4 sm:py-14 lg:px-6'>
           {newsletter && (
-            <div className='grid grid-cols-1 items-center gap-4 lg:grid-cols-5 xl:gap-24'>
-              <div className='col-span-1 space-y-2 lg:col-span-3'>
-                <h6 className='text-2xl font-semibold'>{content.newsletterTitle}</h6>
-                <p className='text-muted-foreground'>{content.newsletterDescription}</p>
+            <div className='grid grid-cols-1 items-center gap-5 border-b pb-10 md:grid-cols-[1.5fr_1fr]'>
+              <div className='space-y-2'>
+                <h6 className='text-2xl font-semibold tracking-normal'>{content.newsletterTitle}</h6>
+                <p className='max-w-2xl text-sm leading-6 text-muted-foreground'>{content.newsletterDescription}</p>
               </div>
-              <div className='col-span-1 lg:col-span-2'>
-                <div className='flex justify-start gap-3 lg:justify-end'>
-                  <Input type='email' placeholder={content.newsletterInputPlaceholder} className='h-10 max-w-70' />
-                  <PrimaryOrionButton size='lg' className='rounded-lg'>
+              <div>
+                <div className='flex flex-col gap-3 sm:flex-row md:justify-end'>
+                  <Input type='email' placeholder={content.newsletterInputPlaceholder} className='h-10 min-w-0 sm:max-w-72' />
+                  <PrimaryOrionButton size='lg' className='shrink-0 rounded-md'>
                     {content.newsletterButtonLabel}
                   </PrimaryOrionButton>
                 </div>
@@ -47,16 +47,16 @@ const Footer = ({ newsletter = true, content }: { newsletter?: boolean; content:
             </div>
           )}
 
-          <div className='grid grid-flow-row grid-cols-2 gap-8 md:grid-cols-3 lg:grid-cols-5'>
+          <div className='grid grid-flow-row grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-3 lg:grid-cols-5'>
             {content.links.map((section, index) => (
-              <div key={index} className='flex flex-col gap-5'>
-                <div className='text-lg font-medium'>{section.title}</div>
-                <ul className='text-muted-foreground space-y-3'>
+              <div key={index} className='flex flex-col gap-4'>
+                <div className='text-sm font-semibold uppercase tracking-normal'>{section.title}</div>
+                <ul className='space-y-2.5 text-sm text-muted-foreground'>
                   {section.links.map((link, linkIndex) => (
                     <li key={linkIndex}>
                       <a
                         href={link.href}
-                        className='text-muted-foreground hover:text-foreground transition-colors duration-300'
+                        className='text-muted-foreground transition-colors duration-200 hover:text-foreground'
                       >
                         {link.title}
                       </a>
@@ -68,13 +68,13 @@ const Footer = ({ newsletter = true, content }: { newsletter?: boolean; content:
           </div>
         </div>
 
-        <div className='mx-auto max-w-7xl border-x'>
+        <div className='mx-auto max-w-5xl border-x'>
           <Separator />
-          <div className='mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-6 p-4 sm:px-6 lg:px-8'>
+          <div className='mx-auto flex flex-wrap items-center justify-between gap-4 px-3 py-5 sm:px-4 lg:px-6'>
             <a href='/#home'>
               <Logo />
             </a>
-            <p className='text-muted-foreground font-light'>
+            <p className='text-sm font-light text-muted-foreground'>
               {'©' + new Date().getFullYear() + ' '}
               <a href='/#home' className='link-animated'>
                 Orion

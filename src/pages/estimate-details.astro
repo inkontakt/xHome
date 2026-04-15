@@ -1,0 +1,139 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import FooterSection from '@/components/sections/footer-section'
+import { loadLandingContent } from '@/lib/loaders/landing-sections-loader'
+
+const landing = await loadLandingContent()
+
+const tenantId = Astro.url.searchParams.get('tenant_id')?.trim() || ''
+const estimateId = Astro.url.searchParams.get('estimate_id')?.trim() || ''
+const hasTenantId = tenantId.length > 0
+const hasEstimateId = estimateId.length > 0
+const hasRequiredQuery = hasTenantId && hasEstimateId
+
+const currentPath = Astro.url.pathname
+const exampleHref = `${currentPath}?tenant_id=tenant-id&estimate_id=estimate-id`
+
+const pageTitle = 'Estimate Details | Orion'
+const pageDescription =
+  'View estimate download details and related image placeholders with preserved tenant and estimate query parameters.'
+---
+
+<Layout title={pageTitle} description={pageDescription} noindex={true}>
+  <section class='border-b px-3 sm:px-4'>
+    <div class='mx-auto max-w-5xl border-x px-3 py-10 sm:px-4 md:py-16 lg:px-6'>
+      <div class='mx-auto max-w-3xl space-y-5 text-center'>
+        <p class='text-sm font-semibold tracking-normal text-primary uppercase'>Estimate details</p>
+        <h1 class='text-3xl font-semibold leading-tight sm:text-4xl'>
+          Review your estimate files and damage images.
+        </h1>
+        <p class='text-base leading-7 text-muted-foreground sm:text-lg'>
+          This Astro route preserves the expected tenant and estimate query parameters and shows safe states until a
+          root-compatible estimate data connector is available.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class='px-3 sm:px-4'>
+    <div class='mx-auto max-w-5xl border-x px-3 py-8 sm:px-4 md:py-12 lg:px-6'>
+      <div class='grid gap-6 lg:grid-cols-[0.9fr_1.1fr]'>
+        <aside class='space-y-4'>
+          <div class='rounded-md border bg-background p-4 shadow-sm'>
+            <h2 class='text-lg font-semibold'>Request parameters</h2>
+            <dl class='mt-4 space-y-3 text-sm'>
+              <div class='space-y-1'>
+                <dt class='text-muted-foreground'>tenant_id</dt>
+                <dd class='break-all rounded-md bg-muted px-3 py-2 font-mono text-xs'>
+                  {hasTenantId ? tenantId : 'Missing'}
+                </dd>
+              </div>
+              <div class='space-y-1'>
+                <dt class='text-muted-foreground'>estimate_id</dt>
+                <dd class='break-all rounded-md bg-muted px-3 py-2 font-mono text-xs'>
+                  {hasEstimateId ? estimateId : 'Missing'}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class='rounded-md border bg-background p-4 shadow-sm'>
+            <h2 class='text-lg font-semibold'>Route state</h2>
+            {
+              hasRequiredQuery ? (
+                <p class='mt-3 text-sm leading-6 text-muted-foreground'>
+                  Query parameters are present. The root app does not yet expose an estimate data source, so the route is
+                  intentionally showing an unavailable data state.
+                </p>
+              ) : (
+                <p class='mt-3 text-sm leading-6 text-muted-foreground'>
+                  Add both query parameters to request an estimate shell. Example:
+                  <a class='ml-1 text-primary underline-offset-4 hover:underline' href={exampleHref}>
+                    tenant_id and estimate_id
+                  </a>
+                </p>
+              )
+            }
+          </div>
+        </aside>
+
+        <div class='space-y-6'>
+          {
+            hasRequiredQuery ? (
+              <div class='rounded-md border border-amber-500/30 bg-amber-500/10 p-4 text-sm leading-6'>
+                <p class='font-semibold text-foreground'>Estimate data connector unavailable</p>
+                <p class='mt-1 text-muted-foreground'>
+                  The nested Next reference reads estimate records from Supabase. This Astro root does not currently include
+                  Supabase configuration or a root estimate API, so successful data is not invented here.
+                </p>
+              </div>
+            ) : (
+              <div class='rounded-md border border-dashed p-4 text-sm leading-6 text-muted-foreground'>
+                Missing query parameters. The route shell is loaded, but no estimate request can be made yet.
+              </div>
+            )
+          }
+
+          <section class='rounded-md border bg-background p-4 shadow-sm'>
+            <div class='flex flex-wrap items-center justify-between gap-3'>
+              <div>
+                <h2 class='text-lg font-semibold'>PDF preview</h2>
+                <p class='text-sm text-muted-foreground'>Estimate document placeholder</p>
+              </div>
+              <button
+                type='button'
+                disabled
+                class='inline-flex h-9 cursor-not-allowed items-center rounded-md border px-4 text-sm font-medium text-muted-foreground opacity-60'
+              >
+                Download unavailable
+              </button>
+            </div>
+            <div class='mt-4 flex min-h-72 items-center justify-center rounded-md border border-dashed bg-muted/35 p-6 text-center text-sm leading-6 text-muted-foreground'>
+              PDF content will render here after a root-compatible estimate file source is wired.
+            </div>
+          </section>
+
+          <section class='rounded-md border bg-background p-4 shadow-sm'>
+            <div>
+              <h2 class='text-lg font-semibold'>Image gallery</h2>
+              <p class='text-sm text-muted-foreground'>Damage image placeholder</p>
+            </div>
+            <div class='mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3'>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div class='flex aspect-square items-center justify-center rounded-md border border-dashed bg-muted/35 text-xs text-muted-foreground'>
+                  Photo {index + 1}
+                </div>
+              ))}
+            </div>
+            <p class='mt-3 text-xs leading-5 text-muted-foreground'>
+              Image thumbnails and lightbox behavior should be enabled only after real file URLs are provided by the root
+              integration.
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <FooterSection content={landing.footer} newsletter={true} client:load />
+</Layout>

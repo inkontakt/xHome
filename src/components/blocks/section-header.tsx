@@ -118,12 +118,12 @@ const SectionHeader = ({
   return (
     <>
       <Separator />
-      <div className={cn('relative z-1 overflow-hidden pt-8 pb-5 text-center', className)} id={id}>
+      <div className={cn('relative z-1 overflow-hidden px-3 pt-10 pb-6 text-center sm:px-4', className)} id={id}>
         <canvas ref={canvasRef} className='pointer-events-none absolute inset-0 -z-2 opacity-40' />
         <div className='to-background absolute bottom-0 -z-1 h-full w-full bg-linear-to-b from-transparent'></div>
-        <div className='space-y-4'>
-          <h2 className={cn('text-xl font-medium tracking-wider uppercase', titleClassName)}>{title}</h2>
-          <p className={cn('text-muted-foreground text-base', descriptionClassName)}>{description}</p>
+        <div className='mx-auto max-w-3xl space-y-3'>
+          <h2 className={cn('text-sm font-semibold tracking-normal text-primary uppercase', titleClassName)}>{title}</h2>
+          <p className={cn('text-base leading-7 text-muted-foreground sm:text-lg', descriptionClassName)}>{description}</p>
         </div>
       </div>
       <Separator />

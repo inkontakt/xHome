@@ -659,7 +659,7 @@
                                                               "complexity":  5,
                                                               "details":  "Complexity: 5/10. Run git status --short, npm run dev, npm run build, and npm run check-types before any migration. Record whether each passes or fails. Manually check /, /blog, one blog detail route, and any current fetch/XML/WordPress integration route. Capture screenshots or manual visual notes for root pages and integration-driven pages. Identify existing localhost:7433 debug/instrumentation fetches and do not remove them in this task.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
 
                                                                                ],
@@ -670,7 +670,7 @@
                                                                                    "title":  "Record command and git baselines",
                                                                                    "description":  "Run baseline terminal checks before migration.",
                                                                                    "details":  "Complexity: 2/10. Run git status --short, npm run dev, npm run build, and npm run check-types. Record pass/fail status and keep outputs available for comparison.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -683,7 +683,7 @@
                                                                                    "title":  "Capture current route and integration behavior",
                                                                                    "description":  "Manually validate current root routes and integration-driven behavior.",
                                                                                    "details":  "Complexity: 2/10. Check /, /blog, one blog detail route, and one current fetch/XML/WordPress integration path. Record expected behavior and any pre-existing issues.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -696,7 +696,7 @@
                                                                                    "title":  "Capture visual and debug instrumentation baseline",
                                                                                    "description":  "Record visual state and existing debug network calls.",
                                                                                    "details":  "Complexity: 2/10. Capture screenshots or manual notes for key pages. Identify existing localhost:7433 debug/instrumentation fetches and mark them as pre-existing.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -713,7 +713,7 @@
                                                               "complexity":  4,
                                                               "details":  "Complexity: 4/10. Update tsconfig.json validation boundaries so nextjs-connect-wp-main is reference-only and no longer scanned by npm run check-types. Re-run npm run check-types after isolation. Record remaining root-only errors from astro.config.mjs, src/lib/loaders/landing-sections-loader.ts, and src/lib/wordpress.ts as pre-existing baseline unless they block runtime validation. Do not fix unrelated root errors in this task unless required to make the baseline meaningful.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    1
                                                                                ],
@@ -729,7 +729,7 @@
                                                               "complexity":  6,
                                                               "details":  "Complexity: 6/10. Inspect nextjs-connect-wp-main/app/globals.css, components/craft.tsx, components/ui, components/layout, components/icons, public assets, site.config.ts, menu.config.ts, data/site-settings.json, lib/site-settings.ts, and both package.json files. Build a component dependency graph with package dependencies, next/* imports, nested lib/data imports, browser/server behavior, port status, target root location, and notes. Do not install dependencies in this task.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    2
                                                                                ],
@@ -740,7 +740,7 @@
                                                                                    "title":  "Inventory nested visual source files",
                                                                                    "description":  "Inspect nested visual files and assets that may influence the migration.",
                                                                                    "details":  "Complexity: 2/10. Review app/globals.css, components/craft.tsx, components/ui, components/layout, components/icons, public assets, site/menu settings, and site-settings data.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -753,7 +753,7 @@
                                                                                    "title":  "Build component dependency graph",
                                                                                    "description":  "Classify each candidate component by dependencies and runtime assumptions.",
                                                                                    "details":  "Complexity: 4/10. For each candidate, record package dependencies, next/* imports, nested lib/data imports, browser-only or server-only behavior, port status, target root location, and adaptation notes.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -766,7 +766,7 @@
                                                                                    "title":  "Classify assets and packages for migration",
                                                                                    "description":  "Decide what is ready to port, needs adaptation, should be skipped, or remains reference-only.",
                                                                                    "details":  "Complexity: 3/10. Compare root and nested package.json files, avoid wholesale dependency additions, and identify required static assets only.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -783,7 +783,7 @@
                                                               "complexity":  5,
                                                               "details":  "Complexity: 5/10. Define the exact target locations for theme tokens, layout primitives, UI components, assets, estimate route pieces, and skipped reference-only files. Confirm src/lib/wordpress.ts, landing content loader, src/pages/api routes, and src/pages/index.astro remain source-of-truth logic. Create the route priority checklist: global theme, header/footer, homepage, estimate route, blog alignment.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    3
                                                                                ],
@@ -794,7 +794,7 @@
                                                                                    "title":  "Map selected files to root locations",
                                                                                    "description":  "Define exact target locations for migrated visual pieces.",
                                                                                    "details":  "Complexity: 3/10. Map theme tokens, UI primitives, layout utilities, assets, and estimate route pieces into src/styles, src/components, src/pages, src/pages/api, and public as appropriate.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -807,7 +807,7 @@
                                                                                    "title":  "Document protected source-of-truth boundaries",
                                                                                    "description":  "Lock down files and flows that must preserve existing behavior.",
                                                                                    "details":  "Complexity: 2/10. Mark src/lib/wordpress.ts, landing content loader, src/pages/api routes, and src/pages/index.astro as logic-preservation boundaries.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -820,7 +820,7 @@
                                                                                    "title":  "Create route priority checklist",
                                                                                    "description":  "Document the intended execution order for visible route changes.",
                                                                                    "details":  "Complexity: 2/10. Confirm order: global theme, header/footer, homepage, estimate route, then blog alignment. Ensure skipped Next routes are documented.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -837,7 +837,7 @@
                                                               "complexity":  7,
                                                               "details":  "Complexity: 7/10. Update src/styles/global.css and selected shared components only after the migration map is complete. Use tailwind-design-system guidance. Preserve root tokens required by active components unless visual parity requires a documented change. Add/adapt Craft-style layout utilities in src/components if needed. Do not import from nextjs-connect-wp-main and do not introduce next/* runtime APIs.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    4
                                                                                ],
@@ -848,7 +848,7 @@
                                                                                    "title":  "Merge compatible Tailwind v4 tokens",
                                                                                    "description":  "Integrate compatible theme tokens and CSS variables into the root stylesheet.",
                                                                                    "details":  "Complexity: 4/10. Update src/styles/global.css only after mapping. Preserve root tokens required by active components unless a documented visual parity change requires adjustment.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -861,7 +861,7 @@
                                                                                    "title":  "Integrate typography, prose, and dark mode styling",
                                                                                    "description":  "Apply compatible typography, prose, and dark mode treatment.",
                                                                                    "details":  "Complexity: 3/10. Use Tailwind v4 CSS-first patterns and ensure landing/blog content remains readable and consistent.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -874,7 +874,7 @@
                                                                                    "title":  "Add or adapt layout primitives safely",
                                                                                    "description":  "Add Craft-style primitives only if needed by migrated UI.",
                                                                                    "details":  "Complexity: 3/10. Place adapted primitives under src/components, avoid imports from nextjs-connect-wp-main, and avoid next/* runtime APIs.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -887,7 +887,7 @@
                                                                                    "title":  "Verify visual system boundaries",
                                                                                    "description":  "Check the global visual integration did not cross forbidden boundaries.",
                                                                                    "details":  "Complexity: 2/10. Search for active next/* and nextjs-connect-wp-main imports, and confirm no extra dependencies were added without audit approval.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         3
                                                                                                     ],
@@ -904,7 +904,7 @@
                                                               "complexity":  5,
                                                               "details":  "Complexity: 5/10. Adapt the visual result of nested layout/nav/footer/theme pieces into root src/components/layout and related root assets as needed. Migrate only required logo/image assets into public. Do not copy nested runtime file-writing behavior from lib/site-settings.ts. Keep existing links/routes stable unless the plan explicitly adds an Astro-compatible estimate link.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    5
                                                                                ],
@@ -915,7 +915,7 @@
                                                                                    "title":  "Compare current and nested header/footer patterns",
                                                                                    "description":  "Review root and nested layout/header/footer/menu implementations before changing UI.",
                                                                                    "details":  "Complexity: 2/10. Identify visual elements to preserve from nested app and behavior/data flow to preserve from root app.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -928,7 +928,7 @@
                                                                                    "title":  "Apply header/footer visual alignment",
                                                                                    "description":  "Adapt header, footer, logo, and menu styling into root layout components.",
                                                                                    "details":  "Complexity: 3/10. Update root layout components as needed while preserving routes and existing navigation behavior.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -941,7 +941,7 @@
                                                                                    "title":  "Migrate required layout assets only",
                                                                                    "description":  "Copy or reference only assets needed by active root layout UI.",
                                                                                    "details":  "Complexity: 2/10. Migrate required logo/images/icons into public and do not copy social metadata images or nested runtime settings behavior unless needed.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -958,7 +958,7 @@
                                                               "complexity":  7,
                                                               "details":  "Complexity: 7/10. Restyle src/components/sections and related UI primitives as needed. Do not replace the homepage with nested Next starter content. Confirm src/pages/index.astro still calls loadLandingContent and src/content/landing-sections remains the content source. Check desktop and mobile layout for text overflow, incoherent overlap, and visual consistency.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    6
                                                                                ],
@@ -969,7 +969,7 @@
                                                                                    "title":  "Restyle primary landing sections",
                                                                                    "description":  "Apply the new visual language to the major homepage sections.",
                                                                                    "details":  "Complexity: 4/10. Restyle hero, features, works-features, and use-cases while keeping props, content contracts, and loadLandingContent behavior unchanged.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -982,7 +982,7 @@
                                                                                    "title":  "Restyle secondary landing sections",
                                                                                    "description":  "Apply the new visual language to the remaining homepage sections.",
                                                                                    "details":  "Complexity: 3/10. Restyle testimonials, pricing, FAQ, CTA, footer-related sections, and related UI primitives without replacing content.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -995,7 +995,7 @@
                                                                                    "title":  "Verify homepage content source and responsiveness",
                                                                                    "description":  "Validate that the homepage still uses the Markdown-backed content source and remains responsive.",
                                                                                    "details":  "Complexity: 3/10. Confirm src/pages/index.astro still calls loadLandingContent, section Markdown remains source-of-truth, and desktop/mobile layouts avoid overflow and overlap.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -1012,7 +1012,7 @@
                                                               "complexity":  8,
                                                               "details":  "Complexity: 8/10. Create or adapt src/pages/estimate-details.astro and supporting client-safe components only after global visuals, header/footer, and homepage are stable. Preserve tenant_id and estimate_id query params. Do not copy Next server code that depends on next/headers, next/dynamic, next/server, or next/cache. Use existing root integration logic where available. If no valid test IDs exist, validate route shell, query parsing, empty state, and error state without inventing fake successful data behavior. Add PDF/image helpers only if actually required.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    7
                                                                                ],
@@ -1023,7 +1023,7 @@
                                                                                    "title":  "Design Astro route shell and query parsing",
                                                                                    "description":  "Create the estimate route shell with preserved query parameter behavior.",
                                                                                    "details":  "Complexity: 3/10. Implement or plan src/pages/estimate-details.astro with tenant_id and estimate_id parsing, shell layout, empty state, and error state.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -1036,7 +1036,7 @@
                                                                                    "title":  "Adapt estimate visual components",
                                                                                    "description":  "Port only client-safe estimate UI pieces into root components.",
                                                                                    "details":  "Complexity: 4/10. Adapt PDF/image/gallery UI without copying next/headers, next/dynamic, next/server, next/cache, or direct nested imports.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -1049,7 +1049,7 @@
                                                                                    "title":  "Wire root-compatible data and file helpers",
                                                                                    "description":  "Connect estimate visuals to existing or approved Astro-compatible helpers.",
                                                                                    "details":  "Complexity: 4/10. Use existing root integration logic where available. Add PDF/image helpers only if required, and avoid fake successful dynamic data without valid test IDs.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -1062,7 +1062,7 @@
                                                                                    "title":  "Validate estimate states",
                                                                                    "description":  "Validate route behavior with available data or documented empty/error states.",
                                                                                    "details":  "Complexity: 3/10. If valid tenant_id and estimate_id exist, validate dynamic PDF/image behavior. Otherwise validate shell, query parsing, empty state, and error state.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         3
                                                                                                     ],
@@ -1079,7 +1079,7 @@
                                                               "complexity":  5,
                                                               "details":  "Complexity: 5/10. Update blog-facing components and prose styling as needed. Preserve current Astro blog routes and content behavior. Confirm /blog and one blog detail page render correctly on desktop and mobile. Do not adopt nested Next /posts, /pages, categories, tags, or author route structure in this phase.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    7
                                                                                ],
@@ -1090,7 +1090,7 @@
                                                                                    "title":  "Align blog index visual treatment",
                                                                                    "description":  "Apply global visual system to /blog without changing content flow.",
                                                                                    "details":  "Complexity: 3/10. Update blog index layout, cards, typography, and spacing while preserving existing Astro blog routes and data behavior.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -1103,7 +1103,7 @@
                                                                                    "title":  "Align blog detail prose and layout",
                                                                                    "description":  "Apply compatible prose and layout treatment to one blog detail page.",
                                                                                    "details":  "Complexity: 3/10. Preserve SEO/data behavior and avoid adopting nested Next /posts route structure.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -1116,7 +1116,7 @@
                                                                                    "title":  "Verify blog responsive behavior",
                                                                                    "description":  "Check blog pages on desktop and mobile.",
                                                                                    "details":  "Complexity: 2/10. Confirm /blog and one detail page render without text overflow, broken spacing, or route/content regressions.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -1133,7 +1133,7 @@
                                                               "complexity":  6,
                                                               "details":  "Complexity: 6/10. Run npm run check-types, npm run build, and npm run dev. Compare typecheck output against the recorded baseline and require no new type errors. Manually check /, /blog, one blog detail route, integration-driven pages, and /estimate-details when applicable. Confirm no active imports from next/* or nextjs-connect-wp-main/*, no new uncontrolled localhost:7433 debug calls, and no dependency on the nested app as a runnable package. Use web-design-guidelines for final UI/accessibility review and Playwright-compatible screenshot checks if available.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    8,
                                                                                    9
@@ -1145,7 +1145,7 @@
                                                                                    "title":  "Run build and typecheck comparison",
                                                                                    "description":  "Compare final build/typecheck state against recorded baseline.",
                                                                                    "details":  "Complexity: 3/10. Run npm run check-types and npm run build. Confirm nextjs-connect-wp-main is not scanned and no new root errors were introduced beyond baseline.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
 
                                                                                                     ],
@@ -1158,7 +1158,7 @@
                                                                                    "title":  "Run manual route and integration validation",
                                                                                    "description":  "Validate key routes and integration behavior after migration.",
                                                                                    "details":  "Complexity: 3/10. Check /, /blog, one blog detail page, integration-driven pages, and /estimate-details where applicable.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         1
                                                                                                     ],
@@ -1171,7 +1171,7 @@
                                                                                    "title":  "Run import, debug, and dependency boundary checks",
                                                                                    "description":  "Confirm forbidden imports and uncontrolled debug calls were not introduced.",
                                                                                    "details":  "Complexity: 2/10. Search for active next/* and nextjs-connect-wp-main imports, verify no new uncontrolled localhost:7433 calls, and confirm the nested app is not required as a runnable package.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         2
                                                                                                     ],
@@ -1184,7 +1184,7 @@
                                                                                    "title":  "Complete UI/accessibility review",
                                                                                    "description":  "Perform final visual and accessibility review.",
                                                                                    "details":  "Complexity: 3/10. Use web-design-guidelines and Playwright-compatible screenshots if available to check desktop/mobile visual quality, accessibility, and layout stability.",
-                                                                                   "status":  "pending",
+                                                                                   "status":  "done",
                                                                                    "dependencies":  [
                                                                                                         3
                                                                                                     ],
@@ -1201,7 +1201,7 @@
                                                               "complexity":  3,
                                                               "details":  "Complexity: 3/10. Do not delete nextjs-connect-wp-main files in this task. Classify nested files as migrated and safe to remove later, reference-only and safe to archive later, still required for comparison, or unknown and needing inspection. Capture cleanup risks and prerequisites for a future dedicated cleanup phase.",
                                                               "testStrategy":  "",
-                                                              "status":  "pending",
+                                                              "status":  "done",
                                                               "dependencies":  [
                                                                                    10
                                                                                ],

@@ -23,8 +23,8 @@ const BentoGrid = ({ content }: { content: FeaturesContent }) => {
   return (
     <section id='features' className='scroll-mt-16'>
       <SectionHeader title={content.title} description={content.description} />
-      <div className='px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto grid max-w-7xl grid-cols-1 border-x sm:grid-cols-2 lg:grid-cols-3'>
+      <div className='px-3 sm:px-4'>
+        <div className='mx-auto grid max-w-5xl grid-cols-1 border-x sm:grid-cols-2 lg:grid-cols-3'>
           <div className='flex flex-col gap-8 overflow-hidden py-6 max-sm:border-b'>
             <SecureTransparent />
             <div className='space-y-4 px-4 sm:px-6 lg:px-8'>

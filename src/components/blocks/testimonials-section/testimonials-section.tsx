@@ -58,9 +58,9 @@ const TestimonialsComponent = ({ testimonials, content }: { testimonials: Testim
   return (
     <section id='testimonials' className='scroll-mt-16'>
       <SectionHeader title={content.title} description={content.description} />
-      <section className='px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto flex max-w-7xl flex-col items-center overflow-hidden border-x'>
-          <div className='flex w-full max-w-207.5 flex-col items-center gap-8 px-4 py-8 md:px-6 md:py-16 lg:px-8 lg:py-24'>
+      <section className='px-3 sm:px-4'>
+        <div className='mx-auto flex max-w-5xl flex-col items-center overflow-hidden border-x'>
+          <div className='flex w-full max-w-3xl flex-col items-center gap-8 px-3 py-10 sm:px-4 md:py-16 lg:px-6'>
             <MotionPreset
               key={'message-' + activeIndex}
               component='h3'
@@ -68,7 +68,7 @@ const TestimonialsComponent = ({ testimonials, content }: { testimonials: Testim
               blur
               slide={{ direction: 'down', offset: 30 }}
               transition={{ duration: 0.5 }}
-              className='text-center text-xl font-medium md:text-3xl'
+              className='text-center text-xl font-medium leading-relaxed md:text-3xl'
             >
               {testimonials[activeIndex].message}
             </MotionPreset>

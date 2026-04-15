@@ -75,7 +75,7 @@ const BlogList = ({
               {/* Image */}
               <a
                 href={`/blog/${post.slug}`}
-                className='w-full shrink-0 overflow-hidden rounded-lg max-md:aspect-video md:h-59.5 md:max-lg:w-80 xl:w-80'
+                className='w-full shrink-0 overflow-hidden rounded-md max-md:aspect-video md:h-59.5 md:max-lg:w-80 xl:w-72'
               >
                 <img
                   src={post.image}
@@ -111,7 +111,7 @@ const BlogList = ({
                   <a href={`/blog/${post.slug}`}>
                     <p className='text-sm'>{post.author?.name}</p>
                   </a>
-                  <SecondaryOrionButton size='icon' className='rounded-lg' asChild>
+                  <SecondaryOrionButton size='icon' className='rounded-md' asChild>
                     <a href={`/blog/${post.slug}`}>
                       <ArrowUpRightIcon className='size-4' />
                       <span className='sr-only'>Read more: {post.title}</span>
@@ -142,7 +142,7 @@ const FeaturedPostsSidebar = ({
     <div>
       <div className='lg:sticky lg:top-16'>
         {/* Categories */}
-        <div className='bg-card space-y-5 border-b px-4 py-9 sm:px-6 lg:px-8'>
+          <div className='space-y-5 border-b bg-card px-3 py-8 sm:px-4 lg:px-6'>
           <div className='flex items-center gap-4'>
             <LayoutDashboardIcon className='size-4.5' />
             <h2 className='text-xl font-medium'>Categories</h2>
@@ -177,7 +177,7 @@ const FeaturedPostsSidebar = ({
                   <CardContent className='px-4 sm:px-6 lg:px-8'>
                     <div className='flex items-center gap-4'>
                       {/* Image */}
-                      <div className='aspect-video h-26 w-30 shrink-0 overflow-hidden rounded-lg'>
+                      <div className='aspect-video h-24 w-28 shrink-0 overflow-hidden rounded-md'>
                         <img
                           src={post.image}
                           alt={post.title}
@@ -237,9 +237,9 @@ const BlogSection = ({ posts, featuredPosts }: { posts: BlogPostMetadata[]; feat
         title='Blogs'
         description='Boost your efficiency with an AI agent that eliminates manual work and streamlines your operations.'
       />
-      <div className='px-4 sm:px-6 lg:px-8'>
-        <div className='mx-auto max-w-7xl border-x'>
-          <div className='flex flex-col-reverse lg:grid lg:grid-cols-[1fr_440px]'>
+      <div className='px-3 sm:px-4'>
+        <div className='mx-auto max-w-5xl border-x'>
+          <div className='flex flex-col-reverse lg:grid lg:grid-cols-[1fr_340px]'>
             {/* Featured Posts Small Screen */}
             {featuredPosts.length > 0 && (
               <div className='lg:hidden'>
@@ -251,7 +251,7 @@ const BlogSection = ({ posts, featuredPosts }: { posts: BlogPostMetadata[]; feat
                         <CardContent>
                           <div className='flex items-center gap-4'>
                             {/* Image */}
-                            <div className='aspect-video h-26 w-30 shrink-0 overflow-hidden rounded-lg'>
+                      <div className='aspect-video h-24 w-28 shrink-0 overflow-hidden rounded-md'>
                               <img
                                 src={post.image}
                                 alt={post.title}

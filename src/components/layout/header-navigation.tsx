@@ -169,7 +169,7 @@ const HeaderNavigation = ({
 
   return (
     <NavigationMenu viewport={false} className={cn('hidden lg:block', navigationClassName)}>
-      <NavigationMenuList className='flex-wrap gap-0'>
+      <NavigationMenuList className='flex-wrap gap-1'>
         {navigationData.map(navItem => {
           if (navItem.href) {
             // Root link item
@@ -187,9 +187,9 @@ const HeaderNavigation = ({
                   href={navItem.href}
                   className={cn(
                     navigationMenuTriggerStyle(),
-                    'text-muted-foreground hover:text-primary focus:text-primary bg-transparent px-3 py-1.5 text-base hover:bg-transparent focus:bg-transparent',
+                    'h-9 rounded-md bg-transparent px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/70 hover:text-foreground focus:bg-accent/70 focus:text-foreground',
                     {
-                      'text-primary font-medium': isActive
+                      'bg-accent text-foreground': isActive
                     }
                   )}
                   asChild
@@ -234,15 +234,15 @@ const HeaderNavigation = ({
             <NavigationMenuItem key={navItem.title}>
               <NavigationMenuTrigger
                 className={cn(
-                  'text-muted-foreground hover:text-primary focus:text-primary data-[state=open]:text-primary data-[state=open]:focus:text-primary data-[state=open]:hover:text-primary bg-transparent px-3 py-1.5 text-base hover:bg-transparent focus:bg-transparent data-[state=open]:bg-transparent data-[state=open]:hover:bg-transparent data-[state=open]:focus:bg-transparent [&_svg]:ml-2 [&_svg]:size-4',
+                  'h-9 rounded-md bg-transparent px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/70 hover:text-foreground focus:bg-accent/70 focus:text-foreground data-[state=open]:bg-accent data-[state=open]:text-foreground data-[state=open]:focus:bg-accent data-[state=open]:hover:bg-accent [&_svg]:ml-2 [&_svg]:size-4',
                   {
-                    'text-primary font-medium': hasActiveChild
+                    'bg-accent text-foreground': hasActiveChild
                   }
                 )}
               >
                 {navItem.title}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className='absolute left-1/2 w-auto -translate-x-1/2 shadow-lg!'>
+              <NavigationMenuContent className='absolute left-1/2 w-auto -translate-x-1/2 rounded-lg border bg-popover/98 p-3 shadow-lg!'>
                 {navItem.splitItems ? (
                   <div className={cn('grid grid-cols-1 gap-2', navItem.contentClassName)}>
                     {navItem.items.map(section => (
@@ -375,20 +375,20 @@ const HeaderNavigationSmallScreen = ({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <SecondaryOrionButton size='icon-lg' className={cn('inline-flex lg:hidden', triggerClassName)}>
+        <SecondaryOrionButton size='icon-sm' className={cn('inline-flex lg:hidden', triggerClassName)}>
           <MenuIcon />
           <span className='sr-only'>Menu</span>
         </SecondaryOrionButton>
       </SheetTrigger>
-      <SheetContent side='left' className='w-75 gap-0 p-0'>
-        <SheetHeader className='p-4'>
+      <SheetContent side='left' className='w-80 max-w-[calc(100vw-2rem)] gap-0 border-r bg-background p-0'>
+        <SheetHeader className='border-b p-4'>
           <SheetTitle hidden />
           <SheetDescription hidden />
-          <a href='#' onClick={handleLinkClick} className='self-start'>
+          <a href='/#home' onClick={handleLinkClick} className='self-start'>
             <Logo />
           </a>
         </SheetHeader>
-        <div className='space-y-0.5 overflow-y-auto p-2'>
+        <div className='space-y-1 overflow-y-auto p-3'>
           {navigationData.map((navItem, index) => {
             if (navItem.href) {
               const sectionId = navItem.href.startsWith('/#')
@@ -404,7 +404,7 @@ const HeaderNavigationSmallScreen = ({
                   key={navItem.title}
                   href={navItem.href}
                   data-active={isActive}
-                  className='hover:bg-accent data-[active=true]:bg-accent flex items-center gap-2 rounded-sm px-3 py-2 text-sm data-[active=true]:font-medium'
+                  className='flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground data-[active=true]:bg-accent data-[active=true]:text-foreground'
                   onClick={handleLinkClick}
                 >
                   {navItem.title}
@@ -445,7 +445,7 @@ const HeaderNavigationSmallScreen = ({
               <Collapsible key={index} className='w-full'>
                 <CollapsibleTrigger
                   data-active={hasActiveChild}
-                  className='hover:bg-accent group data-[active=true]:bg-accent flex w-full items-center justify-between rounded-sm px-3 py-2 text-sm data-[active=true]:font-medium'
+                  className='group flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-foreground data-[active=true]:bg-accent data-[active=true]:text-foreground'
                 >
                   <div className='flex items-center gap-2'>{navItem.title}</div>
                   <ChevronRightIcon className='size-4 shrink-0 transition-transform duration-300 group-data-[state=open]:rotate-90' />

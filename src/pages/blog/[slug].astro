@@ -29,6 +29,8 @@ export async function getStaticPaths() {
   }))
 }
 
+export const prerender = true
+
 const post = Astro.props
 const currentPostId = post.data.slug
 
@@ -169,16 +171,16 @@ const schema = {
   keywords={post.data.tags?.join(', ')}
 >
   <section class='relative -mt-15.75 flex flex-col pt-15.75'>
-    <div class='px-4 sm:px-6 lg:px-8'>
-      <div class='mx-auto w-full max-w-7xl border-x'>
-        <div class='grid grid-cols-1 lg:grid-cols-[340px_1fr] xl:grid-cols-[400px_1fr]'>
+    <div class='px-3 sm:px-4'>
+      <div class='mx-auto w-full max-w-5xl border-x'>
+        <div class='grid grid-cols-1 lg:grid-cols-[280px_1fr] xl:grid-cols-[320px_1fr]'>
           <!-- Left Sidebar - TOC -->
-          <aside class='bg-muted hidden px-4 py-8 sm:py-16 md:px-5 lg:block lg:py-24'>
+          <aside class='hidden bg-muted/60 px-4 py-8 sm:py-16 md:px-5 lg:block lg:py-20'>
             <TOCSidebar headings={tocHeadings} />
           </aside>
 
           <!-- Main Content -->
-          <article class='space-y-8 px-4 py-8 sm:py-16 md:space-y-12 md:px-6 lg:space-y-16 lg:px-8 lg:py-24'>
+          <article class='space-y-8 px-3 py-10 sm:px-4 sm:py-16 md:space-y-12 lg:px-6 lg:py-20'>
             <div class='space-y-6'>
               <!-- Breadcrumb -->
               <Breadcrumb className='mb-6' client:load>
@@ -198,7 +200,7 @@ const schema = {
               </Breadcrumb>
 
               <!-- Title -->
-              <h1 class='text-2xl font-semibold tracking-tight sm:text-3xl lg:text-4xl'>{post.data.title}</h1>
+              <h1 class='text-3xl font-semibold leading-tight tracking-normal sm:text-4xl'>{post.data.title}</h1>
 
               <!-- Author & Read Time -->
               <div class='flex flex-wrap items-center justify-between gap-6'>
@@ -219,7 +221,7 @@ const schema = {
             <!-- Hero Image -->
             {
               post.data.imageUrl && (
-                <div class='overflow-hidden rounded-lg'>
+                <div class='overflow-hidden rounded-md'>
                   <img src={post.data.imageUrl} alt={post.data.title} class='w-full object-cover' />
                 </div>
               )
@@ -229,7 +231,7 @@ const schema = {
             <AISummaryButtons postTitle={post.data.title} postUrl={postUrl} client:load />
 
             <!-- MDX Content -->
-            <div class='prose dark:prose-invert prose-neutral max-w-none space-y-4'>
+            <div class='prose prose-neutral max-w-none space-y-4 dark:prose-invert prose-headings:tracking-normal prose-p:leading-7 prose-a:text-primary'>
               <Content />
             </div>
 
