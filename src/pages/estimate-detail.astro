@@ -1,0 +1,6 @@
+---
+const target = new URL('/estimate-details', Astro.url)
+target.search = Astro.url.search
+
+return Astro.redirect(`${target.pathname}${target.search}`, 301)
+---
