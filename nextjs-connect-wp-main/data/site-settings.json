@@ -1,0 +1,123 @@
+{
+  "logos": {
+    "header": "/carfit_logo-300x273.png.webp",
+    "footer": "/carfit_logo-300x273.png.webp",
+    "alt": "Carfit Logo",
+    "headerWidth": 80,
+    "footerWidth": 60
+  },
+  "menus": {
+    "header": [
+      {
+        "label": "Angebot",
+        "href": "https://connect-wp.inkontaktsystem.de/estimate-details?tenant_id=bb4122a1-7b24-4bb8-b5b9-cdce538d53bb&estimate_id=6360edfc-d0ce-43f2-84e6-4584bfe35301"
+      }
+    ],
+    "footer": [
+      {
+        "label": "impressum",
+        "href": "https://carfit-hamburg.de/impressum/"
+      },
+      {
+        "label": "datenschutz",
+        "href": "https://carfit-hamburg.de/datenschutz/"
+      }
+    ]
+  },
+  "footerText": "All rights reserved | Carfit-Hamburg (c) {year}",
+  "footerTextHelp": "Tip: use {year} to insert the current year automatically.",
+  "theme": {
+    "allowLight": true,
+    "allowDark": true,
+    "defaultMode": "system",
+    "showToggle": true,
+    "enableDarkModeOnly": false,
+    "modePreset": "allow-both"
+  },
+  "colors": {
+    "light": {
+      "background": "0 0% 100%",
+      "foreground": "0 0% 3.9%",
+      "card": "0 0% 100%",
+      "cardForeground": "252 70% 32%",
+      "popover": "0 0% 100%",
+      "popoverForeground": "0 0% 0%",
+      "primary": "252 71% 32%",
+      "primaryForeground": "0 0% 98%",
+      "secondary": "193 100% 43%",
+      "secondaryForeground": "0 0% 9%",
+      "muted": "210 4% 20%",
+      "mutedForeground": "0 0% 45.1%",
+      "accent": "193 100% 43%",
+      "accentForeground": "0 0% 9%",
+      "destructive": "0 84.2% 60.2%",
+      "destructiveForeground": "0 0% 98%",
+      "border": "0 0% 89.8%",
+      "input": "0 0% 89.8%",
+      "ring": "252 70% 32%",
+      "headerMenuBg": "240 47% 97%",
+      "headerMenuText": "0 0% 3.9%",
+      "headerMenuHover": "252 70% 32%",
+      "footerMenuBg": "0 0% 100%",
+      "footerMenuText": "0 0% 3.9%",
+      "footerMenuHover": "252 70% 32%"
+    },
+    "dark": {
+      "background": "251 38% 91%",
+      "foreground": "0 0% 98%",
+      "card": "210 4% 20%",
+      "cardForeground": "0 0% 98%",
+      "popover": "210 4% 20%",
+      "popoverForeground": "0 0% 98%",
+      "primary": "252 70% 32%",
+      "primaryForeground": "0 0% 98%",
+      "secondary": "193 100% 43%",
+      "secondaryForeground": "0 0% 9%",
+      "muted": "0 0% 14.9%",
+      "mutedForeground": "0 0% 63.9%",
+      "accent": "193 25% 47%",
+      "accentForeground": "0 0% 9%",
+      "destructive": "0 62.8% 30.6%",
+      "destructiveForeground": "0 0% 98%",
+      "border": "0 0% 14.9%",
+      "input": "0 0% 14.9%",
+      "ring": "252 70% 32%",
+      "headerMenuBg": "210 4% 20%",
+      "headerMenuText": "0 0% 98%",
+      "headerMenuHover": "193 100% 43%",
+      "footerMenuBg": "210 4% 20%",
+      "footerMenuText": "0 0% 98%",
+      "footerMenuHover": "193 100% 43%"
+    },
+    "custom": [
+      {
+        "name": "test-custom color",
+        "value": "0 100% 28%"
+      }
+    ],
+    "globalLight": [
+      {
+        "name": "Primary",
+        "value": "252 70% 32%"
+      },
+      {
+        "name": "Secondary",
+        "value": "193 100% 43%"
+      }
+    ],
+    "globalDark": [
+      {
+        "name": "Primary",
+        "value": "252 70% 32%"
+      },
+      {
+        "name": "Secondary",
+        "value": "193 100% 43%"
+      },
+      {
+        "name": "Accent",
+        "value": "193 100% 43%"
+      }
+    ]
+  }
+}
