@@ -10,6 +10,9 @@ import {
 import Header from '@/components/layout/header'
 import type { Navigation } from '@/components/layout/header-navigation'
 
+const ESTIMATE_DETAILS_HREF =
+  '/estimate-details?tenant_id=bb4122a1-7b24-4bb8-b5b9-cdce538d53bb&estimate_id=6360edfc-d0ce-43f2-84e6-4584bfe35301'
+
 const navigationData: Navigation[] = [
   {
     title: 'Features',
@@ -85,6 +88,10 @@ const navigationData: Navigation[] = [
   {
     title: 'App integration',
     href: '/app-integration'
+  },
+  {
+    title: 'Estimate',
+    href: ESTIMATE_DETAILS_HREF
   }
 ]
 

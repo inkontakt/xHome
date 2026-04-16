@@ -1,26 +1,38 @@
 ---
 import Layout from '@/layouts/Layout.astro'
+import ImageGallery from '@/components/estimate-details/image-gallery'
+import PdfViewer from '@/components/estimate-details/pdf-viewer'
 import { loadEstimateData } from '@/lib/estimate-data'
+import { safeDownloadFileName } from '@/lib/estimate-files'
 
 const tenantId = Astro.url.searchParams.get('tenant_id')?.trim() || ''
 const estimateId = Astro.url.searchParams.get('estimate_id')?.trim() || ''
 const hasRequiredQuery = tenantId.length > 0 && estimateId.length > 0
 const estimateData = await loadEstimateData(tenantId, estimateId)
-const submission = estimateData.submission
 const person = estimateData.person
 const pdfFile = estimateData.pdfFile
 const imageFiles = estimateData.imageFiles
-const estimateLabel = submission?.title || '6607'
-const greeting = person?.last_name
-  ? `Hallo Herr ${person.last_name},`
-  : submission?.title
-    ? `Hallo ${submission.title},`
-    : 'Hallo there'
+const greeting = person?.last_name ? `Hallo Herr ${person.last_name},` : 'Hallo there'
 const showSupabaseLabel = hasRequiredQuery && estimateData.status !== 'missing-config'
 
 const pageTitle = 'Estimate Details | Orion'
 const pageDescription =
   'View estimate download details and related damage images with preserved tenant and estimate query parameters.'
+const pdfPreviewUrl = pdfFile?.file_url
+  ? `/api/pdf?${new URLSearchParams({ url: pdfFile.file_url }).toString()}`
+  : null
+const pdfDownloadUrl =
+  pdfFile?.file_url && pdfPreviewUrl
+    ? `${pdfPreviewUrl}&download=1&filename=${encodeURIComponent(safeDownloadFileName(pdfFile.file_name, 'PDF Preview.pdf'))}`
+    : null
+const imageEmptyMessage =
+  estimateData.status === 'missing-config'
+    ? 'Supabase is not configured for this Astro app yet.'
+    : estimateData.status === 'not-found'
+      ? 'No estimate images were found for these IDs.'
+      : estimateData.status === 'error'
+        ? estimateData.message
+        : 'Image thumbnails will appear here once linked to Supabase.'
 ---
 
 <Layout title={pageTitle} description={pageDescription} noindex={true}>
@@ -29,11 +41,11 @@ const pageDescription =
       <div class='space-y-6'>
         <header class='space-y-2 text-center'>
           <p class='text-[35px] leading-tight tracking-wide text-foreground'>
-            Angebot <span class='font-semibold text-primary'>{estimateLabel}</span> und Schadensbilder zum Download
+            Angebot <span class='font-semibold text-primary'>6607</span> und Schadensbilder zum Download
           </p>
           <h1 class='text-3xl font-semibold tracking-tight'>{greeting}</h1>
           <p class='mx-auto max-w-3xl text-[20px] leading-relaxed text-muted-foreground'>
-            hier finden Sie Ihr Angebot zum Download inklusive der Schadensbilder.
+            Hier finden Sie Ihr Angebot zum Download inklusive der Schadensbilder.
           </p>
         </header>
 
@@ -47,7 +59,7 @@ const pageDescription =
                     <span class='text-xs text-muted-foreground'>Supabase</span>
                   </div>
                   <a
-                    href={pdfFile.file_url}
+                    href={pdfDownloadUrl}
                     target='_blank'
                     rel='noreferrer'
                     class='rounded-md border bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90'
@@ -60,11 +72,7 @@ const pageDescription =
             <div class='rounded-md border border-dashed p-4'>
               {
                 pdfFile?.file_url ? (
-                  <iframe
-                    src={pdfFile.file_url}
-                    title={pdfFile.file_name || 'Estimate PDF preview'}
-                    class='min-h-[360px] w-full rounded-md bg-muted md:min-h-[600px]'
-                  />
+                  <PdfViewer client:load url={pdfFile.file_url} />
                 ) : (
                   <div class='flex min-h-[360px] items-center justify-center px-4 text-center text-sm text-muted-foreground md:min-h-[600px]'>
                     {estimateData.status === 'missing-query'
@@ -85,7 +93,7 @@ const pageDescription =
               pdfFile?.file_url && (
                 <div class='mt-4 flex justify-center'>
                   <a
-                    href={pdfFile.file_url}
+                    href={pdfDownloadUrl}
                     target='_blank'
                     rel='noreferrer'
                     class='rounded-md border bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition hover:bg-primary/90'
@@ -97,54 +105,12 @@ const pageDescription =
             }
           </section>
 
-          <section class='rounded-lg border bg-background p-4 shadow-sm'>
-            <div class='flex items-center justify-between'>
-              <h2 class='text-lg font-semibold'>Image Gallery</h2>
-              {showSupabaseLabel && <span class='text-xs text-muted-foreground'>Supabase</span>}
-            </div>
-            <div class='mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4'>
-              {
-                imageFiles.length > 0 ? (
-                  imageFiles.map((image, index) => (
-                    <a
-                      href={image.file_url || '#'}
-                      target='_blank'
-                      rel='noreferrer'
-                      class='group relative aspect-square overflow-hidden rounded-md bg-muted transition hover:bg-primary'
-                      aria-label={`View photo ${index + 1} in detail`}
-                    >
-                      <img
-                        src={image.file_url || ''}
-                        alt={image.file_name || `Estimate photo ${index + 1}`}
-                        class='h-full w-full object-cover transition-transform group-hover:scale-105'
-                        loading='lazy'
-                      />
-                      <span class='absolute right-0 bottom-0 bg-white/90 px-3 py-2 text-sm font-semibold text-foreground backdrop-blur-sm'>
-                        Photo #{index + 1}
-                      </span>
-                    </a>
-                  ))
-                ) : (
-                  <div class='col-span-full flex h-48 items-center justify-center rounded-md border border-dashed bg-muted/40 px-4 text-center text-sm text-muted-foreground'>
-                    {estimateData.status === 'missing-config'
-                      ? 'Supabase is not configured for this Astro app yet.'
-                      : estimateData.status === 'not-found'
-                        ? 'No estimate images were found for these IDs.'
-                        : estimateData.status === 'error'
-                          ? estimateData.message
-                          : 'Image thumbnails will appear here once linked to Supabase.'}
-                  </div>
-                )
-              }
-            </div>
-            <p class='mt-3 text-xs text-muted-foreground'>
-              {
-                imageFiles.length > 0
-                  ? 'Click on any image to view it in full screen with navigation controls.'
-                  : 'Image thumbnails will appear here once linked to Supabase.'
-              }
-            </p>
-          </section>
+          <ImageGallery
+            client:load
+            imageFiles={imageFiles}
+            showSupabaseLabel={showSupabaseLabel}
+            emptyMessage={imageEmptyMessage}
+          />
         </div>
       </div>
     </div>

@@ -59,6 +59,28 @@ type Navigation = {
     }
 )
 
+const getSectionIdFromHref = (href: string) => (href.startsWith('/#') ? href.slice(2) : href.startsWith('#') ? href.slice(1) : '')
+
+const getPathnameFromHref = (href: string) => {
+  if (!href || href.startsWith('#')) {
+    return ''
+  }
+
+  return href.split('?')[0] || href
+}
+
+const isHrefActive = (href: string, activeSection?: string, pathname?: string) => {
+  const sectionId = getSectionIdFromHref(href)
+
+  if (sectionId) {
+    return activeSection === sectionId
+  }
+
+  const normalizedHref = getPathnameFromHref(href)
+
+  return normalizedHref ? pathname?.startsWith(normalizedHref) : false
+}
+
 const ListItem = (props: {
   title: NavigationItem['title']
   href: NavigationItem['href']
@@ -71,9 +93,7 @@ const ListItem = (props: {
 }) => {
   const { title, href, icon, badge, description, splitItems, activeSection, pathname } = props
 
-  // Extract section id from href (e.g., '#home' -> 'home')
-  const sectionId = href.startsWith('/#') ? href.slice(2) : href.startsWith('#') ? href.slice(1) : ''
-  const isActive = sectionId ? activeSection === sectionId : pathname?.startsWith(href)
+  const isActive = isHrefActive(href, activeSection, pathname)
 
   return (
     <li className={cn({ 'group/link h-19.5': description && splitItems })}>
@@ -123,11 +143,7 @@ const HeaderNavigation = ({
   // Extract all section IDs from navigation data
   const sectionIds = navigationData.flatMap(navItem => {
     if (navItem.href) {
-      const id = navItem.href.startsWith('/#')
-        ? navItem.href.slice(2)
-        : navItem.href.startsWith('#')
-          ? navItem.href.slice(1)
-          : ''
+      const id = getSectionIdFromHref(navItem.href)
 
       return id ? [id] : []
     }
@@ -137,11 +153,7 @@ const HeaderNavigation = ({
         return navItem.items.flatMap(section =>
           section.items
             .map(item => {
-              const id = item.href.startsWith('/#')
-                ? item.href.slice(2)
-                : item.href.startsWith('#')
-                  ? item.href.slice(1)
-                  : ''
+              const id = getSectionIdFromHref(item.href)
 
               return id
             })
@@ -151,11 +163,7 @@ const HeaderNavigation = ({
 
       return navItem.items
         .map(item => {
-          const id = item.href.startsWith('/#')
-            ? item.href.slice(2)
-            : item.href.startsWith('#')
-              ? item.href.slice(1)
-              : ''
+          const id = getSectionIdFromHref(item.href)
 
           return id
         })
@@ -172,14 +180,7 @@ const HeaderNavigation = ({
       <NavigationMenuList className='flex-wrap gap-1'>
         {navigationData.map(navItem => {
           if (navItem.href) {
-            // Root link item
-            const sectionId = navItem.href.startsWith('/#')
-              ? navItem.href.slice(2)
-              : navItem.href.startsWith('#')
-                ? navItem.href.slice(1)
-                : ''
-
-            const isActive = sectionId ? activeSection === sectionId : pathname?.startsWith(navItem.href)
+            const isActive = isHrefActive(navItem.href, activeSection, pathname)
 
             return (
               <NavigationMenuItem key={navItem.title}>
@@ -207,26 +208,10 @@ const HeaderNavigation = ({
           if (navItem.items) {
             if (navItem.splitItems) {
               hasActiveChild = navItem.items.some(section =>
-                section.items.some(item => {
-                  const id = item.href.startsWith('/#')
-                    ? item.href.slice(2)
-                    : item.href.startsWith('#')
-                      ? item.href.slice(1)
-                      : ''
-
-                  return id && activeSection === id
-                })
+                section.items.some(item => isHrefActive(item.href, activeSection, pathname))
               )
             } else {
-              hasActiveChild = navItem.items.some(item => {
-                const id = item.href.startsWith('/#')
-                  ? item.href.slice(2)
-                  : item.href.startsWith('#')
-                    ? item.href.slice(1)
-                    : ''
-
-                return id && activeSection === id
-              })
+              hasActiveChild = navItem.items.some(item => isHrefActive(item.href, activeSection, pathname))
             }
           }
 
@@ -317,11 +302,7 @@ const HeaderNavigationSmallScreen = ({
   // Extract all section IDs from navigation data
   const sectionIds = navigationData.flatMap(navItem => {
     if (navItem.href) {
-      const id = navItem.href.startsWith('/#')
-        ? navItem.href.slice(2)
-        : navItem.href.startsWith('#')
-          ? navItem.href.slice(1)
-          : ''
+      const id = getSectionIdFromHref(navItem.href)
 
       return id ? [id] : []
     }
@@ -331,11 +312,7 @@ const HeaderNavigationSmallScreen = ({
         return navItem.items.flatMap(section =>
           section.items
             .map(item => {
-              const id = item.href.startsWith('/#')
-                ? item.href.slice(2)
-                : item.href.startsWith('#')
-                  ? item.href.slice(1)
-                  : ''
+              const id = getSectionIdFromHref(item.href)
 
               return id
             })
@@ -345,11 +322,7 @@ const HeaderNavigationSmallScreen = ({
 
       return navItem.items
         .map(item => {
-          const id = item.href.startsWith('/#')
-            ? item.href.slice(2)
-            : item.href.startsWith('#')
-              ? item.href.slice(1)
-              : ''
+          const id = getSectionIdFromHref(item.href)
 
           return id
         })
@@ -391,13 +364,7 @@ const HeaderNavigationSmallScreen = ({
         <div className='space-y-1 overflow-y-auto p-3'>
           {navigationData.map((navItem, index) => {
             if (navItem.href) {
-              const sectionId = navItem.href.startsWith('/#')
-                ? navItem.href.slice(2)
-                : navItem.href.startsWith('#')
-                  ? navItem.href.slice(1)
-                  : ''
-
-              const isActive = sectionId ? activeSection === sectionId : pathname?.startsWith(navItem.href)
+              const isActive = isHrefActive(navItem.href, activeSection, pathname)
 
               return (
                 <a
@@ -418,26 +385,10 @@ const HeaderNavigationSmallScreen = ({
             if (navItem.items) {
               if (navItem.splitItems) {
                 hasActiveChild = navItem.items.some(section =>
-                  section.items.some(item => {
-                    const id = item.href.startsWith('/#')
-                      ? item.href.slice(2)
-                      : item.href.startsWith('#')
-                        ? item.href.slice(1)
-                        : ''
-
-                    return id && activeSection === id
-                  })
+                  section.items.some(item => isHrefActive(item.href, activeSection, pathname))
                 )
               } else {
-                hasActiveChild = navItem.items.some(item => {
-                  const id = item.href.startsWith('/#')
-                    ? item.href.slice(2)
-                    : item.href.startsWith('#')
-                      ? item.href.slice(1)
-                      : ''
-
-                  return id && activeSection === id
-                })
+                hasActiveChild = navItem.items.some(item => isHrefActive(item.href, activeSection, pathname))
               }
             }
 
@@ -456,15 +407,7 @@ const HeaderNavigationSmallScreen = ({
                         <div key={i} className='mt-1.5'>
                           <div className='text-muted-foreground mb-1 pl-4.5 text-xs font-medium'>{item.title}</div>
                           {item.items.map((subItem, j) => {
-                            const sectionId = subItem.href.startsWith('/#')
-                              ? subItem.href.slice(2)
-                              : subItem.href.startsWith('#')
-                                ? subItem.href.slice(1)
-                                : ''
-
-                            const isActive = sectionId
-                              ? activeSection === sectionId
-                              : pathname?.startsWith(subItem.href)
+                            const isActive = isHrefActive(subItem.href, activeSection, pathname)
 
                             return (
                               <a
@@ -482,13 +425,7 @@ const HeaderNavigationSmallScreen = ({
                         </div>
                       ))
                     : navItem.items?.map(item => {
-                        const sectionId = item.href.startsWith('/#')
-                          ? item.href.slice(2)
-                          : item.href.startsWith('#')
-                            ? item.href.slice(1)
-                            : ''
-
-                        const isActive = sectionId ? activeSection === sectionId : pathname?.startsWith(item.href)
+                        const isActive = isHrefActive(item.href, activeSection, pathname)
 
                         return (
                           <a

@@ -22,7 +22,7 @@ todos:
     status: pending
   - id: integrate_estimate_route
     content: Add or adapt the estimate-details frontend in Astro-compatible form while preserving existing query params and using existing working data/integration logic where available
-    status: pending
+    status: in_progress
   - id: validate_integration
     content: Run non-regression checks, type checks, production build, local visual inspection, and integration checks before any duplicate cleanup
     status: pending
@@ -87,6 +87,13 @@ Do not treat pre-existing typecheck, debug instrumentation, or root content-load
 - Defer Supabase comments, analytics, newsletter APIs, revalidation plugin behavior, standalone Next build config, Railway/Docker files, and Next metadata routes unless a specific UI depends on them.
 - For theme/site settings, migrate the visual result of logo, menus, header/footer colors, and CSS variables; do not copy nested runtime file-writing behavior unless explicitly needed.
 - Keep `nextjs-connect-wp-main` unchanged until the root Astro app builds, runs, and visually passes review.
+- Add a top-level `Estimate` navigation item in the Astro header that points to the working `/estimate-details` route with preserved `tenant_id` and `estimate_id` query params.
+- Update Astro navigation active-state handling so links containing query strings still highlight correctly in desktop and mobile menus.
+- Mirror the Next.js estimate-details PDF rendering approach in Astro with a client-side React viewer instead of a native browser `iframe`/`object` embed.
+- Add an Astro `/api/pdf` proxy/download route so PDF preview and download work through a same-origin endpoint.
+- Port the Next.js estimate image popup flow into Astro with a React gallery/lightbox, full-screen modal, keyboard navigation, thumbnail strip, and scroll locking.
+- Align Astro estimate-details header copy and control styling with the Next.js reference, including the fixed `6607` heading label, greeting behavior, supporting sentence, and lightbox button color adjustments.
+- Add only the minimum new estimate-page dependencies required by the ported PDF viewer (`@react-pdf-viewer/core`, `pdfjs-dist`) and a local type declaration for `pdfjs-dist/build/pdf`.
 
 ## Execution Order
 
@@ -101,6 +108,35 @@ Do not treat pre-existing typecheck, debug instrumentation, or root content-load
 9. Blog visual alignment.
 10. Validation and final UI/accessibility review.
 11. Cleanup planning only.
+
+## Current Status Snapshot
+
+**Completed**
+
+- Astro estimate-details route is present and wired to preserved `tenant_id` and `estimate_id` query params.
+- Header menu includes an `Estimate` entry that links to the Astro estimate-details route.
+- Header navigation active-state logic handles menu links that include query strings.
+- Astro estimate data loading remains rooted in `src/lib/estimate-data.ts`.
+- Astro PDF proxy/download endpoint exists at `src/pages/api/pdf.ts`.
+- Astro PDF display now uses a client-side React viewer instead of a browser-native embed.
+- Astro estimate image gallery now uses a full-screen lightbox flow with thumbnail strip, keyboard navigation, and scroll lock.
+- Estimate-page header copy has been aligned to the current Next.js reference for the heading, greeting logic, and supporting sentence.
+- Estimate lightbox button styling has been adjusted for visibility/readability.
+- Required viewer dependencies were added to root `package.json`.
+- Local `pdfjs-dist/build/pdf` typing support was added.
+
+**In Progress**
+
+- Task 5: estimate-details parity and validation are partially complete. Core implementation is done, but browser-level validation and a few parity decisions remain open.
+
+**Not Done Yet**
+
+- Preflight baseline documentation is not yet recorded in this plan as completed.
+- Nested Next.js reference repo isolation from root type checking is not yet recorded as completed.
+- Visual asset audit, migration map, global visual system integration, homepage restyle, blog alignment, and overall integration validation are not yet recorded as completed.
+- Browser verification of the Astro estimate route is still pending.
+- End-to-end verification of PDF downloads and viewer behavior with real data is still pending.
+- Final decision on any remaining structural parity differences, such as sticky gallery/layout behavior, is still pending.
 
 ## File Responsibility Map
 
@@ -341,6 +377,39 @@ Use this graph to prevent scope creep during Tasks 3-5.
 7. If root does not have known test values for `tenant_id` and `estimate_id`, validate the route shell, empty state, and query parsing without inventing fake successful data behavior.
 8. If valid estimate test IDs are discovered, validate the dynamic PDF/image behavior against those IDs; otherwise document that dynamic-data validation remains pending test data.
 
+**Completed so far in Astro (`src/pages/estimate-details.astro` and related files):**
+
+- Added/retained the Astro route shell for `/estimate-details` with preserved `tenant_id` and `estimate_id` query parsing.
+- Added a header menu link for the estimate route in `src/components/sections/header-section.tsx`.
+- Updated `src/components/layout/header-navigation.tsx` so links with query strings can be treated as active navigation targets.
+- Kept Astro-side estimate data loading in `src/lib/estimate-data.ts` as the active source instead of importing the Next.js server helper directly.
+- Added Astro PDF proxy/download handling in `src/pages/api/pdf.ts`.
+- Switched Astro PDF display from a native embed to a React viewer island in `src/components/estimate-details/pdf-viewer.tsx`.
+- Added `src/types/pdfjs-dist.d.ts` to support the PDF viewer import.
+- Installed the minimum viewer dependencies in root `package.json`: `@react-pdf-viewer/core` and `pdfjs-dist`.
+- Replaced static image links with a React gallery/lightbox flow using:
+  - `src/components/estimate-details/image-gallery.tsx`
+  - `src/components/estimate-details/image-lightbox.tsx`
+- Matched the Astro estimate-page text closer to the Next.js reference:
+  - fixed heading number `6607`
+  - greeting fallback logic
+  - supporting sentence capitalization
+- Adjusted image lightbox control styling for visibility and closer visual parity:
+  - dark text on the tinted `Next` button
+  - white close button label
+
+**Still pending for Task 5 completion:**
+
+- Browser-side validation that the Astro estimate route now visually matches the Next.js reference closely enough on desktop and mobile.
+- Direct verification that the Astro PDF download buttons work end-to-end with real data and that `/api/pdf` returns a valid attachment response in-browser.
+- Direct verification that the lightbox interaction, keyboard controls, thumbnail strip, and close/next/previous buttons behave correctly in-browser.
+- Decision on whether the Astro estimate layout should also adopt the Next.js sticky image-gallery ordering (`lg:order-2 lg:sticky lg:top-24`) for closer structural parity.
+- Final confirmation that the current Astro estimate header copy should remain intentionally fixed to the Next.js reference text instead of dynamically reflecting submission title text.
+
+**Task 5 completion rule for this plan:**
+
+- Mark `integrate_estimate_route` as `completed` only after the pending browser verification items above are checked off or explicitly waived/documented.
+
 ## Task 6: Validate Integration
 
 **Commands:**
@@ -364,6 +433,11 @@ npm run dev
 - Visit one blog detail page.
 - Visit any page that uses the working fetch/XML/WordPress integration.
 - Visit `/estimate-details?tenant_id=<known-test-tenant>&estimate_id=<known-test-estimate>` if known test values are available.
+- Verify the header menu `Estimate` link navigates to the Astro estimate route and remains visibly active.
+- Verify both estimate-page PDF download buttons trigger a real file download from the Astro `/api/pdf` endpoint.
+- Verify the Astro PDF viewer renders the document instead of falling back to the browser-native PDF viewer UI.
+- Verify image thumbnails open the Astro lightbox, `Esc` closes it, arrow keys navigate, and the thumbnail strip updates the selected image.
+- Verify the lightbox button colors/text remain readable against the active theme.
 
 **Acceptance criteria:**
 
@@ -380,6 +454,13 @@ npm run dev
 - Existing form and booking behavior still works if configured.
 - Visual system is applied consistently.
 - Mobile and desktop layouts do not overflow or overlap.
+- The Astro estimate route is reachable from the header menu and preserves the working query params.
+- The Astro estimate route uses the same broad UX structure as the Next.js reference:
+  - fixed estimate heading line
+  - person greeting/fallback
+  - client-side PDF viewer
+  - same-origin PDF download route
+  - full-screen image lightbox with navigation controls
 - `nextjs-connect-wp-main` is not required as a runnable nested app.
 - Root code does not import from the nested folder.
 - Root code does not depend on Next.js runtime APIs.
