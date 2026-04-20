@@ -5,15 +5,15 @@ import PdfViewer from '@/components/estimate-details/pdf-viewer'
 import { loadEstimateData } from '@/lib/estimate-data'
 import { safeDownloadFileName } from '@/lib/estimate-files'
 
-const tenantId = Astro.url.searchParams.get('tenant_id')?.trim() || ''
+const tenantParam = Astro.url.searchParams.get('tenant')?.trim() || Astro.url.searchParams.get('tenant_id')?.trim() || ''
 const estimateId = Astro.url.searchParams.get('estimate_id')?.trim() || ''
-const hasRequiredQuery = tenantId.length > 0 && estimateId.length > 0
-const estimateData = await loadEstimateData(tenantId, estimateId)
+const hasRequiredQuery = tenantParam.length > 0 && estimateId.length > 0
+const estimateData = await loadEstimateData(tenantParam, estimateId)
 const person = estimateData.person
 const pdfFile = estimateData.pdfFile
 const imageFiles = estimateData.imageFiles
 const greeting = person?.last_name ? `Hallo Herr ${person.last_name},` : 'Hallo there'
-const showSupabaseLabel = hasRequiredQuery && estimateData.status !== 'missing-config'
+const tenantLabel = hasRequiredQuery && estimateData.status !== 'missing-config' ? estimateData.tenant?.name ?? null : null
 
 const pageTitle = 'Estimate Details | Orion'
 const pageDescription =
@@ -32,7 +32,7 @@ const imageEmptyMessage =
       ? 'No estimate images were found for these IDs.'
       : estimateData.status === 'error'
         ? estimateData.message
-        : 'Image thumbnails will appear here once linked to Supabase.'
+        : 'Image thumbnails will appear here once linked to this estimate.'
 ---
 
 <Layout title={pageTitle} description={pageDescription} noindex={true}>
@@ -41,7 +41,7 @@ const imageEmptyMessage =
       <div class='space-y-6'>
         <header class='space-y-2 text-center'>
           <p class='text-[35px] leading-tight tracking-wide text-foreground'>
-            Angebot <span class='font-semibold text-primary'>6607</span> und Schadensbilder zum Download
+            Angebot und Schadensbilder zum Download
           </p>
           <h1 class='text-3xl font-semibold tracking-tight'>{greeting}</h1>
           <p class='mx-auto max-w-3xl text-[20px] leading-relaxed text-muted-foreground'>
@@ -56,7 +56,7 @@ const imageEmptyMessage =
                 <div class='mb-4 flex items-center justify-between gap-3'>
                   <div class='flex items-center gap-3'>
                     <h2 class='text-lg font-semibold'>PDF Preview</h2>
-                    <span class='text-xs text-muted-foreground'>Supabase</span>
+                    {tenantLabel && <span class='text-xs text-muted-foreground'>{tenantLabel}</span>}
                   </div>
                   <a
                     href={pdfDownloadUrl}
@@ -80,7 +80,7 @@ const imageEmptyMessage =
                       : estimateData.status === 'missing-config'
                         ? 'Supabase is not configured for this Astro app yet.'
                         : estimateData.status === 'not-found'
-                          ? 'No estimate was found for these tenant and estimate IDs.'
+                          ? 'No estimate was found for these tenant and estimate values.'
                           : estimateData.status === 'error'
                             ? estimateData.message
                             : 'No PDF uploaded for this estimate yet.'}
@@ -108,7 +108,7 @@ const imageEmptyMessage =
           <ImageGallery
             client:load
             imageFiles={imageFiles}
-            showSupabaseLabel={showSupabaseLabel}
+            contextLabel={tenantLabel}
             emptyMessage={imageEmptyMessage}
           />
         </div>

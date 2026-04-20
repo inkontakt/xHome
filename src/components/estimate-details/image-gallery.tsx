@@ -13,11 +13,11 @@ type EstimateImage = {
 
 type ImageGalleryProps = {
   imageFiles: EstimateImage[]
-  showSupabaseLabel?: boolean
+  contextLabel?: string | null
   emptyMessage: string
 }
 
-const ImageGallery = ({ imageFiles, showSupabaseLabel = false, emptyMessage }: ImageGalleryProps) => {
+const ImageGallery = ({ imageFiles, contextLabel, emptyMessage }: ImageGalleryProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [lightboxStartIndex, setLightboxStartIndex] = useState(0)
 
@@ -31,7 +31,7 @@ const ImageGallery = ({ imageFiles, showSupabaseLabel = false, emptyMessage }: I
       <section className='rounded-lg border bg-background p-4 shadow-sm'>
         <div className='flex items-center justify-between'>
           <h2 className='text-lg font-semibold'>Image Gallery</h2>
-          {showSupabaseLabel ? <span className='text-xs text-muted-foreground'>Supabase</span> : null}
+          {contextLabel ? <span className='text-xs text-muted-foreground'>{contextLabel}</span> : null}
         </div>
         <div className='mt-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4'>
           {imageFiles.length > 0 ? (
