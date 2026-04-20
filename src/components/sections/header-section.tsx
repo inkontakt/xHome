@@ -11,7 +11,7 @@ import Header from '@/components/layout/header'
 import type { Navigation } from '@/components/layout/header-navigation'
 
 const ESTIMATE_DETAILS_HREF =
-  '/estimate-details?tenant_id=bb4122a1-7b24-4bb8-b5b9-cdce538d53bb&estimate_id=6360edfc-d0ce-43f2-84e6-4584bfe35301'
+  '/estimate-details?tenant=carfit&estimate_id=77f512f1-c50d-4bf2-9012-1c6b1b655207'
 
 const navigationData: Navigation[] = [
   {
