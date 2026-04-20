@@ -15,6 +15,7 @@
   - resolve displayed customer name from `process_estimate.person_id -> sa_persons`
   - resolve tenant display name from `tenants.name`
   - stop depending on `inquiry_photo_annotations`
+- Update the Estimate navigation link in `src/components/sections/header-section.tsx` to use a relative URL so the current domain is inherited automatically.
 - Keep the page entrypoint in `src/pages/estimate-details.astro` mostly unchanged at the UI level and switch it to the new loader result.
 - Extend the loader result shape so it returns:
   - `estimate`
@@ -35,6 +36,11 @@
 - PDF:
   - source only from `estimate_submission_files`
   - do not read PDFs from `form_submission_files`
+  - resolve child estimate submissions through `estimate_submission_fields`
+  - child-link rule:
+    - `field_key = 'parent_estimate_id'`
+    - `field_value = process_estimate.process_estimate_uuid`
+  - fetch child files from `estimate_submission_files` for those child submission IDs
   - if exactly one PDF exists, show it
   - if multiple PDFs exist, use deterministic fallback:
     - `file_position ASC`
@@ -63,6 +69,11 @@
 - Use separate asset sources:
   - `estimate_submission_files` for PDF
   - `form_submission_files` for images
+- Resolve PDF linkage through child estimate submissions:
+  - query `estimate_submission_fields` where `field_key = 'parent_estimate_id'`
+  - match `field_value` to `process_estimate.process_estimate_uuid`
+  - collect child `submission_id` values
+  - fetch PDF files from `estimate_submission_files` using those child submission IDs
 - Remove all fetch logic that reads from `inquiry_photo_annotations`.
 - Normalize file filtering with the existing helpers in `src/lib/estimate-files.ts`:
   - MIME type first
@@ -74,6 +85,7 @@
   - `tenant=<TENANT_SLUG>`
   - `estimate_id=<PROCESS_ESTIMATE_UUID>`
 - Keep `tenant_id` as fallback compatibility only.
+- Estimate navigation should use a relative URL so it works on localhost, staging, and production without hardcoding the domain.
 
 ## Test Plan
 - Valid tenant slug plus valid estimate UUID:
@@ -86,7 +98,8 @@
   - all images render
   - no dependency on `inquiry_photo_annotations`
 - Valid estimate with PDF in `estimate_submission_files`:
-  - one PDF renders
+  - child estimate submissions are discovered through `estimate_submission_fields`
+  - one PDF renders from child `estimate_submission_files`
   - download link works through `/api/pdf`
 - Valid estimate with no PDF row in `estimate_submission_files`:
   - PDF section shows empty state
@@ -109,5 +122,6 @@
 - `form_submission_files` is the active file source for images only.
 - `inquiry_photo_annotations` is intentionally removed from this flow.
 - `process_estimate.person_id` maps to `sa_persons.person_id` for displayed customer name.
+- `estimate_submission_fields.field_key = 'parent_estimate_id'` points to `process_estimate.process_estimate_uuid`, not to `process_estimate.id` and not to `form_submission_id`.
 - Remaining open item:
-  - if a PDF still fails to appear for a known estimate, the exact live linkage field/value inside `estimate_submission_files` needs to be confirmed from a real row sample for that estimate.
+  - if a PDF still fails to appear for a known estimate after this linkage path, confirm one real child row from `estimate_submission_fields` and one real child file row from `estimate_submission_files` for that estimate.
