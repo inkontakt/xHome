@@ -38,6 +38,41 @@ export const POST: APIRoute = async ({ params, request }) => {
 
     return jsonResponse({ ok: true, result })
   } catch (error) {
+    if (error instanceof Error) {
+      const match = error.message.match(/^WordPress request failed \((\d+)\):\s*(.+)$/s)
+
+      if (match) {
+        const status = Number(match[1])
+        const rawPayload = match[2]
+
+        try {
+          const parsedPayload = JSON.parse(rawPayload) as Record<string, unknown>
+
+          return jsonResponse(
+            {
+              error:
+                typeof parsedPayload.message === 'string'
+                  ? parsedPayload.message
+                  : parsedPayload.errors && typeof parsedPayload.errors === 'object'
+                    ? 'Please correct the highlighted fields.'
+                  : error.message,
+              ...(parsedPayload.errors && typeof parsedPayload.errors === 'object'
+                ? { errors: parsedPayload.errors }
+                : {})
+            },
+            { status: Number.isNaN(status) ? 400 : status }
+          )
+        } catch {
+          return jsonResponse(
+            {
+              error: error.message
+            },
+            { status: Number.isNaN(status) ? 400 : status }
+          )
+        }
+      }
+    }
+
     return jsonResponse(
       {
         error: error instanceof Error ? error.message : 'Unable to submit form'

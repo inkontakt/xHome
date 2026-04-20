@@ -1,17 +1,33 @@
 import { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { cn } from '@/lib/utils'
 
 type FormField =
   | {
-      type: 'text' | 'email' | 'textarea'
+      type:
+        | 'text'
+        | 'email'
+        | 'textarea'
+        | 'number'
+        | 'url'
+        | 'password'
+        | 'tel'
+        | 'date'
+        | 'color'
+        | 'mask'
       name: string
       label: string
       placeholder?: string
       required: boolean
       rows?: number
+      mask?: string
+      reverseMask?: boolean
+      clearIfNotMatch?: boolean
     }
   | {
       type: 'name'
@@ -37,9 +53,58 @@ type FormField =
       name: string
       label: string
       required: boolean
+      multiple?: boolean
       options: Array<{
         label: string
         value: string
+      }>
+    }
+  | {
+      type: 'address'
+      name: string
+      label: string
+      required: boolean
+      parts: Array<{
+        name: string
+        label: string
+        placeholder?: string
+        required: boolean
+        type?: 'text' | 'select'
+        options?: Array<{
+          label: string
+          value: string
+        }>
+      }>
+    }
+  | {
+      type: 'gdpr'
+      name: string
+      label: string
+      required: boolean
+      description?: string
+    }
+  | {
+      type: 'section'
+      name: string
+      label: string
+      description?: string
+    }
+  | {
+      type: 'html'
+      name: string
+      html: string
+    }
+  | {
+      type: 'hidden'
+      name: string
+      value: string
+    }
+  | {
+      type: 'container'
+      name: string
+      columns: Array<{
+        width?: number
+        fields: FormField[]
       }>
     }
 
@@ -64,6 +129,8 @@ type BookingApiResponse = {
   error?: string
 }
 
+type FieldValidationErrors = Record<string, string>
+
 type Props = {
   formId: number
   bookingCalendarId?: number
@@ -74,12 +141,45 @@ type Props = {
 function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookingUrl }: Props) {
   const [schema, setSchema] = useState<FormSchema | null>(null)
   const [formData, setFormData] = useState<Record<string, any>>({})
+  const [initialFormData, setInitialFormData] = useState<Record<string, any>>({})
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldValidationErrors>({})
   const [bookingData, setBookingData] = useState<BookingApiResponse | null>(null)
   const [bookingError, setBookingError] = useState<string | null>(null)
+
+  function initializeFieldState(field: FormField, nextState: Record<string, any>) {
+    if (field.type === 'container') {
+      field.columns.forEach(column => {
+        column.fields.forEach(childField => initializeFieldState(childField, nextState))
+      })
+      return
+    }
+
+    if (field.type === 'name' || field.type === 'address') {
+      nextState[field.name] = Object.fromEntries(field.parts.map(part => [part.name, '']))
+      return
+    }
+
+    if (field.type === 'checkbox' || (field.type === 'select' && field.multiple)) {
+      nextState[field.name] = []
+      return
+    }
+
+    if (field.type === 'gdpr') {
+      nextState[field.name] = false
+      return
+    }
+
+    if (field.type === 'hidden') {
+      nextState[field.name] = field.value
+      return
+    }
+
+    nextState[field.name] = ''
+  }
 
   useEffect(() => {
     let active = true
@@ -112,22 +212,11 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
         const initialState: Record<string, any> = {}
 
         payload.fields.forEach(field => {
-          if (field.type === 'name') {
-            initialState[field.name] = Object.fromEntries(
-              field.parts.map(part => [part.name, ''])
-            )
-            return
-          }
-
-          if (field.type === 'checkbox') {
-            initialState[field.name] = []
-            return
-          }
-
-          initialState[field.name] = ''
+          initializeFieldState(field, initialState)
         })
 
         setFormData(initialState)
+        setInitialFormData(initialState)
       } catch (loadError) {
         if (!active) {
           return
@@ -197,6 +286,16 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
   }, [bookingCalendarId, bookingEventId, schema])
 
   function updateField(name: string, value: string) {
+    setFieldErrors(current => {
+      if (!current[name]) {
+        return current
+      }
+
+      const nextErrors = { ...current }
+      delete nextErrors[name]
+      return nextErrors
+    })
+
     setFormData(current => ({
       ...current,
       [name]: value
@@ -204,6 +303,21 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
   }
 
   function updateNameField(group: string, part: string, value: string) {
+    setFieldErrors(current => {
+      const keysToClear = [part, `${group}.${part}`, `${group}[${part}]`, group]
+      const nextErrors = { ...current }
+      let changed = false
+
+      keysToClear.forEach(key => {
+        if (key in nextErrors) {
+          delete nextErrors[key]
+          changed = true
+        }
+      })
+
+      return changed ? nextErrors : current
+    })
+
     setFormData(current => ({
       ...current,
       [group]: {
@@ -214,6 +328,16 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
   }
 
   function updateCheckboxField(group: string, value: string, checked: boolean) {
+    setFieldErrors(current => {
+      if (!current[group]) {
+        return current
+      }
+
+      const nextErrors = { ...current }
+      delete nextErrors[group]
+      return nextErrors
+    })
+
     setFormData(current => {
       const currentValues = Array.isArray(current[group]) ? current[group] : []
       const nextValues = checked
@@ -225,6 +349,128 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
         [group]: nextValues
       }
     })
+  }
+
+  function updateNestedField(group: string, part: string, value: string) {
+    setFieldErrors(current => {
+      const keysToClear = [part, `${group}.${part}`, `${group}[${part}]`, group]
+      const nextErrors = { ...current }
+      let changed = false
+
+      keysToClear.forEach(key => {
+        if (key in nextErrors) {
+          delete nextErrors[key]
+          changed = true
+        }
+      })
+
+      return changed ? nextErrors : current
+    })
+
+    setFormData(current => ({
+      ...current,
+      [group]: {
+        ...(current[group] ?? {}),
+        [part]: value
+      }
+    }))
+  }
+
+  function updateBooleanField(name: string, checked: boolean) {
+    setFieldErrors(current => {
+      if (!current[name]) {
+        return current
+      }
+
+      const nextErrors = { ...current }
+      delete nextErrors[name]
+      return nextErrors
+    })
+
+    setFormData(current => ({
+      ...current,
+      [name]: checked
+    }))
+  }
+
+  function updateMultiSelectField(name: string, values: string[]) {
+    setFieldErrors(current => {
+      if (!current[name]) {
+        return current
+      }
+
+      const nextErrors = { ...current }
+      delete nextErrors[name]
+      return nextErrors
+    })
+
+    setFormData(current => ({
+      ...current,
+      [name]: values
+    }))
+  }
+
+  function extractFieldErrors(
+    errors: Record<string, unknown>,
+    parentKey?: string
+  ): FieldValidationErrors {
+    const flattenedErrors: FieldValidationErrors = {}
+
+    Object.entries(errors).forEach(([key, value]) => {
+      const currentKey = parentKey ? `${parentKey}.${key}` : key
+
+      if (typeof value === 'string' && value.trim().length > 0) {
+        flattenedErrors[currentKey] = value
+        return
+      }
+
+      if (Array.isArray(value)) {
+        const firstMessage = value.find(
+          item => typeof item === 'string' && item.trim().length > 0
+        )
+
+        if (typeof firstMessage === 'string') {
+          flattenedErrors[currentKey] = firstMessage
+        }
+
+        return
+      }
+
+      if (value && typeof value === 'object') {
+        const nestedEntries = Object.entries(value)
+        const directMessages = nestedEntries
+          .map(([, nestedValue]) => nestedValue)
+          .filter(
+            (nestedValue): nestedValue is string =>
+              typeof nestedValue === 'string' && nestedValue.trim().length > 0
+          )
+
+        if (directMessages.length > 0) {
+          flattenedErrors[key] = directMessages[0]
+        }
+
+        Object.assign(
+          flattenedErrors,
+          extractFieldErrors(value as Record<string, unknown>, currentKey)
+        )
+      }
+    })
+
+    return flattenedErrors
+  }
+
+  function getFieldError(name: string) {
+    return fieldErrors[name] ?? null
+  }
+
+  function getNestedFieldError(group: string, part: string) {
+    return (
+      fieldErrors[part] ??
+      fieldErrors[`${group}.${part}`] ??
+      fieldErrors[`${group}[${part}]`] ??
+      fieldErrors[group] ??
+      null
+    )
   }
 
   function renderWeeklySchedules() {
@@ -240,8 +486,9 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
     return (
       <div className='space-y-2'>
         {days.map(([day, info]) => {
-          const enabled = Boolean(info?.enabled)
-          const slots = Array.isArray(info?.slots) ? info.slots : []
+          const schedule = info as { enabled?: boolean; slots?: Array<any> }
+          const enabled = Boolean(schedule?.enabled)
+          const slots = Array.isArray(schedule?.slots) ? schedule.slots : []
           const label = day.slice(0, 1).toUpperCase() + day.slice(1)
 
           return (
@@ -262,6 +509,7 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
     setSubmitting(true)
     setError(null)
     setSuccess(null)
+    setFieldErrors({})
 
     try {
       const response = await fetch(`/api/forms/${formId}`, {
@@ -273,9 +521,16 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
           data: formData
         })
       })
-      const payload = (await response.json()) as { error?: string }
+      const payload = (await response.json()) as {
+        error?: string
+        errors?: Record<string, unknown>
+      }
 
       if (!response.ok) {
+        if (payload.errors && typeof payload.errors === 'object') {
+          setFieldErrors(extractFieldErrors(payload.errors))
+        }
+
         throw new Error(payload.error ?? 'Unable to submit form')
       }
 
@@ -287,6 +542,360 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
     } finally {
       setSubmitting(false)
     }
+  }
+
+  function resetSubmittedForm() {
+    setFormData(initialFormData)
+    setSuccess(null)
+    setError(null)
+    setFieldErrors({})
+  }
+
+  function renderField(field: FormField, keyPrefix = ''): React.ReactNode {
+    const key = keyPrefix ? `${keyPrefix}-${field.name}` : field.name
+
+    if (field.type === 'container') {
+      const gridClass =
+        field.columns.length === 1
+          ? 'grid-cols-1'
+          : field.columns.length === 2
+            ? 'md:grid-cols-2'
+            : field.columns.length === 3
+              ? 'md:grid-cols-3'
+              : field.columns.length >= 4
+                ? 'md:grid-cols-2 xl:grid-cols-4'
+                : 'grid-cols-1'
+
+      return (
+        <div key={key} className={`grid gap-4 ${gridClass}`}>
+          {field.columns.map((column, columnIndex) => (
+            <div key={`${key}-column-${columnIndex}`} className='space-y-5'>
+              {column.fields.map((childField, childIndex) =>
+                renderField(childField, `${key}-column-${columnIndex}-${childIndex}`)
+              )}
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    if (field.type === 'hidden') {
+      return (
+        <input
+          key={key}
+          type='hidden'
+          name={field.name}
+          value={formData[field.name] ?? field.value}
+        />
+      )
+    }
+
+    if (field.type === 'section') {
+      return (
+        <div key={key} className='rounded-lg border bg-muted/30 p-4'>
+          <p className='text-base font-semibold'>{field.label}</p>
+          {field.description ? (
+            <p className='mt-1 text-sm text-muted-foreground'>{field.description}</p>
+          ) : null}
+        </div>
+      )
+    }
+
+    if (field.type === 'html') {
+      return (
+        <div
+          key={key}
+          className='prose prose-sm max-w-none text-foreground'
+          dangerouslySetInnerHTML={{ __html: field.html }}
+        />
+      )
+    }
+
+    if (field.type === 'name') {
+      return (
+        <fieldset key={key} className='space-y-3'>
+          <legend className='text-sm font-medium'>{field.label}</legend>
+          <div className='grid gap-3 md:grid-cols-2'>
+            {field.parts.map(part => (
+              <label key={`${key}-${part.name}`} className='space-y-2'>
+                <span className='text-sm font-medium'>
+                  {part.label}
+                  {renderRequiredIndicator(part.required)}
+                </span>
+                <Input
+                  className={cn(getNestedFieldError(field.name, part.name) ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200' : '')}
+                  value={formData[field.name]?.[part.name] ?? ''}
+                  placeholder={part.placeholder}
+                  onChange={event => updateNameField(field.name, part.name, event.target.value)}
+                  required={part.required}
+                />
+                {getNestedFieldError(field.name, part.name) ? (
+                  <p className='text-sm text-red-600'>{getNestedFieldError(field.name, part.name)}</p>
+                ) : null}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )
+    }
+
+    if (field.type === 'address') {
+      return (
+        <fieldset key={key} className='space-y-3'>
+          <legend className='text-sm font-medium'>
+            {field.label}
+            {renderRequiredIndicator(field.required)}
+          </legend>
+          <div className='grid gap-3 md:grid-cols-2'>
+            {field.parts.map(part => (
+              <label key={`${key}-${part.name}`} className='space-y-2'>
+                <span className='text-sm font-medium'>
+                  {part.label}
+                  {renderRequiredIndicator(part.required)}
+                </span>
+                {part.type === 'select' ? (
+                  <select
+                    className={cn(
+                      'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-[3px]',
+                      getNestedFieldError(field.name, part.name)
+                        ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200'
+                        : ''
+                    )}
+                    value={formData[field.name]?.[part.name] ?? ''}
+                    onChange={event => updateNestedField(field.name, part.name, event.target.value)}
+                    required={part.required}
+                  >
+                    <option value=''>{part.placeholder ?? 'Select an option'}</option>
+                    {(part.options ?? []).map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <Input
+                    className={cn(getNestedFieldError(field.name, part.name) ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200' : '')}
+                    value={formData[field.name]?.[part.name] ?? ''}
+                    placeholder={part.placeholder}
+                    onChange={event => updateNestedField(field.name, part.name, event.target.value)}
+                    required={part.required}
+                  />
+                )}
+                {getNestedFieldError(field.name, part.name) ? (
+                  <p className='text-sm text-red-600'>{getNestedFieldError(field.name, part.name)}</p>
+                ) : null}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      )
+    }
+
+    if (field.type === 'booking') {
+      const resolvedEventId = field.eventId ?? bookingEventId
+      const resolvedBookingUrl =
+        bookingUrl && resolvedEventId
+          ? bookingUrl.replaceAll('{eventId}', String(resolvedEventId))
+          : bookingUrl
+
+      return (
+        <div key={key} className='rounded-lg border border-dashed p-4'>
+          <p className='text-sm font-medium'>{field.label}</p>
+          {resolvedBookingUrl ? (
+            <div className='mt-3 space-y-2'>
+              <p className='text-sm text-muted-foreground'>
+                Booking calendar for event {resolvedEventId ?? 'unknown'}.
+              </p>
+              <iframe
+                title='Booking calendar'
+                src={resolvedBookingUrl}
+                className='h-[520px] w-full rounded-md border'
+                loading='lazy'
+              />
+            </div>
+          ) : null}
+          {!resolvedBookingUrl ? (
+            <div className='mt-3 space-y-3 text-sm text-muted-foreground'>
+              <p>Booking-linked field detected for event {resolvedEventId ?? 'unknown'}.</p>
+              {bookingError ? <p className='text-red-600'>{bookingError}</p> : renderWeeklySchedules()}
+            </div>
+          ) : null}
+        </div>
+      )
+    }
+
+    if (field.type === 'select') {
+      return (
+        <label key={key} className='block space-y-2'>
+          <span className='text-sm font-medium'>
+            {field.label}
+            {renderRequiredIndicator(field.required)}
+          </span>
+          <select
+            className={cn(
+              'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-[3px]',
+              getFieldError(field.name)
+                ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200'
+                : ''
+            )}
+            value={formData[field.name] ?? (field.multiple ? [] : '')}
+            onChange={event =>
+              field.multiple
+                ? updateMultiSelectField(
+                    field.name,
+                    Array.from(event.target.selectedOptions, option => option.value)
+                  )
+                : updateField(field.name, event.target.value)
+            }
+            required={field.required}
+            multiple={field.multiple}
+          >
+            {!field.multiple ? <option value=''>Select an option</option> : null}
+            {field.options.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {getFieldError(field.name) ? (
+            <p className='text-sm text-red-600'>{getFieldError(field.name)}</p>
+          ) : null}
+        </label>
+      )
+    }
+
+    if (field.type === 'gdpr') {
+      return (
+        <div key={key} className='space-y-3 rounded-lg border p-4'>
+          <div className='flex items-start gap-3'>
+            <Checkbox
+              id={field.name}
+              checked={Boolean(formData[field.name])}
+              onCheckedChange={checked => updateBooleanField(field.name, checked === true)}
+              required={field.required}
+            />
+            <div className='space-y-2'>
+              <Label htmlFor={field.name} className='leading-5'>
+                {field.label}
+                {renderRequiredIndicator(field.required)}
+              </Label>
+              {field.description ? (
+                <div
+                  className='text-sm text-muted-foreground'
+                  dangerouslySetInnerHTML={{ __html: field.description }}
+                />
+              ) : null}
+            </div>
+          </div>
+          {getFieldError(field.name) ? (
+            <p className='text-sm text-red-600'>{getFieldError(field.name)}</p>
+          ) : null}
+        </div>
+      )
+    }
+
+    if (field.type === 'radio') {
+      return (
+        <fieldset key={key} className='space-y-2'>
+          <legend className='text-sm font-medium'>
+            {field.label}
+            {renderRequiredIndicator(field.required)}
+          </legend>
+          <div className='space-y-2'>
+            {field.options.map(option => (
+              <label key={option.value} className='flex items-center gap-2 text-sm'>
+                <input
+                  type='radio'
+                  name={field.name}
+                  value={option.value}
+                  checked={formData[field.name] === option.value}
+                  onChange={event => updateField(field.name, event.target.value)}
+                  required={field.required}
+                />
+                <span>{option.label}</span>
+              </label>
+            ))}
+          </div>
+          {getFieldError(field.name) ? (
+            <p className='text-sm text-red-600'>{getFieldError(field.name)}</p>
+          ) : null}
+        </fieldset>
+      )
+    }
+
+    if (field.type === 'checkbox') {
+      return (
+        <fieldset key={key} className='space-y-2'>
+          <legend className='text-sm font-medium'>
+            {field.label}
+            {renderRequiredIndicator(field.required)}
+          </legend>
+          <div className='space-y-2'>
+            {field.options.map(option => (
+              <label key={option.value} className='flex items-center gap-2 text-sm'>
+                <input
+                  type='checkbox'
+                  name={`${field.name}[]`}
+                  value={option.value}
+                  checked={Array.isArray(formData[field.name]) && formData[field.name].includes(option.value)}
+                  onChange={event => updateCheckboxField(field.name, option.value, event.target.checked)}
+                />
+                <span>{option.label}</span>
+              </label>
+            ))}
+          </div>
+          {getFieldError(field.name) ? (
+            <p className='text-sm text-red-600'>{getFieldError(field.name)}</p>
+          ) : null}
+        </fieldset>
+      )
+    }
+
+    return (
+      <label key={key} className='block space-y-2'>
+        <span className='text-sm font-medium'>
+          {field.label}
+          {renderRequiredIndicator(field.required)}
+        </span>
+        {field.type === 'textarea' ? (
+          <Textarea
+            className={cn(getFieldError(field.name) ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200' : '')}
+            rows={field.rows ?? 4}
+            value={formData[field.name] ?? ''}
+            placeholder={field.placeholder}
+            onChange={event => updateField(field.name, event.target.value)}
+            required={field.required}
+          />
+        ) : (
+          <Input
+            className={cn(getFieldError(field.name) ? 'border-red-500 focus-visible:border-red-500 focus-visible:ring-red-200' : '')}
+            type={field.type === 'mask' ? 'text' : field.type}
+            value={formData[field.name] ?? ''}
+            placeholder={'placeholder' in field ? field.placeholder : undefined}
+            onChange={event => updateField(field.name, event.target.value)}
+            required={field.required}
+            inputMode={field.type === 'mask' ? 'text' : undefined}
+            pattern={field.type === 'mask' && field.mask ? field.mask : undefined}
+            data-mask={field.type === 'mask' ? field.mask : undefined}
+          />
+        )}
+        {getFieldError(field.name) ? (
+          <p className='text-sm text-red-600'>{getFieldError(field.name)}</p>
+        ) : null}
+      </label>
+    )
+  }
+
+  function renderRequiredIndicator(required: boolean) {
+    if (!required) {
+      return null
+    }
+
+    return (
+      <span aria-hidden='true' className='ml-1 text-red-500'>
+        *
+      </span>
+    )
   }
 
   return (
@@ -306,184 +915,30 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
 
         {loading ? <p className='text-sm text-muted-foreground'>Loading form…</p> : null}
         {error ? <p className='text-sm text-red-600'>{error}</p> : null}
-        {success ? <p className='text-sm text-green-600'>{success}</p> : null}
 
         {schema ? (
           <form className='space-y-5' onSubmit={handleSubmit}>
-            {schema.fields.map(field => {
-              if (field.type === 'name') {
-                return (
-                  <fieldset key={field.name} className='space-y-3'>
-                    <legend className='text-sm font-medium'>{field.label}</legend>
-                    <div className='grid gap-3 md:grid-cols-2'>
-                      {field.parts.map(part => (
-                        <label key={part.name} className='space-y-2'>
-                          <span className='text-sm font-medium'>
-                            {part.label}
-                            {part.required ? ' *' : ''}
-                          </span>
-                          <Input
-                            value={formData[field.name]?.[part.name] ?? ''}
-                            placeholder={part.placeholder}
-                            onChange={event =>
-                              updateNameField(field.name, part.name, event.target.value)
-                            }
-                            required={part.required}
-                          />
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                )
-              }
+            {success ? (
+              <div className='space-y-4 rounded-xl border border-green-200 bg-green-50 p-6 text-green-950'>
+                <div className='space-y-2'>
+                  <p className='text-lg font-semibold'>Thank you for your submission.</p>
+                  <p className='text-sm text-green-900/80'>
+                    We&apos;ve received your information successfully.
+                  </p>
+                </div>
+                <Button className='w-full' type='button' variant='outline' onClick={resetSubmittedForm}>
+                  Submit another response
+                </Button>
+              </div>
+            ) : (
+              <>
+                {schema.fields.map((field, index) => renderField(field, `root-${index}`))}
 
-              if (field.type === 'booking') {
-                const resolvedEventId = field.eventId ?? bookingEventId
-                const resolvedBookingUrl =
-                  bookingUrl && resolvedEventId
-                    ? bookingUrl.replaceAll('{eventId}', String(resolvedEventId))
-                    : bookingUrl
-
-                return (
-                  <div key={field.name} className='rounded-lg border border-dashed p-4'>
-                    <p className='text-sm font-medium'>{field.label}</p>
-                    {resolvedBookingUrl ? (
-                      <div className='mt-3 space-y-2'>
-                        <p className='text-sm text-muted-foreground'>
-                          Booking calendar for event {resolvedEventId ?? 'unknown'}.
-                        </p>
-                        <iframe
-                          title='Booking calendar'
-                          src={resolvedBookingUrl}
-                          className='h-[520px] w-full rounded-md border'
-                          loading='lazy'
-                        />
-                      </div>
-                    ) : null}
-                    {!resolvedBookingUrl ? (
-                      <div className='mt-3 space-y-3 text-sm text-muted-foreground'>
-                        <p>
-                          Booking-linked field detected for event {resolvedEventId ?? 'unknown'}.
-                        </p>
-                        {bookingError ? (
-                          <p className='text-red-600'>{bookingError}</p>
-                        ) : (
-                          renderWeeklySchedules()
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
-                )
-              }
-
-              if (field.type === 'select') {
-                return (
-                  <label key={field.name} className='block space-y-2'>
-                    <span className='text-sm font-medium'>
-                      {field.label}
-                      {field.required ? ' *' : ''}
-                    </span>
-                    <select
-                      className='flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-none focus-visible:ring-[3px]'
-                      value={formData[field.name] ?? ''}
-                      onChange={event => updateField(field.name, event.target.value)}
-                      required={field.required}
-                    >
-                      <option value=''>Select an option</option>
-                      {field.options.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                )
-              }
-
-              if (field.type === 'radio') {
-                return (
-                  <fieldset key={field.name} className='space-y-2'>
-                    <legend className='text-sm font-medium'>
-                      {field.label}
-                      {field.required ? ' *' : ''}
-                    </legend>
-                    <div className='space-y-2'>
-                      {field.options.map(option => (
-                        <label key={option.value} className='flex items-center gap-2 text-sm'>
-                          <input
-                            type='radio'
-                            name={field.name}
-                            value={option.value}
-                            checked={formData[field.name] === option.value}
-                            onChange={event => updateField(field.name, event.target.value)}
-                            required={field.required}
-                          />
-                          <span>{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                )
-              }
-
-              if (field.type === 'checkbox') {
-                return (
-                  <fieldset key={field.name} className='space-y-2'>
-                    <legend className='text-sm font-medium'>
-                      {field.label}
-                      {field.required ? ' *' : ''}
-                    </legend>
-                    <div className='space-y-2'>
-                      {field.options.map(option => (
-                        <label key={option.value} className='flex items-center gap-2 text-sm'>
-                          <input
-                            type='checkbox'
-                            name={`${field.name}[]`}
-                            value={option.value}
-                            checked={Array.isArray(formData[field.name]) &&
-                              formData[field.name].includes(option.value)}
-                            onChange={event =>
-                              updateCheckboxField(field.name, option.value, event.target.checked)
-                            }
-                          />
-                          <span>{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </fieldset>
-                )
-              }
-
-              return (
-                <label key={field.name} className='block space-y-2'>
-                  <span className='text-sm font-medium'>
-                    {field.label}
-                    {field.required ? ' *' : ''}
-                  </span>
-                  {field.type === 'textarea' ? (
-                    <Textarea
-                      rows={field.rows ?? 4}
-                      value={formData[field.name] ?? ''}
-                      placeholder={field.placeholder}
-                      onChange={event => updateField(field.name, event.target.value)}
-                      required={field.required}
-                    />
-                  ) : (
-                    <Input
-                      type={field.type === 'email' ? 'email' : 'text'}
-                      value={formData[field.name] ?? ''}
-                      placeholder={field.placeholder}
-                      onChange={event => updateField(field.name, event.target.value)}
-                      required={field.required}
-                    />
-                  )}
-                </label>
-              )
-            })}
-
-            <Button disabled={submitting} type='submit'>
-              {submitting ? 'Submitting…' : 'Submit'}
-            </Button>
+                <Button className='w-full' disabled={submitting} type='submit'>
+                  {submitting ? 'Submitting…' : 'Submit'}
+                </Button>
+              </>
+            )}
           </form>
         ) : null}
       </div>
