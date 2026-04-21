@@ -7,6 +7,7 @@ seo:
 
 integrations:
   formId: 11
+  proxyFormId: 11
   bookingCalendarId: 2
   bookingEventId: 6
 ---

@@ -1,0 +1,33 @@
+---
+import { buildFluentFormProxyPath } from '@/lib/fluent-form-proxy'
+
+type Props = {
+  formId: number
+}
+
+const { formId } = Astro.props
+const formUrl = buildFluentFormProxyPath(formId)
+---
+
+<section id='standalone-form-proxy' class='bg-background px-4 pb-16'>
+  <div class='mx-auto max-w-5xl rounded-2xl border bg-background p-6 shadow-sm md:p-8'>
+    <div class='mb-6 space-y-2'>
+      <p class='text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground'>
+        Fluent Forms
+      </p>
+      <h2 class='text-2xl font-semibold tracking-tight'>WordPress Form</h2>
+      <p class='text-sm text-muted-foreground'>
+        This section renders the native Fluent Forms experience from WordPress through the Astro proxy.
+      </p>
+    </div>
+
+    <div class='overflow-hidden rounded-xl border bg-muted/20'>
+      <iframe
+        title='Fluent Forms form'
+        src={formUrl}
+        class='h-[1100px] w-full'
+        loading='lazy'
+      />
+    </div>
+  </div>
+</section>

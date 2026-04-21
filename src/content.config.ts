@@ -34,6 +34,7 @@ const seoSchema = z.object({
 
 const integrationsSchema = z.object({
   formId: z.number().int().positive().optional(),
+  proxyFormId: z.number().int().positive().optional(),
   bookingCalendarId: z.number().int().positive().optional(),
   bookingEventId: z.number().int().positive().optional(),
   standaloneBookingUrl: z.string().url().optional(),

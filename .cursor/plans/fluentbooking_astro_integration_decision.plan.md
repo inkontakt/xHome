@@ -52,9 +52,34 @@ The current working behavior is:
 - HTML, asset paths, AJAX endpoints, and related subrequests are rewritten to flow through the Astro origin
 - the user sees the native FluentBooking structure on the Astro page
 - the booking is currently confirmed working in the frontend
+- the booking now opens directly in the single-event booking view instead of first showing the extra event-card/button layer
+- booking confirmation pages render within the proxy structure
+- cancel and reschedule flows now have proxy-aware support so `meeting_hash` management URLs can stay inside the Astro proxy lifecycle
+- proxy rewriting now covers additional booking-management URL patterns and escaped URL payloads used by the plugin during the booking lifecycle
 
 The important shift is that this is no longer a design recommendation only.
 It is now the implemented direction in this repository.
+
+## Current Implementation Snapshot
+The current repo state should now be understood as the following working baseline:
+
+- content-managed booking IDs are set in markdown via `bookingCalendarId` and `bookingEventId`
+- Astro reads those IDs and renders the standalone booking section automatically on the landing page
+- the standalone booking section points to the Astro booking proxy route rather than to a direct external booking URL
+- the main booking proxy route resolves the WordPress booking target and renders the proxied booking page from the Astro origin
+- the direct booking experience is now event-first, meaning the user lands directly in the booking flow rather than on the extra "book now" card step
+- proxy lifecycle support has been extended for:
+  - booking page rendering
+  - booking confirmation rendering
+  - cancel management flow
+  - reschedule management flow
+- proxy rewriting has been hardened to preserve:
+  - root query booking links such as `/?fluent-booking=booking...`
+  - booking-management redirects and referers
+  - escaped booking URLs returned inside text or JSON-like plugin payloads
+
+The known open area is not the core proxy direction anymore.
+The known open area is now the next-layer UX/data contract work, especially invitee-prefill workflow definition and any final hardening/validation of the management flows.
 
 ## The Key Architectural Clarification
 One question caused repeated confusion during the investigation:
@@ -206,6 +231,9 @@ What was verified:
 - the proxy route emits rewritten localhost/app-origin URLs instead of direct external framing
 - booking-related subrequests such as FluentBooking availability calls work through the Astro proxy
 - the user confirmed that the booking is showing in place and working correctly in the frontend
+- the extra event-card/button layer was removed in favor of direct event booking embed behavior
+- booking confirmation state is displayed inside the proxy-driven frontend flow
+- cancel and reschedule management URLs were added to the proxy-aware flow rather than left as direct-site escapes
 
 Conclusion:
 
@@ -405,29 +433,113 @@ The proxy version should not be treated as complete until it is verified end-to-
 - slot selection
 - booking submission
 - confirmation state
+- cancel flow
+- reschedule flow
+- any management-page redirects or follow-up actions that originate from confirmation pages
+
+## Implementation Progress Since The Initial Decision
+The following items should now be treated as completed implementation milestones unless later regression disproves them:
+
+- `bookingCalendarId + bookingEventId` markdown contract added and wired into the Astro landing page
+- standalone booking section added to the homepage and driven from content config
+- same-origin booking proxy routes added for main booking pages and downstream asset/subrequest handling
+- direct event booking embed behavior enabled so users land in the appointment flow itself
+- booking confirmation view confirmed rendering inside the proxy container
+- cancel and reschedule proxy support added for `meeting_hash` management URLs
+- proxy rewriting extended to preserve booking-management query links and escaped URL payloads
+
+The following items should still be treated as validation-sensitive rather than permanently closed:
+
+- full browser-tested end-to-end cancel flow after a real booking
+- full browser-tested end-to-end reschedule flow after a real booking
+- browser coverage and stability across multiple events/calendars
+
+## Invitee Prefill Requirement
+An additional clarified requirement now exists around prefilled booking data.
+
+The corrected prefix is:
+
+- `invitee_`
+
+This means the intended prefilling model is no longer "maybe custom input injection first."
+The desired first-class workflow is:
+
+- FluentBooking booking target still comes from markdown/config
+- invitee-specific values are passed through the booking/proxy URL using FluentBooking-supported `invitee_*` query parameters
+- FluentBooking receives those parameters through the proxy and pre-fills the booking form natively
+
+Examples of the target URL shape:
+
+- `/booking-proxy/2/6?invitee_firstname=Anna&invitee_lastname=Khan&invitee_email=anna@example.com`
+- `/booking-proxy/2/6?invitee_name=Anna%20Khan&invitee_email=anna@example.com&invitee_organisation=Inkontakt`
+
+## Invitee Prefill Open Questions
+The unresolved work is no longer "can prefill exist at all?"
+The unresolved work is the product/process contract for how prefills are sourced and controlled.
+
+The main open questions are:
+
+- where do the invitee-prefill values originate at runtime?
+- are they expected to come from:
+  - another app or CRM
+  - URL params from an upstream page
+  - markdown-configured defaults
+  - a hybrid of markdown defaults plus runtime user data
+- which invitee fields are officially supported and documented by this project?
+- should Astro simply pass through existing `invitee_*` params, or should it also map internal app data into that format?
+- should markdown support only booking target IDs, or also optional default prefill config?
+
+## Recommended Prefill Workflow Direction
+The most sensible current recommendation is:
+
+- keep markdown/config responsible for the booking target only
+- let runtime user/context data provide invitee-prefill values
+- preserve and pass through supported `invitee_*` params via the Astro proxy unchanged
+
+Why this is the best next-step model:
+
+- editors keep a clean content contract for selecting the booking target
+- user-specific values stay dynamic instead of being hard-coded in markdown
+- the proxy remains infrastructure glue rather than becoming the owner of business data
+- FluentBooking can continue to do native prefilling itself
+
+Possible later extension:
+
+- allow markdown-configured default invitee-prefill values for static/default cases
+- then merge those defaults with runtime values, where runtime values win
+
+That should be treated as optional enhancement, not as the required first step.
 
 ## Recommended Next Steps
 
-### Phase 1: Hardening
+### Phase 1: Hardening And Validation
 - test more booking flows across multiple events/calendars
 - validate booking confirmation behavior consistently
 - verify month navigation, slot selection, and submission flows across browsers
+- run full real-booking cancel and reschedule tests end-to-end inside the proxy
+- confirm no remaining iframe-breakout or management-link escape paths remain
 
 ### Phase 2: Content Contract Cleanup
 - keep `calendarId + eventId` as the primary markdown contract
 - document that contract for future editors and developers
 - optionally add validation or clearer authoring guidance around booking config
 
-### Phase 3: Cleanup
+### Phase 3: Invitee Prefill Finalization
+- define the official invitee-prefill source-of-truth workflow
+- document the supported `invitee_*` parameter contract
+- decide whether Astro only passes through `invitee_*` params or also derives/maps them from internal app/user data
+- decide whether markdown allows only booking IDs or also optional default prefill values
+
+### Phase 4: Cleanup
 - remove or isolate abandoned experimental paths if they are no longer needed
 - decide whether to retain the Astro-native fallback files as reference or move them out of the main integration path
 - decide whether the older lightweight proxy experiment files should remain for debugging or be retired
 
-### Phase 4: Follow-Up Integration
+### Phase 5: Follow-Up Integration
 - evaluate whether Fluent Form and standalone FluentBooking should stay separate or be composed more tightly later
 - implement any additional booking UX refinements only after the proxy path remains stable
 
-### Phase 5: Fallback Strategy
+### Phase 6: Fallback Strategy
 - keep the Astro-native API-backed renderer as fallback if the proxy path becomes disproportionate in cost or instability in future maintenance
 
 ## Final Position
@@ -442,6 +554,7 @@ The current preferred production direction is:
 
 - a dynamic, markdown-driven, same-origin proxy/subapp architecture that preserves native FluentBooking UI inside Astro
 - this direction is now implemented and confirmed working in the frontend
+- this direction now also includes direct event booking embed behavior plus proxy-aware cancel/reschedule support as part of the intended integrated experience
 
 And the fallback, if that becomes too costly or fragile, is:
 
