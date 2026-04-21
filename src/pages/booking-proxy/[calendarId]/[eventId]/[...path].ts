@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 
 import {
+  buildUpstreamReferer,
   getFluentBookingProxyContext,
   isTextLikeContentType,
   rewriteBookingProxyTextAsset,
@@ -39,7 +40,7 @@ async function proxyBookingRequest(request: Request, params: Record<string, stri
   }
 
   upstreamHeaders.set('Origin', context.remoteOrigin)
-  upstreamHeaders.set('Referer', `${context.remoteOrigin}/fb-embed/?event_id=${eventId}`)
+  upstreamHeaders.set('Referer', buildUpstreamReferer(context, request))
 
   const upstreamResponse = await fetch(upstreamUrl, {
     method: request.method,

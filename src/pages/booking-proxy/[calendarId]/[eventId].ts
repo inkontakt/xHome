@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro'
 
 import {
-  buildBookingEmbedUrl,
+  buildBookingProxyEntryUrl,
   getFluentBookingProxyContext,
   rewriteBookingProxyHtml,
   rewriteProxyLocationHeader
@@ -15,12 +15,8 @@ export const GET: APIRoute = async ({ params, request }) => {
     const calendarId = getNumericParam(params, 'calendarId')
     const eventId = getNumericParam(params, 'eventId')
     const context = await getFluentBookingProxyContext(calendarId, eventId)
-    const upstreamUrl = buildBookingEmbedUrl(context)
     const incomingUrl = new URL(request.url)
-
-    incomingUrl.searchParams.forEach((value, key) => {
-      upstreamUrl.searchParams.set(key, value)
-    })
+    const upstreamUrl = buildBookingProxyEntryUrl(context, incomingUrl)
 
     const upstreamResponse = await fetch(upstreamUrl, {
       headers: {
