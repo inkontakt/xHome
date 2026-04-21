@@ -1,0 +1,34 @@
+---
+import { buildBookingProxyPath } from '@/lib/fluent-booking-proxy'
+
+type Props = {
+  calendarId: number
+  eventId: number
+}
+
+const { calendarId, eventId } = Astro.props
+const bookingUrl = buildBookingProxyPath(calendarId, eventId)
+---
+
+<section id='standalone-booking' class='bg-background px-4 pb-16'>
+  <div class='mx-auto max-w-5xl rounded-2xl border bg-background p-6 shadow-sm md:p-8'>
+    <div class='mb-6 space-y-2'>
+      <p class='text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground'>
+        Fluent Booking
+      </p>
+      <h2 class='text-2xl font-semibold tracking-tight'>Booking Calendar</h2>
+      <p class='text-sm text-muted-foreground'>
+        This section renders the native Fluent Booking experience through the Astro proxy.
+      </p>
+    </div>
+
+    <div class='overflow-hidden rounded-xl border bg-muted/20'>
+      <iframe
+        title='Fluent Booking calendar'
+        src={bookingUrl}
+        class='h-[900px] w-full'
+        loading='lazy'
+      />
+    </div>
+  </div>
+</section>

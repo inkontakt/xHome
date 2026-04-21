@@ -240,6 +240,13 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
   useEffect(() => {
     const bookingField = schema?.fields.find(field => field.type === 'booking')
     const eventId = bookingField?.eventId ?? bookingEventId
+    const hasEmbeddedBookingUrl = Boolean(bookingUrl)
+
+    if (hasEmbeddedBookingUrl) {
+      setBookingData(null)
+      setBookingError(null)
+      return
+    }
 
     if (!bookingCalendarId || !eventId) {
       setBookingData(null)
@@ -283,7 +290,7 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
     return () => {
       active = false
     }
-  }, [bookingCalendarId, bookingEventId, schema])
+  }, [bookingCalendarId, bookingEventId, bookingUrl, schema])
 
   function updateField(name: string, value: string) {
     setFieldErrors(current => {
@@ -692,20 +699,14 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
     }
 
     if (field.type === 'booking') {
-      const resolvedEventId = field.eventId ?? bookingEventId
-      const resolvedBookingUrl =
-        bookingUrl && resolvedEventId
-          ? bookingUrl.replaceAll('{eventId}', String(resolvedEventId))
-          : bookingUrl
+      const resolvedBookingUrl = bookingUrl
 
       return (
         <div key={key} className='rounded-lg border border-dashed p-4'>
           <p className='text-sm font-medium'>{field.label}</p>
           {resolvedBookingUrl ? (
             <div className='mt-3 space-y-2'>
-              <p className='text-sm text-muted-foreground'>
-                Booking calendar for event {resolvedEventId ?? 'unknown'}.
-              </p>
+              <p className='text-sm text-muted-foreground'>Bookings are handled in FluentBooking.</p>
               <iframe
                 title='Booking calendar'
                 src={resolvedBookingUrl}

@@ -1,78 +1,407 @@
 # FluentBooking Astro Integration Decision Plan
 
-## Summary
-Today’s conversation converged on a phased direction for FluentBooking in Astro.
+## Executive Summary
+This document records the investigation history, the implementation paths that were tried, what failed, what was proven, and the current architectural decision for FluentBooking inside the Astro frontend.
 
-The current integration approach in this repo is not the direction to continue. It was investigated and found to be only a partial implementation: Astro can currently read some FluentBooking data, but it does not create real FluentBooking bookings from Astro. The user explicitly decided to discard that structure and restart from scratch with a cleaner approach.
+The requirement is now clearer than it was at the beginning:
 
-The agreed near-term goal is not full form integration. The immediate goal is narrower: show FluentBooking on an Astro page the same way it appears when FluentBooking shortcode output is used on a WordPress page. Fluent Forms integration is deferred to a later phase.
+- users should be able to define booking references from markdown or content config
+- Astro should automatically render the correct booking experience on the frontend
+- the booking should continue to use FluentBooking and WordPress as the real backend
+- if possible, the booking experience should preserve the native FluentBooking look and behavior rather than a custom recreation
 
-## Conversation Record
-What was discussed and concluded today:
+That clarification changes the recommendation.
 
-- The original goal was to make FluentBooking behave in Astro similarly to how Fluent Forms currently works: render in Astro and submit into WordPress so data appears natively in the plugin admin.
-- Investigation showed the repo already has a partial booking path:
-  - Fluent Forms submission is proxied through Astro into WordPress.
-  - FluentBooking event/availability/field data can be fetched.
-  - There is no booking creation flow wired from Astro into FluentBooking.
-- That led to the conclusion that the existing booking implementation is incomplete and should not be the foundation for the final solution.
-- The user then changed direction and said the current framework/structure should be removed conceptually and the work should restart from scratch.
-- We discussed two strategic options for FluentBooking:
-  1. Custom Astro-native booking UI that posts to FluentBooking via Astro server routes.
-  2. Native FluentBooking UI shown inside Astro.
-- Recommendation given: for a long-term fully integrated UX, custom Astro UI is stronger, but for the current phase it is not the best first step.
-- The user clarified that the current phase is only about showing FluentBooking now, just like the shortcode/page experience in WordPress. Forms integration will come later.
-- Based on that narrower requirement, recommendation given:
-  - Use the exact native FluentBooking UI for now.
-  - Embed it in Astro via the public/native FluentBooking booking page URL.
-  - Do not attempt to manually recreate shortcode output from raw WordPress data in this phase.
-- The user accepted that recommendation.
+The current best-fit direction is:
 
-## Confirmed Direction
-The current decision path for tomorrow is:
+- use a stronger same-origin proxy/subapp architecture if the business requires the native FluentBooking UI inside Astro
+- keep the integration dynamic by letting markdown/config provide `eventId`, `calendarId`, slug, or booking URL references
+- avoid simple iframe-only embedding and lightweight HTML proxying, because those have already proven unreliable here
 
-1. Phase 1 uses the native FluentBooking frontend experience, not a custom Astro recreation.
-2. Phase 1 delivers FluentBooking inside Astro via its public booking page URL.
-3. Phase 1 explicitly avoids mixing Fluent Forms into the booking experience.
-4. Phase 2, after native booking display works correctly, can evaluate Fluent Forms integration around or alongside FluentBooking.
-5. The previously explored partial booking implementation in the repo should not be treated as the target architecture.
+If exact native FluentBooking UI later becomes optional, an Astro-native UI backed by real FluentBooking data remains a valid fallback. But for the current boss-level preference, the proxy/subapp architecture is the correct target.
 
-## Key Changes To Make
-Implementation should be planned around these changes in behavior and structure:
+## Current Requirement Definition
+The requirement is not just "show booking somehow."
 
-- Stop using the current partial “dynamic booking data fetch + placeholder booking field rendering” as the intended FluentBooking solution.
-- Replace the booking display path with a simpler native embed strategy based on the public FluentBooking booking page URL.
-- Treat booking configuration as content/config-driven so an Astro page can specify which FluentBooking page/event to show.
-- Keep the implementation isolated from Fluent Forms logic so the booking phase remains simple and correct.
-- Preserve the option for a later redesign into a custom Astro-native booking UI once the booking-only phase is proven.
+The actual target behavior is:
 
-## Decision To Make Tomorrow
-The main decision tomorrow should be whether to proceed with the already recommended Phase 1 architecture or reopen the architecture discussion.
+- a content editor can add a FluentBooking reference in markdown or landing configuration
+- Astro resolves that reference dynamically
+- the correct booking experience appears automatically on the page
+- the user interacts with real FluentBooking behavior
+- bookings continue to be stored and managed in WordPress / FluentBooking
 
-Recommended decision:
-- Proceed with native FluentBooking embed via booking page URL.
+This is very close to the control model already used for Fluent Forms:
 
-Only reopen the decision if one of these is true:
-- The native FluentBooking embed does not match shortcode behavior closely enough.
-- The booking page URL is not available/publicly usable in the target WordPress setup.
-- The embed creates unacceptable styling, responsiveness, or navigation issues in Astro.
+- content decides what to render
+- Astro decides where and how to render it
+- WordPress remains the backend source of truth
 
-If any of those occur, the fallback direction should be:
-- Build a custom Astro wrapper using FluentBooking data/API, but only after documenting why native embedding is insufficient.
+The new nuance is that the boss would prefer the native FluentBooking structure if it can still stay dynamic and content-driven.
 
-## Test Plan
-When implementation starts, acceptance should be based on these checks:
+## The Key Architectural Clarification
+One question caused repeated confusion during the investigation:
 
-- An Astro page can display the native FluentBooking experience using configured booking page information.
-- The displayed experience matches the WordPress shortcode/page behavior closely enough for booking-only use.
-- The booking UI is usable on desktop and mobile inside the Astro layout.
-- Booking submission creates a real booking in FluentBooking/WordPress admin.
-- No Fluent Forms dependency is required for this phase.
-- Existing unrelated Astro page content continues to render normally around the booking section.
+Can a proxy architecture still be dynamic from markdown, or does it become hard-coded?
 
-## Assumptions
-- “Same as shortcode” for this phase means using FluentBooking’s own frontend behavior, not rebuilding it.
-- The public/native FluentBooking booking page URL exists or can be obtained from WordPress configuration.
-- Styling differences caused by embedding are acceptable in Phase 1 as long as the booking flow works correctly.
-- Fluent Forms integration is intentionally out of scope until after booking-only display is working.
-- The current partial booking code in the repo may later be removed or bypassed, but that cleanup is not part of this planning turn.
+The answer is:
+
+- yes, a proxy architecture can still be fully dynamic
+- dynamic content configuration is not exclusive to custom rendering
+- markdown can supply `eventId`, `calendarId`, slug, or booking URL
+- Astro can transform those values into proxy routes at runtime
+
+So the real decision is not:
+
+- dynamic markdown integration versus proxy
+
+The real decision is:
+
+- lightweight embed/proxy attempts versus a full same-origin proxy/subapp architecture
+
+That distinction matters, because the lightweight versions failed, while the stronger architecture is still valid.
+
+## What Was Investigated
+
+### 1. Existing Partial Repo Integration
+The repository already contained partial FluentBooking-related code:
+
+- booking-related API fetches
+- booking-related placeholders
+- some field and event handling
+
+What it did not provide:
+
+- a complete booking flow
+- a reliable rendering architecture
+- a production-ready inline booking experience
+
+Conclusion:
+
+- useful as reference material
+- not a complete solution
+
+### 2. Direct Native Booking URL Embed
+The first simple strategy was to embed the public FluentBooking booking page directly in Astro via iframe.
+
+Why it looked attractive:
+
+- preserved native FluentBooking UI
+- minimal frontend work
+- closest to "render the shortcode result"
+
+What happened:
+
+- the page worked directly in the browser
+- the iframe in Astro was blocked by `Content-Security-Policy` `frame-ancestors`
+
+Conclusion:
+
+- direct external iframe is not reliable in this environment
+- it depends on server/security headers outside the Astro app
+
+### 3. Lightweight Astro Proxy of Booking HTML and AJAX
+To work around iframe restrictions, a lighter Astro proxy was tried.
+
+That approach attempted to:
+
+- fetch booking HTML through Astro
+- rewrite the HTML
+- reroute AJAX calls
+- present the proxied page from the Astro side
+
+What succeeded:
+
+- the calendar could sometimes render
+- assets and AJAX could partially be routed through Astro
+
+What failed:
+
+- click behavior became brittle
+- date selection became unreliable
+- runtime assumptions inside the plugin frontend were repeatedly broken
+- the setup depended on careful HTML rewriting and JS behavior preservation
+
+Conclusion:
+
+- the lightweight proxy/embed approach is too fragile
+- it is not a production-grade solution for this plugin
+
+### 4. WordPress-Rendered `fb-embed` Endpoint
+A better native-rendering test was then tried:
+
+- create a custom WordPress endpoint
+- let WordPress itself render the FluentBooking shortcode
+- embed that endpoint from Astro
+
+What was proven:
+
+- the endpoint worked directly in WordPress
+- FluentBooking rendered correctly there
+- date selection and booking functions worked correctly there
+
+What still failed:
+
+- Astro iframe embedding was blocked by the final CSP header
+- another header layer still injected restrictive `frame-ancestors`
+
+Conclusion:
+
+- this confirmed that WordPress rendering itself is fine
+- but direct iframe embedding remains dependent on infrastructure header control
+
+### 5. Astro-Native Booking Renderer With Real Submission
+Because the embed path kept failing, a custom Astro renderer was tested.
+
+That path proved:
+
+- Astro can fetch FluentBooking-backed data
+- Astro can submit real bookings into FluentBooking
+- bookings can be written into WordPress successfully
+
+This proved the backend integration model is feasible.
+
+Why it was not accepted as the final answer:
+
+- it did not preserve the native FluentBooking presentation closely enough
+- the current requirement now leans toward preserving native UI if possible
+
+Conclusion:
+
+- this remains a valid fallback architecture
+- but it is no longer the first recommendation if native UI is still desired
+
+## What Was Actually Rejected
+It is important to state this precisely.
+
+We did not prove that all proxy approaches are bad.
+
+What we did prove is:
+
+- direct iframe to external booking page is unreliable here
+- lightweight HTML/AJAX proxying is brittle here
+- shortcode text inside Astro is not a real solution
+
+What was not fully implemented here:
+
+- a full same-origin proxy/subapp architecture like the one already used elsewhere in the organization
+
+That stronger architecture is materially different from the lighter attempts.
+
+It can include:
+
+- same-origin routing
+- path/query preservation
+- asset proxying
+- AJAX/API proxying
+- cookie and auth rewriting when needed
+- app-origin delivery of the booking experience
+
+That is not the same thing as a simple iframe or a page rewrite experiment.
+
+## Why Proxy Is Back On The Table
+Proxy is back on the table because the actual business requirement changed from:
+
+- "make booking work inline somehow"
+
+to:
+
+- "keep the native FluentBooking structure if possible, while still allowing dynamic content-driven configuration from markdown"
+
+Given that requirement, the stronger proxy/subapp model is the correct fit.
+
+Why:
+
+- it preserves native FluentBooking UI and behavior better
+- it can still be driven dynamically by markdown/config
+- it keeps WordPress as the backend source of truth
+- it matches an already known company pattern from another booking app setup
+
+## Dynamic Markdown-Controlled Proxy Is Possible
+This is now a formal requirement and should be considered fully compatible with the proxy direction.
+
+Recommended content model:
+
+- markdown/config stores one of:
+  - `eventId`
+  - `calendarId`
+  - booking slug
+  - booking URL
+
+Recommended Astro behavior:
+
+- read the booking reference from content
+- transform it into the internal proxy route
+- render the proxy-backed booking experience automatically on the page
+
+This means editors still get the simplicity they need:
+
+- add ID/reference in content
+- frontend renders the corresponding booking experience automatically
+
+So the proxy architecture does not remove flexibility.
+It only changes the infrastructure behind the rendering.
+
+## Why The Lightweight Embed Path Is Still Not Recommended
+Even though native UI is desired, the earlier lightweight embed/proxy path should still be considered rejected.
+
+Reasons:
+
+- it depends on third-party framing permissions
+- it breaks when CSP headers are not aligned
+- it is not robust against plugin page-context assumptions
+- it is too easy for interaction bugs to reappear
+- it is difficult to maintain with confidence
+
+So the choice is not:
+
+- simple embed versus Astro-native UI
+
+The real choice is:
+
+- full same-origin proxy/subapp for native UI
+- or Astro-native custom UI for maximum control
+
+## Decision Matrix
+
+### Option A: Full Same-Origin Proxy / Booking Subapp
+Best when:
+
+- native FluentBooking UI matters
+- native plugin behavior matters
+- markdown-driven dynamic rendering still matters
+- the team accepts higher infrastructure complexity
+
+Benefits:
+
+- closest to native WordPress/FluentBooking behavior
+- content-driven IDs can still work
+- strongest fit for boss requirement if native UI matters
+
+Costs:
+
+- higher implementation complexity
+- route, asset, cookie, and request proxying must be done carefully
+- more infrastructure work than a custom Astro renderer
+
+### Option B: Astro-Native UI Backed By Real FluentBooking APIs
+Best when:
+
+- inline rendering matters more than native plugin appearance
+- UI control and maintainability matter most
+- the team wants to avoid proxy complexity
+
+Benefits:
+
+- fully under Astro control
+- simpler long-term ownership
+- no CSP/frame-ancestor dependency
+
+Costs:
+
+- not native FluentBooking UI
+- more custom UI work
+- plugin frontend must be reinterpreted rather than preserved
+
+## Current Recommended Direction
+Based on the clarified requirement, the current recommendation is:
+
+- proceed with the stronger same-origin proxy/subapp architecture
+- keep booking selection dynamic through markdown/config references
+- do not continue investing in simple iframe embedding or lightweight page proxying
+
+This is the cleanest way to satisfy all of the following at once:
+
+- native FluentBooking structure
+- dynamic markdown-controlled configuration
+- Astro page integration
+- WordPress-backed booking truth
+
+## Concrete Implementation Principles For The Proxy Path
+If execution continues on the proxy path, the system should be designed around these principles:
+
+### 1. Content-Driven Inputs
+Allow content to specify booking references such as:
+
+- `eventId`
+- `calendarId`
+- booking slug
+- booking URL
+
+### 2. Astro Resolution Layer
+Astro should:
+
+- read booking references from markdown/config
+- normalize them into a canonical proxy route
+- render the booking area based on that derived route
+
+### 3. Same-Origin Delivery
+The browser should experience the booking flow as app-origin delivery, not as a raw external frame dependency.
+
+This likely means:
+
+- same-origin route mounting
+- proxying path and query parameters
+- proxying HTML/assets/XHR/fetch requests as needed
+
+### 4. Runtime Preservation
+The proxy system must preserve:
+
+- booking app paths
+- query strings
+- required assets
+- AJAX/API endpoints
+- cookies or session state if relevant
+
+### 5. Functional Validation
+The proxy version should not be treated as complete until it is verified end-to-end for:
+
+- calendar render
+- month navigation
+- date selection
+- slot selection
+- booking submission
+- confirmation state
+
+## Recommended Next Steps
+
+### Phase 1: Proxy Architecture Mapping
+- document the working company proxy pattern already shared
+- identify which parts can be reused for Astro
+- define the minimal same-origin proxy surface needed for FluentBooking
+
+### Phase 2: Dynamic Content Contract
+- define exactly which markdown fields will control booking rendering
+- decide whether canonical input is `eventId`, `calendarId`, slug, or URL
+- document the conversion from content input to proxy route
+
+### Phase 3: Proxy Implementation
+- implement same-origin booking route handling
+- implement request forwarding/preservation
+- ensure frontend route output is driven by content config
+
+### Phase 4: Functional Validation
+- verify the booking behaves like the native WordPress version
+- confirm dynamic content swapping works
+- confirm submission reaches real FluentBooking backend
+
+### Phase 5: Fallback Strategy
+- keep the Astro-native API-backed renderer as fallback if the proxy path becomes disproportionate in cost or instability
+
+## Final Position
+The decision is now:
+
+- not simple iframe
+- not lightweight HTML proxy
+- not shortcode text inside Astro
+- not immediate preference for custom UI
+
+The current preferred production direction is:
+
+- a dynamic, markdown-driven, same-origin proxy/subapp architecture that preserves native FluentBooking UI inside Astro
+
+And the fallback, if that becomes too costly or fragile, is:
+
+- an Astro-native booking renderer backed by real FluentBooking data and real FluentBooking booking submission
+
+This position reflects everything proven so far, while aligning with the boss requirement more accurately than the previous plan.

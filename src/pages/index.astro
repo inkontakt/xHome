@@ -9,6 +9,7 @@ import PricingSectionPage from '@/components/sections/pricing-section'
 import FAQSectionPage from '@/components/sections/faq-section'
 import CTASection from '@/components/sections/cta-section'
 import FooterSection from '@/components/sections/footer-section'
+import StandaloneBookingSection from '@/components/sections/standalone-booking-section.astro'
 import DynamicFormRenderer from '@/components/forms/DynamicFormRenderer'
 import { loadLandingContent } from '@/lib/loaders/landing-sections-loader'
 
@@ -20,7 +21,7 @@ const pageKeywords = landing.seo.keywords
 const formId = landing.integrations?.formId
 const bookingCalendarId = landing.integrations?.bookingCalendarId
 const bookingEventId = landing.integrations?.bookingEventId
-const standaloneBookingUrl = landing.integrations?.standaloneBookingUrl
+const hasStandaloneBooking = Boolean(bookingCalendarId && bookingEventId)
 
 const schema = {
   '@context': 'https://schema.org',
@@ -52,9 +53,11 @@ const schema = {
       formId={formId}
       bookingCalendarId={bookingCalendarId}
       bookingEventId={bookingEventId}
-      bookingUrl={standaloneBookingUrl}
       client:load
     />
+  ) : null}
+  {hasStandaloneBooking ? (
+    <StandaloneBookingSection calendarId={bookingCalendarId!} eventId={bookingEventId!} />
   ) : null}
   <FooterSection content={landing.footer} newsletter={true} client:load />
 </Layout>

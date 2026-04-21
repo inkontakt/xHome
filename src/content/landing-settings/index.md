@@ -7,6 +7,6 @@ seo:
 
 integrations:
   formId: 11
-  bookingCalendarId: 1
-  bookingEventId: 1
+  bookingCalendarId: 2
+  bookingEventId: 6
 ---
