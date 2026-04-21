@@ -16,15 +16,15 @@ const bookingUrl = buildBookingProxyPath(calendarId, eventId)
       <p class='text-sm font-medium uppercase tracking-[0.2em] text-muted-foreground'>
         Fluent Booking
       </p>
-      <h2 class='text-2xl font-semibold tracking-tight'>Booking Calendar</h2>
+      <h2 class='text-2xl font-semibold tracking-tight'>Book an Appointment</h2>
       <p class='text-sm text-muted-foreground'>
-        This section renders the native Fluent Booking experience through the Astro proxy.
+        This section opens the direct Fluent Booking event view through the Astro proxy.
       </p>
     </div>
 
     <div class='overflow-hidden rounded-xl border bg-muted/20'>
       <iframe
-        title='Fluent Booking calendar'
+        title='Fluent Booking appointment'
         src={bookingUrl}
         class='h-[900px] w-full'
         loading='lazy'

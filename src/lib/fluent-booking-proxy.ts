@@ -35,9 +35,7 @@ export function buildBookingProxyPath(calendarId: number, eventId: number) {
 
 export function buildBookingEmbedUrl(context: FluentBookingProxyContext) {
   const upstreamUrl = new URL(`${context.remoteOrigin}/fb-embed/`)
-  upstreamUrl.searchParams.set('calendar_id', String(context.calendarId))
   upstreamUrl.searchParams.set('event_id', String(context.eventId))
-  upstreamUrl.searchParams.set('mode', 'calendar')
   return upstreamUrl
 }
 

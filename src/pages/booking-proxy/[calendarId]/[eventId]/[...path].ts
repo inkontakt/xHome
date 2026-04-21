@@ -39,10 +39,7 @@ async function proxyBookingRequest(request: Request, params: Record<string, stri
   }
 
   upstreamHeaders.set('Origin', context.remoteOrigin)
-  upstreamHeaders.set(
-    'Referer',
-    `${context.remoteOrigin}/fb-embed/?calendar_id=${calendarId}&event_id=${eventId}&mode=calendar`
-  )
+  upstreamHeaders.set('Referer', `${context.remoteOrigin}/fb-embed/?event_id=${eventId}`)
 
   const upstreamResponse = await fetch(upstreamUrl, {
     method: request.method,
