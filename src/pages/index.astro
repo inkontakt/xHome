@@ -24,6 +24,7 @@ const proxyFormId = landing.integrations?.proxyFormId
 const bookingCalendarId = landing.integrations?.bookingCalendarId
 const bookingEventId = landing.integrations?.bookingEventId
 const hasStandaloneBooking = Boolean(bookingCalendarId && bookingEventId)
+const forwardedSearch = Astro.url.search
 
 const schema = {
   '@context': 'https://schema.org',
@@ -59,8 +60,14 @@ const schema = {
     />
   ) : null}
   {hasStandaloneBooking ? (
-    <StandaloneBookingSection calendarId={bookingCalendarId!} eventId={bookingEventId!} />
+    <StandaloneBookingSection
+      calendarId={bookingCalendarId!}
+      eventId={bookingEventId!}
+      forwardedSearch={forwardedSearch}
+    />
   ) : null}
-  {proxyFormId ? <StandaloneFormProxySection formId={proxyFormId} /> : null}
+  {proxyFormId ? (
+    <StandaloneFormProxySection formId={proxyFormId} forwardedSearch={forwardedSearch} />
+  ) : null}
   <FooterSection content={landing.footer} newsletter={true} client:load />
 </Layout>

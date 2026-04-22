@@ -4,10 +4,11 @@ import { buildBookingProxyPath } from '@/lib/fluent-booking-proxy'
 type Props = {
   calendarId: number
   eventId: number
+  forwardedSearch?: string
 }
 
-const { calendarId, eventId } = Astro.props
-const bookingUrl = buildBookingProxyPath(calendarId, eventId)
+const { calendarId, eventId, forwardedSearch = '' } = Astro.props
+const bookingUrl = `${buildBookingProxyPath(calendarId, eventId)}${forwardedSearch}`
 ---
 
 <section id='standalone-booking' class='bg-background px-4 pb-16'>

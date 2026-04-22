@@ -3,10 +3,11 @@ import { buildFluentFormProxyPath } from '@/lib/fluent-form-proxy'
 
 type Props = {
   formId: number
+  forwardedSearch?: string
 }
 
-const { formId } = Astro.props
-const formUrl = buildFluentFormProxyPath(formId)
+const { formId, forwardedSearch = '' } = Astro.props
+const formUrl = `${buildFluentFormProxyPath(formId)}${forwardedSearch}`
 ---
 
 <section id='standalone-form-proxy' class='bg-background px-4 pb-16'>
