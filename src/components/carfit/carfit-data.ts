@@ -50,6 +50,17 @@ export const carfitReviews = {
   ]
 }
 
+export const carfitProxiedReviews = {
+  heading: 'Externe Bewertungen per Proxy',
+  intro:
+    'Diese Vorschau rendert einen externen Bewertungsbereich ueber denselben Reverse-Proxy-Ansatz wie die bestehenden Fluent-Embeds.',
+  siteKey: 'carfitMain',
+  sourceUrl: '',
+  sourcePath: '/wsn-reviews-embed/?template_id={templateId}&platform=reviews',
+  sectionSelector: '',
+  iframeHeight: 1100
+}
+
 export const carfitBenefits = [
   'Wir sorgen für das einwandfreie Erscheinungsbild Ihres Fahrzeugs – innen wie außen.',
   'Mit uns sitzen Sie immer in einem glänzenden, sauberen Auto.',

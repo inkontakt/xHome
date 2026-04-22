@@ -1,10 +1,17 @@
 import type { APIRoute } from 'astro'
 
+import {
+  getWordPressApiUrl,
+  getWordPressAuthCredentials,
+  type WordPressSiteKey
+} from '@/lib/wordpress-site-config'
+
 export type WordPressFetchOptions = {
   auth?: boolean
   method?: 'GET' | 'POST'
   body?: BodyInit | null
   headers?: HeadersInit
+  siteKey?: WordPressSiteKey
 }
 
 export type FluentFormField =
@@ -143,16 +150,6 @@ const DEFAULT_FORM_SCHEMA_PATH = '/fluentform/v1/forms/{formId}/fields'
 const DEFAULT_FORM_SUBMIT_PATH = '/fluentform/v1/forms/{formId}/submit'
 const DEFAULT_BOOKING_BASE_PATH = '/fluent-booking/v2'
 
-function getRequiredEnv(name: string) {
-  const value = import.meta.env[name]
-
-  if (!value || typeof value !== 'string') {
-    throw new Error(`Missing required environment variable: ${name}`)
-  }
-
-  return value
-}
-
 function getOptionalEnv(name: string) {
   const value = import.meta.env[name]
   return typeof value === 'string' && value.length > 0 ? value : undefined
@@ -202,29 +199,24 @@ function buildBookingPath(template: string, calendarId: number, eventId: number)
     .replaceAll('{eventId}', String(eventId))
 }
 
-function getWordPressBaseUrl() {
-  return getRequiredEnv('WORDPRESS_API_URL').replace(/\/$/, '')
-}
-
-function getWordPressAuthHeader() {
-  const authMode = getRequiredEnv('WP_AUTH_MODE')
+function getWordPressAuthHeader(siteKey: WordPressSiteKey) {
+  const { authMode, username, appPassword } = getWordPressAuthCredentials(siteKey)
 
   if (authMode !== 'application_password') {
     throw new Error(`Unsupported WP_AUTH_MODE: ${authMode}`)
   }
 
-  const username = getRequiredEnv('WP_USERNAME')
-  const password = getRequiredEnv('WP_APP_PASSWORD')
-  const token = Buffer.from(`${username}:${password}`).toString('base64')
+  const token = Buffer.from(`${username}:${appPassword}`).toString('base64')
 
   return `Basic ${token}`
 }
 
 async function fetchWordPress<T>(path: string, options: WordPressFetchOptions = {}) {
+  const siteKey = options.siteKey ?? 'connectCarfit'
   const headers = new Headers(options.headers)
 
   if (options.auth ?? true) {
-    headers.set('Authorization', getWordPressAuthHeader())
+    headers.set('Authorization', getWordPressAuthHeader(siteKey))
   }
 
   if (!headers.has('Accept')) {
@@ -236,7 +228,7 @@ async function fetchWordPress<T>(path: string, options: WordPressFetchOptions = 
   }
 
   const startedAt = Date.now()
-  const response = await fetch(`${getWordPressBaseUrl()}${path}`, {
+  const response = await fetch(`${getWordPressApiUrl(siteKey)}${path}`, {
     method: options.method ?? 'GET',
     headers,
     body: options.body ?? null
@@ -703,12 +695,15 @@ function toSupportedField(field: any): FluentFormField | null {
   return null
 }
 
-export async function getFluentFormSchema(formId: number): Promise<FluentFormSchema> {
+export async function getFluentFormSchema(
+  formId: number,
+  siteKey: WordPressSiteKey = 'connectCarfit'
+): Promise<FluentFormSchema> {
   const schemaPath = buildWpPath(
     getOptionalEnv('WORDPRESS_FORM_SCHEMA_PATH') ?? DEFAULT_FORM_SCHEMA_PATH,
     formId
   )
-  const response = await fetchWordPress<FluentFormsFieldResponse>(schemaPath)
+  const response = await fetchWordPress<FluentFormsFieldResponse>(schemaPath, { siteKey })
 
   const rawFields = Array.isArray(response?.form_fields?.fields)
     ? response.form_fields.fields
@@ -767,7 +762,11 @@ function serializeFluentFormData(data: Record<string, unknown>) {
   return params.toString()
 }
 
-export async function submitFluentForm(formId: number, data: Record<string, unknown>) {
+export async function submitFluentForm(
+  formId: number,
+  data: Record<string, unknown>,
+  siteKey: WordPressSiteKey = 'connectCarfit'
+) {
   const submitPath = buildWpPath(
     getOptionalEnv('WORDPRESS_FORM_SUBMIT_PATH') ?? DEFAULT_FORM_SUBMIT_PATH,
     formId
@@ -779,6 +778,7 @@ export async function submitFluentForm(formId: number, data: Record<string, unkn
 
   return fetchWordPress<Record<string, unknown>>(submitPath, {
     method: 'POST',
+    siteKey,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
     },
@@ -786,34 +786,46 @@ export async function submitFluentForm(formId: number, data: Record<string, unkn
   })
 }
 
-export async function getFluentBookingEvent(calendarId: number, eventId: number) {
+export async function getFluentBookingEvent(
+  calendarId: number,
+  eventId: number,
+  siteKey: WordPressSiteKey = 'connectCarfit'
+) {
   const path = buildBookingPath(
     `${DEFAULT_BOOKING_BASE_PATH}/calendars/{calendarId}/events/{eventId}`,
     calendarId,
     eventId
   )
 
-  return fetchWordPress<FluentBookingEvent>(path)
+  return fetchWordPress<FluentBookingEvent>(path, { siteKey })
 }
 
-export async function getFluentBookingAvailability(calendarId: number, eventId: number) {
+export async function getFluentBookingAvailability(
+  calendarId: number,
+  eventId: number,
+  siteKey: WordPressSiteKey = 'connectCarfit'
+) {
   const path = buildBookingPath(
     `${DEFAULT_BOOKING_BASE_PATH}/calendars/{calendarId}/events/{eventId}/availability`,
     calendarId,
     eventId
   )
 
-  return fetchWordPress<FluentBookingAvailability>(path)
+  return fetchWordPress<FluentBookingAvailability>(path, { siteKey })
 }
 
-export async function getFluentBookingFields(calendarId: number, eventId: number) {
+export async function getFluentBookingFields(
+  calendarId: number,
+  eventId: number,
+  siteKey: WordPressSiteKey = 'connectCarfit'
+) {
   const path = buildBookingPath(
     `${DEFAULT_BOOKING_BASE_PATH}/calendars/{calendarId}/events/{eventId}/booking-fields`,
     calendarId,
     eventId
   )
 
-  return fetchWordPress<FluentBookingFields>(path)
+  return fetchWordPress<FluentBookingFields>(path, { siteKey })
 }
 
 export function jsonResponse(body: unknown, init?: ResponseInit) {

@@ -1,3 +1,5 @@
+import { getWordPressPublicSiteUrl } from '@/lib/wordpress-site-config'
+
 const ROOT_PATH_PATTERN =
   /(["'=:(\s])\/(wp-admin\/|wp-content\/|wp-includes\/|wp-json(?:\/|[/?])|ff-embed\/|index\.php\?rest_route=)/g
 const ESCAPED_ROOT_PATH_PATTERN =
@@ -10,18 +12,8 @@ export type FluentFormProxyContext = {
   publicUrl: string
 }
 
-function getWordPressPublicSiteUrl() {
-  const value = import.meta.env.WORDPRESS_PUBLIC_SITE_URL
-
-  if (!value || typeof value !== 'string') {
-    throw new Error('Missing required environment variable: WORDPRESS_PUBLIC_SITE_URL')
-  }
-
-  return value.replace(/\/$/, '')
-}
-
 export async function getFluentFormProxyContext(formId: number): Promise<FluentFormProxyContext> {
-  const remoteOrigin = getWordPressPublicSiteUrl()
+  const remoteOrigin = getWordPressPublicSiteUrl('connectCarfit')
   const publicUrl = `${remoteOrigin}/ff-embed/?form_id=${formId}`
 
   return {

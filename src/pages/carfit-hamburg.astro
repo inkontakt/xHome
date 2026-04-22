@@ -1,7 +1,13 @@
 ---
+import { getEntry } from 'astro:content'
+
 import Layout from '@/layouts/Layout.astro'
 
 import CarfitPage from '@/components/carfit/carfit-page.astro'
+
+const carfitSettings = await getEntry('carfitSettings', 'index')
+const reviewsTemplateId = carfitSettings?.data.reviewsProxy?.templateId
+const reviewsIframeHeight = carfitSettings?.data.reviewsProxy?.iframeHeight
 
 const pageTitle = 'Carfit Hamburg'
 const pageDescription =
@@ -19,5 +25,5 @@ const schema = {
 ---
 
 <Layout title={pageTitle} description={pageDescription} keywords={pageKeywords} schema={schema} noindex={true}>
-  <CarfitPage />
+  <CarfitPage reviewsTemplateId={reviewsTemplateId} reviewsIframeHeight={reviewsIframeHeight} />
 </Layout>

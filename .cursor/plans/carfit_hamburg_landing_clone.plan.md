@@ -4,32 +4,71 @@ overview: Build a new Astro route at /carfit-hamburg that recreates the carfit-h
 todos:
   - id: capture_reference
     content: Inspect the live reference page and record the exact section order, repeated patterns, key copy blocks, and visible CTA/contact elements
-    status: pending
+    status: completed
   - id: collect_assets
     content: Gather or recreate all required Carfit assets, including logos, photos, icons, colors, contact details, and any typography requirements
-    status: pending
+    status: in_progress
   - id: create_route_shell
     content: Add the new /carfit-hamburg Astro page using the existing shared Layout and SEO wrapper so the existing Astro header remains the only page header
-    status: pending
+    status: completed
   - id: wire_navigation
     content: Add the Carfit Hamburg menu entry to the shared desktop and mobile navigation without regressing existing header behavior
-    status: pending
+    status: completed
   - id: build_sections
     content: Implement the Carfit page body section by section in the same order as the reference site, starting with hero and ending with contact/footer CTA
-    status: pending
+    status: completed
   - id: scope_styles
     content: Add Carfit-specific styling and local design tokens without leaking the visual system into unrelated pages
-    status: pending
+    status: completed
   - id: responsive_polish
     content: Tune the page for mobile, tablet, desktop, and wide desktop so spacing and layout remain faithful to the reference
-    status: pending
+    status: in_progress
   - id: verify_and_refine
     content: Compare the Astro result against the live reference, fix mismatches, and run non-mutating verification commands
-    status: pending
+    status: in_progress
 isProject: false
 ---
 
 # Carfit Hamburg Landing Page Clone Plan
+
+## Current Status
+- Route created:
+  `src/pages/carfit-hamburg.astro` exists and renders through the shared `Layout.astro`.
+- Shared navigation updated:
+  `Carfit Hamburg` was added in `src/components/sections/header-section.tsx`.
+- Carfit component slice created:
+  `src/components/carfit/` now contains the page composition, section files, and centralized content data.
+- Screenshot-based clone implemented:
+  hero, contact strip, reviews, benefits, service grid, CTA band, additional services, differentiators, owner/about section, map row, inquiry form, and footer are all present.
+- Styling refinement has started:
+  the page now uses a dedicated Carfit color token set and several rounds of visual cleanup were applied to better match the source.
+- The clone is functional as a standalone page addition, but visual parity is still not final.
+
+## What Is Done
+- Reference snapshot created from the provided full-page screenshot and used as the working execution baseline.
+- New page route added at `/carfit-hamburg`.
+- Shared Astro header kept as the only header.
+- Shared menu entry added for `Carfit Hamburg`.
+- Carfit page split into dedicated components instead of a single large file.
+- Page-scoped design tokens and Carfit-specific styling added.
+- Footer/social area and several color values refined toward the live site.
+- Hero badge copy updated to `CARFIT Hamburg Codex`.
+
+## What Is Not Done Yet
+- Exact asset parity is not finished.
+  The page still uses recreated/plain-color visual substitutes instead of the original photographic assets from the source site.
+- Final visual parity review is still open.
+  Some spacing, typography, image treatment, section density, and color matching still differ from `carfit-hamburg.de`.
+- Responsive polish is not fully signed off.
+  The layout has responsive structure, but it still needs browser-level review at mobile/tablet/desktop breakpoints.
+- CTA/link fidelity is not fully confirmed.
+  Some actions still use safe defaults like linking to the local inquiry form instead of confirmed production destinations.
+- Form behavior is not wired to a confirmed live backend endpoint.
+  The form currently reproduces the visible structure and styling rather than a verified production submission flow.
+- SEO copy has encoding artifacts in at least one file.
+  `src/pages/carfit-hamburg.astro` still contains broken encoded German text in `pageDescription` and `pageKeywords` and should be cleaned up.
+- Verification remains partial.
+  Lint for the Carfit files passed, but repo-wide `check-types` and `build` still report pre-existing project issues outside this work.
 
 ## Summary
 Build a new Astro route at `/carfit-hamburg` that recreates the `carfit-hamburg.de` homepage as closely as practical inside the existing Astro app. The page will keep the existing shared Astro header as the only page header, avoid any duplicate Carfit-style top bar, and implement the Carfit landing-page body as a dedicated static page/component set for maximum visual fidelity with minimal structural risk.
@@ -311,6 +350,12 @@ Default rules:
 - Verify no unrelated homepage, blog, or app-integration page behavior regressed.
 - Fix visual mismatches before considering the page complete:
   spacing, image scale, headline wrapping, button styling, card density, and footer/contact presentation.
+
+## Verification Notes
+- `npm run lint src/components/carfit src/pages/carfit-hamburg.astro` passed during implementation.
+- `npm run check-types` still fails because of pre-existing repo issues outside the Carfit clone work.
+- `npm run build` still fails because of the pre-existing `.vite` unlink `EPERM` problem in `node_modules`.
+- Browser-level side-by-side comparison and final responsive signoff are still pending.
 
 ## Assumptions
 - Fidelity target is near 1:1, not merely inspired by the reference.

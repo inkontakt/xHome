@@ -1,0 +1,72 @@
+---
+import { carfitProxiedReviews } from '@/components/carfit/carfit-data'
+import { buildExternalSectionProxyUrl } from '@/lib/external-section-proxy'
+
+type Props = {
+  templateId?: string | number
+  iframeHeight?: number
+}
+
+const { templateId, iframeHeight } = Astro.props
+const proxyPath = '/carfit-proxy/reviews'
+const isConfigured =
+  carfitProxiedReviews.sourceUrl.trim().length > 0 ||
+  String(templateId ?? '').trim().length > 0 ||
+  Boolean(carfitProxiedReviews.siteKey)
+const proxiedUrl =
+  String(templateId ?? '').trim().length > 0
+    ? `${buildExternalSectionProxyUrl(proxyPath)}?templateId=${encodeURIComponent(String(templateId))}`
+    : buildExternalSectionProxyUrl(proxyPath)
+---
+
+<section class='bg-slate-50 py-14 sm:py-18'>
+  <div class='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='mx-auto max-w-3xl text-center'>
+      <p class='text-xs font-semibold uppercase tracking-[0.24em] text-[var(--carfit-accent)]'>
+        Reverse Proxy
+      </p>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>
+        {carfitProxiedReviews.heading}
+      </h2>
+      <p class='mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base'>
+        {carfitProxiedReviews.intro}
+      </p>
+    </div>
+
+    {
+      isConfigured ? (
+        <div class='mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_18px_48px_rgba(15,23,42,0.1)]'>
+          <iframe
+            title='Externe Bewertungen'
+            src={proxiedUrl}
+            class='w-full'
+            style={`height: ${iframeHeight ?? carfitProxiedReviews.iframeHeight}px;`}
+            loading='lazy'
+          />
+        </div>
+      ) : (
+        <div class='mt-8 rounded-[1.75rem] border border-dashed border-slate-300 bg-white p-8 text-left shadow-[0_18px_48px_rgba(15,23,42,0.06)]'>
+          <p class='text-sm font-semibold text-slate-950'>
+            Der externe Reviews-Proxy ist vorbereitet, aber noch nicht konfiguriert.
+          </p>
+          <p class='mt-3 text-sm leading-7 text-slate-600'>
+            Tragen Sie in <code>src/components/carfit/carfit-data.ts</code> entweder eine direkte
+            URL in <code>carfitProxiedReviews.sourceUrl</code> oder einen
+            <code>siteKey</code> aus <code>src/lib/wordpress-site-config.ts</code> ein. Falls nur
+            ein bestimmter Bereich der Seite geladen werden soll, setzen Sie optional
+            <code>carfitProxiedReviews.sectionSelector</code>.
+          </p>
+          <p class='mt-3 text-sm leading-7 text-slate-600'>
+            Fuer einen WP-Social-Ninja-Embed tragen Sie einfach die
+            <code>templateId</code> in <code>src/content/carfit-settings/index.md</code> ein.
+            Dann verwendet der Proxy automatisch <code>carfitProxiedReviews.sourcePath</code>.
+          </p>
+          <p class='mt-3 text-sm leading-7 text-slate-600'>
+            Unterstuetzte einfache Selektoren: <code>#id</code>, <code>.class</code>,
+            <code>tag</code>, <code>tag.class</code> oder <code>[data-attr="value"]</code>.
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>

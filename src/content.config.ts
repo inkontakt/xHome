@@ -40,6 +40,11 @@ const integrationsSchema = z.object({
   standaloneBookingUrl: z.string().url().optional(),
 });
 
+const carfitReviewsProxySchema = z.object({
+  templateId: z.union([z.string(), z.number().int().positive()]).optional(),
+  iframeHeight: z.number().int().positive().optional(),
+});
+
 const heroSchema = z.object({
   badge: z.object({
     label: z.string(),
@@ -229,6 +234,13 @@ const landingSettings = defineCollection({
   }),
 });
 
+const carfitSettings = defineCollection({
+  loader: glob({ pattern: "*.md", base: "./src/content/carfit-settings" }),
+  schema: z.object({
+    reviewsProxy: carfitReviewsProxySchema.optional(),
+  }),
+});
+
 const landingSections = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/content/landing-sections" }),
   schema: z.discriminatedUnion("section", [
@@ -262,4 +274,4 @@ const landingSections = defineCollection({
   ]),
 });
 
-export const collections = { blog, landingSettings, landingSections };
+export const collections = { blog, landingSettings, landingSections, carfitSettings };
