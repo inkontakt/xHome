@@ -84,6 +84,46 @@ export function buildUpstreamReferer(context: FluentBookingProxyContext, request
   return incomingReferer.replace(requestUrl.origin, context.remoteOrigin)
 }
 
+function normalizeDuplicateProxyReferences(
+  value: string,
+  context: FluentBookingProxyContext,
+  localOrigin: string
+) {
+  const proxyBaseUrl = `${localOrigin}${context.proxyBasePath}`
+  const escapedProxyBaseUrl = proxyBaseUrl.replaceAll('/', '\\/')
+  const escapedProxyBasePath = context.proxyBasePath.replaceAll('/', '\\/')
+  const bareProxyBasePath = context.proxyBasePath.replace(/^\//, '')
+
+  let output = value
+
+  while (output.includes(`${context.proxyBasePath}${context.proxyBasePath}`)) {
+    output = output.replaceAll(
+      `${context.proxyBasePath}${context.proxyBasePath}`,
+      context.proxyBasePath
+    )
+  }
+
+  while (output.includes(`${escapedProxyBasePath}${escapedProxyBasePath}`)) {
+    output = output.replaceAll(
+      `${escapedProxyBasePath}${escapedProxyBasePath}`,
+      escapedProxyBasePath
+    )
+  }
+
+  while (output.includes(`${proxyBaseUrl}${context.proxyBasePath}`)) {
+    output = output.replaceAll(`${proxyBaseUrl}${context.proxyBasePath}`, proxyBaseUrl)
+  }
+
+  while (output.includes(`${escapedProxyBaseUrl}${escapedProxyBasePath}`)) {
+    output = output.replaceAll(
+      `${escapedProxyBaseUrl}${escapedProxyBasePath}`,
+      escapedProxyBaseUrl
+    )
+  }
+
+  return output.replaceAll(`${proxyBaseUrl}/${bareProxyBasePath}`, `${proxyBaseUrl}/`)
+}
+
 function rewriteCommonProxyText(
   source: string,
   context: FluentBookingProxyContext,
@@ -105,7 +145,7 @@ function rewriteCommonProxyText(
   output = output.replaceAll('"baseurl":"\\/"', `"baseurl":"${escapedProxyBasePath}\\/"`)
   output = output.replaceAll("'baseurl':'\\/'", `'baseurl':'${escapedProxyBasePath}\\/'`)
 
-  return output
+  return normalizeDuplicateProxyReferences(output, context, localOrigin)
 }
 
 export function rewriteBookingProxyHtml(
@@ -142,15 +182,33 @@ export function rewriteProxyLocationHeader(
   context: FluentBookingProxyContext,
   localOrigin: string
 ) {
+  const bareProxyBasePath = context.proxyBasePath.replace(/^\//, '')
+
+  if (location.startsWith(context.proxyBasePath)) {
+    return normalizeDuplicateProxyReferences(`${localOrigin}${location}`, context, localOrigin)
+  }
+
+  if (location.startsWith(bareProxyBasePath)) {
+    return normalizeDuplicateProxyReferences(`${localOrigin}/${location}`, context, localOrigin)
+  }
+
   if (location.startsWith(context.remoteOrigin)) {
-    return location.replace(context.remoteOrigin, `${localOrigin}${context.proxyBasePath}`)
+    return normalizeDuplicateProxyReferences(
+      location.replace(context.remoteOrigin, `${localOrigin}${context.proxyBasePath}`),
+      context,
+      localOrigin
+    )
   }
 
   if (location.startsWith('/')) {
-    return `${localOrigin}${context.proxyBasePath}${location}`
+    return normalizeDuplicateProxyReferences(
+      `${localOrigin}${context.proxyBasePath}${location}`,
+      context,
+      localOrigin
+    )
   }
 
-  return location
+  return normalizeDuplicateProxyReferences(location, context, localOrigin)
 }
 
 export function isTextLikeContentType(contentType: string | null) {
