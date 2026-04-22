@@ -1,0 +1,28 @@
+---
+import CarfitHero from '@/components/carfit/carfit-hero.astro'
+import CarfitReviews from '@/components/carfit/carfit-reviews.astro'
+import CarfitServices from '@/components/carfit/carfit-services.astro'
+import CarfitDetails from '@/components/carfit/carfit-details.astro'
+import CarfitContact from '@/components/carfit/carfit-contact.astro'
+---
+
+<div class='carfit-page bg-white text-slate-950'>
+  <CarfitHero />
+  <CarfitReviews />
+  <CarfitServices />
+  <CarfitDetails />
+  <CarfitContact />
+</div>
+
+<style>
+  .carfit-page {
+    --carfit-accent: #4136b6;
+    --carfit-accent-strong: #32279f;
+    --carfit-soft: rgba(63, 57, 185, 0.12);
+    --carfit-dark: #0e1624;
+    --carfit-dark-soft: #1a314c;
+    --carfit-light: #eef5ff;
+    --carfit-pink: #f6eaea;
+    --carfit-footer: #1b3753;
+  }
+</style>

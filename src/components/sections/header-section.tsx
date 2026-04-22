@@ -90,6 +90,10 @@ const navigationData: Navigation[] = [
     href: '/app-integration'
   },
   {
+    title: 'Carfit Hamburg',
+    href: '/carfit-hamburg'
+  },
+  {
     title: 'Estimate',
     href: ESTIMATE_DETAILS_HREF
   }

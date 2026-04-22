@@ -1,0 +1,125 @@
+---
+import {
+  BadgeCheck,
+  CircleDollarSign,
+  Headset,
+  Laptop2,
+  PaintbrushVertical,
+  ShieldCheck,
+  Sparkles,
+  Stars,
+  Wrench
+} from 'lucide-react'
+
+import { carfitAbout, carfitAdditionalServices, carfitDifferentiators } from '@/components/carfit/carfit-data'
+
+const icons = [
+  Stars,
+  Sparkles,
+  ShieldCheck,
+  Wrench,
+  Laptop2,
+  CircleDollarSign,
+  BadgeCheck,
+  PaintbrushVertical,
+  Headset,
+  Stars,
+  Wrench,
+  ShieldCheck
+]
+---
+
+<section class='bg-white py-14 sm:py-18'>
+  <div class='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='px-6 py-10 sm:px-8'>
+      <div class='mx-auto max-w-3xl text-center'>
+        <p class='text-sm font-semibold uppercase tracking-[0.28em] text-[var(--carfit-accent)]'>Leistungen</p>
+        <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>
+          Nochmal unsere weiteren Leistungen
+        </h2>
+      </div>
+      <div class='mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3'>
+        {carfitAdditionalServices.map(item => (
+          <div class='flex items-start gap-3'>
+            <span class='mt-1 inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--carfit-light)] text-[var(--carfit-accent)]'>
+              <Sparkles className='size-4' />
+            </span>
+            <p class='text-sm leading-7 text-slate-600'>{item}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class='relative overflow-hidden bg-[var(--carfit-dark)] py-16 text-white sm:py-20'>
+  <div class='absolute inset-0 bg-[linear-gradient(180deg,rgba(14,22,36,0.92),rgba(14,22,36,0.96))]'></div>
+  <div class='relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='mx-auto max-w-3xl text-center'>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight sm:text-4xl'>Was macht uns besonders?</h2>
+    </div>
+    <div class='mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
+      {carfitDifferentiators.map((item, index) => {
+        const Icon = icons[index % icons.length]
+
+        return (
+          <article class='rounded-sm border border-white/10 bg-white/4 p-5'>
+            <span class='inline-flex size-11 items-center justify-center rounded-full bg-white/8 text-sky-200'>
+              <Icon className='size-5' />
+            </span>
+            <h3 class='mt-4 text-lg font-semibold'>{item.title}</h3>
+            <p class='mt-2 text-sm leading-7 text-white/72'>{item.description}</p>
+          </article>
+        )
+      })}
+    </div>
+    <div class='mt-8 text-center'>
+      <a
+        href='#online-anfrage'
+        class='inline-flex items-center rounded-md bg-[var(--carfit-accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--carfit-accent-strong)]'
+      >
+        Hier Preis anfragen
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class='bg-white py-14 sm:py-18'>
+  <div class='mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:px-8'>
+    <div class='flex justify-center lg:justify-start'>
+      <div class='relative w-full max-w-sm'>
+        <div class='absolute inset-x-10 top-0 h-24 rounded-full bg-[var(--carfit-soft)] blur-3xl'></div>
+        <div class='relative overflow-hidden rounded-sm bg-[linear-gradient(180deg,#eff6ff_0%,#ffffff_38%,#f8fafc_100%)] p-6 shadow-[0_20px_40px_rgba(15,23,42,0.1)]'>
+          <div class='mx-auto flex h-96 w-64 items-end justify-center rounded-sm bg-[linear-gradient(180deg,#475569_0%,#1e293b_36%,#111827_100%)]'>
+            <div class='mb-0 h-72 w-32 rounded-t-[3.5rem] bg-[linear-gradient(180deg,#f8d7c5_0%,#f1bda4_35%,#c48a73_100%)]'></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <p class='text-sm font-semibold uppercase tracking-[0.28em] text-[var(--carfit-accent)]'>Peter Bock</p>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>{carfitAbout.heading}</h2>
+      <p class='mt-4 text-lg font-medium text-[var(--carfit-accent)]'>{carfitAbout.intro}</p>
+      <div class='mt-5 space-y-4'>
+        {carfitAbout.body.map(paragraph => (
+          <p class='text-sm leading-7 text-slate-600 sm:text-base'>{paragraph}</p>
+        ))}
+      </div>
+      <div class='mt-7 flex flex-wrap items-center gap-4'>
+        <a
+          href='#online-anfrage'
+          class='inline-flex items-center rounded-md bg-[var(--carfit-accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--carfit-accent-strong)]'
+        >
+          {carfitAbout.ctaLabel}
+        </a>
+        <a
+          href='https://maps.google.com/?q=Fangdieckstra%C3%9Fe+32,+22547+Hamburg'
+          class='text-sm font-semibold text-slate-600 transition hover:text-slate-950'
+        >
+          Karte anzeigen
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

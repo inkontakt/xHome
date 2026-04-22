@@ -1,0 +1,23 @@
+---
+import Layout from '@/layouts/Layout.astro'
+
+import CarfitPage from '@/components/carfit/carfit-page.astro'
+
+const pageTitle = 'Carfit Hamburg'
+const pageDescription =
+  'Fahrzeugaufbereitung, Smart Repair, Leasing-Rückläufer und Fahrzeugpflege in Hamburg – als eigenständige Referenz-Landingpage im Astro-Frontend nachgebaut.'
+const pageKeywords =
+  'Carfit Hamburg, Fahrzeugaufbereitung Hamburg, Smart Repair Hamburg, Leasing Rückläufer, Autoaufbereitung'
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: pageTitle,
+  description: pageDescription,
+  url: `${Astro.site}carfit-hamburg`
+}
+---
+
+<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords} schema={schema} noindex={true}>
+  <CarfitPage />
+</Layout>

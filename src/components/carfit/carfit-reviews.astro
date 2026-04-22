@@ -1,0 +1,69 @@
+---
+import { Star } from 'lucide-react'
+
+import { carfitReviews } from '@/components/carfit/carfit-data'
+
+const initialsForName = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0]?.toUpperCase() ?? '')
+    .join('')
+---
+
+<section class='bg-white py-14 sm:py-18'>
+  <div class='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='mx-auto max-w-3xl text-center'>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>Was Kunden über uns sagen</h2>
+    </div>
+
+    <div class='mx-auto mt-8 flex max-w-3xl flex-col items-center justify-center gap-3 rounded-sm bg-[var(--carfit-pink)] px-6 py-5 text-center sm:flex-row sm:gap-6 sm:text-left'>
+      <div class='flex items-center gap-1 text-amber-500'>
+        {Array.from({ length: 5 }).map(() => (
+          <Star className='size-4 fill-current' />
+        ))}
+      </div>
+      <div>
+        <p class='text-sm font-semibold text-slate-900'>Google {carfitReviews.summaryLabel}</p>
+        <p class='text-sm text-slate-600'>
+          <span class='font-semibold text-slate-950'>{carfitReviews.summaryScore}</span> {carfitReviews.summaryText}
+        </p>
+      </div>
+    </div>
+
+    <div class='mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
+      {carfitReviews.items.map((review, index) => (
+        <article class='rounded-sm border border-slate-200 bg-white p-5 shadow-[0_10px_22px_rgba(15,23,42,0.08)]'>
+          <div class='flex items-center gap-3'>
+            <div
+              class='flex size-12 items-center justify-center rounded-full text-sm font-bold text-white'
+              style={`background: ${['#5ca444', '#7c3aed', '#2563eb', '#0f766e', '#92400e', '#6366f1'][index % 6]};`}
+            >
+              {initialsForName(review.name)}
+            </div>
+            <div>
+              <h3 class='text-base font-semibold text-slate-950'>{review.name}</h3>
+              <p class='text-xs uppercase tracking-[0.18em] text-slate-500'>{review.date}</p>
+            </div>
+          </div>
+          <div class='mt-4 flex items-center gap-1 text-amber-500'>
+            {Array.from({ length: 5 }).map(() => (
+              <Star className='size-4 fill-current' />
+            ))}
+          </div>
+          <p class='mt-4 text-sm leading-7 text-slate-600'>{review.text}</p>
+        </article>
+      ))}
+    </div>
+
+    <div class='mt-8 text-center'>
+      <a
+        href='#online-anfrage'
+        class='inline-flex items-center rounded-md bg-[var(--carfit-accent)] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[var(--carfit-accent-strong)]'
+      >
+        {carfitReviews.ctaLabel}
+      </a>
+    </div>
+  </div>
+</section>
