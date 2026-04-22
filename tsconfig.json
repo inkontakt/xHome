@@ -5,8 +5,7 @@
     "**/*"
   ],
   "exclude": [
-    "dist",
-    "nextjs-connect-wp-main"
+    "dist"
   ],
   "compilerOptions": {
     "jsxImportSource": "react",

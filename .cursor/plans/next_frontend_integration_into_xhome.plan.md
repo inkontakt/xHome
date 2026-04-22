@@ -28,7 +28,7 @@ todos:
     status: pending
   - id: plan_cleanup
     content: After validation, create a separate cleanup plan for duplicate nested repo files
-    status: pending
+    status: completed
 isProject: false
 ---
 
@@ -124,6 +124,8 @@ Do not treat pre-existing typecheck, debug instrumentation, or root content-load
 - Estimate lightbox button styling has been adjusted for visibility/readability.
 - Required viewer dependencies were added to root `package.json`.
 - Local `pdfjs-dist/build/pdf` typing support was added.
+- Duplicate cleanup has been executed by removing the nested `nextjs-connect-wp-main` folder after confirming the active Astro app did not import from it.
+- Root `tsconfig.json` was simplified to remove the stale `nextjs-connect-wp-main` exclusion after the folder deletion.
 
 **In Progress**
 
@@ -137,6 +139,8 @@ Do not treat pre-existing typecheck, debug instrumentation, or root content-load
 - Browser verification of the Astro estimate route is still pending.
 - End-to-end verification of PDF downloads and viewer behavior with real data is still pending.
 - Final decision on any remaining structural parity differences, such as sticky gallery/layout behavior, is still pending.
+- Root `npm run check-types` still reports pre-existing root-only issues in `astro.config.mjs`, booking/form code, `src/lib/loaders/landing-sections-loader.ts`, and `src/lib/wordpress.ts`.
+- Root `npm run build` still hits a pre-existing `.vite` cache unlink `EPERM` issue under `node_modules`.
 
 ## File Responsibility Map
 
@@ -479,11 +483,34 @@ The cleanup plan should classify nested files into:
 - Still required for comparison.
 - Unknown and requiring another inspection pass.
 
+## Cleanup Execution Update
+
+Cleanup was completed conservatively after confirming that active root Astro code did not import from `nextjs-connect-wp-main`.
+
+**Executed changes**
+
+- Removed the full nested `nextjs-connect-wp-main` standalone Next.js project from the repository.
+- Kept all active root Astro code under `src`, `public`, root config files, and existing integrations unchanged.
+- Removed the obsolete `nextjs-connect-wp-main` entry from root `tsconfig.json` because the folder no longer exists.
+
+**Verification results after cleanup**
+
+- Search confirmed there are no active root imports or runtime references to `nextjs-connect-wp-main`.
+- The only remaining textual references to `nextjs-connect-wp-main` are in this plan document.
+- `npm run check-types` still fails, but the failures are root-only and pre-existing rather than caused by nested Next.js code.
+- `npm run build` still fails because of a pre-existing `.vite` cache unlink permission error, not because of the cleanup.
+
+**Non-regression conclusion**
+
+- Active Astro logic structure was not changed by cleanup.
+- The cleanup removed duplicate/reference-only project material, not working root runtime code.
+- Remaining validation work is now focused entirely on the root Astro application.
+
 ## Public Interfaces
 
 - No framework-level public API change.
 - No URL changes in Phase 1.
-- No deletion of `nextjs-connect-wp-main`.
+- `nextjs-connect-wp-main` has been removed after the visual migration work that depended on it was already ported into the root app.
 - Existing landing content remains in `src/content/landing-sections`.
 - Existing WordPress/fetch helpers remain in `src/lib/wordpress.ts`.
 - Astro pages remain the routing source.
@@ -496,5 +523,5 @@ The cleanup plan should classify nested files into:
 - The first goal is visual parity, not full Next feature parity.
 - Existing URLs are preserved.
 - Existing working fetch/XML/WordPress integration remains the source of truth.
-- Duplicate cleanup is intentionally deferred until after successful integration and validation.
+- Duplicate cleanup has now been performed because the nested Next.js app was no longer part of the active runtime path.
 - Any missing package should be added only after confirming the specific migrated component needs it.
