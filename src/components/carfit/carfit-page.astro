@@ -1,6 +1,7 @@
 ---
 import CarfitHero from '@/components/carfit/carfit-hero.astro'
 import CarfitProxiedReviews from '@/components/carfit/carfit-proxied-reviews.astro'
+import CarfitAstroReviews from '@/components/carfit/carfit-astro-reviews.astro'
 import CarfitServices from '@/components/carfit/carfit-services.astro'
 import CarfitDetails from '@/components/carfit/carfit-details.astro'
 import CarfitContact from '@/components/carfit/carfit-contact.astro'
@@ -16,6 +17,7 @@ const { reviewsTemplateId, reviewsIframeHeight } = Astro.props
 <div class='carfit-page bg-white text-slate-950'>
   <CarfitHero />
   <CarfitProxiedReviews templateId={reviewsTemplateId} iframeHeight={reviewsIframeHeight} />
+  <CarfitAstroReviews />
   <CarfitServices />
   <CarfitDetails />
   <CarfitContact />

@@ -1,0 +1,82 @@
+---
+import ReviewsGallery from '../../../astro-reviews-package/src/components/ReviewsGallery.astro'
+import { getCarfitSqliteReviewStats, getCarfitSqliteReviews } from '@/lib/carfit-sqlite-reviews'
+
+const reviews = getCarfitSqliteReviews(100)
+const stats = getCarfitSqliteReviewStats()
+---
+
+<section class='bg-white py-14 sm:py-18'>
+  <div class='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='mx-auto max-w-3xl text-center'>
+      <p class='text-xs font-semibold uppercase tracking-[0.24em] text-[var(--carfit-accent)]'>
+        SQLite Reviews
+      </p>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>
+        Kundenbewertungen aus der lokalen Datenbank
+      </h2>
+      <p class='mx-auto mt-4 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base'>
+        Diese Ansicht rendert die WP-Social-Ninja-Bewertungen direkt aus dem lokalen Export.
+      </p>
+    </div>
+
+    <div class='carfit-sqlite-reviews mt-8'>
+      {
+        reviews.length > 0 ? (
+          <ReviewsGallery
+            reviews={reviews}
+            stats={stats}
+            showHeader={true}
+            showGoogleLogo={true}
+            showLoadMore={true}
+            itemsPerPage={9}
+            headerTitle='Google Bewertungen'
+            excerptMaxChars={220}
+            loadMoreLabel='Mehr laden'
+            readMoreLabel='Mehr lesen'
+          />
+        ) : (
+          <div class='rounded-sm border border-dashed border-slate-300 bg-slate-50 p-8 text-center'>
+            <p class='text-sm font-semibold text-slate-950'>
+              Es wurden keine lokalen Bewertungen gefunden.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .carfit-sqlite-reviews :global(.reviews-gallery) {
+    --review-star-filled: #f5b301;
+    --review-star-empty: #e5e7eb;
+    --review-text: #475569;
+    --review-muted: #64748b;
+    --review-card-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    --review-btn-bg: var(--carfit-accent);
+    max-width: none;
+    padding-inline: 0;
+    padding-bottom: 0;
+  }
+
+  .carfit-sqlite-reviews :global(.reviews-header) {
+    padding-top: 0;
+  }
+
+  .carfit-sqlite-reviews :global(.reviews-header__title),
+  .carfit-sqlite-reviews :global(.reviewer-name a),
+  .carfit-sqlite-reviews :global(.reviewer-name span) {
+    color: #0f172a;
+  }
+
+  .carfit-sqlite-reviews :global(.review-card) {
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+  }
+
+  .carfit-sqlite-reviews :global(.reviews-load-more:hover) {
+    background-color: var(--carfit-accent-strong);
+    opacity: 1;
+  }
+</style>

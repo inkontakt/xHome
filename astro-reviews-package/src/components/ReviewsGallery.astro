@@ -13,6 +13,8 @@ interface Props {
   showLoadMore?: boolean;
   headerTitle?: string;
   excerptMaxChars?: number;
+  loadMoreLabel?: string;
+  readMoreLabel?: string;
 }
 
 const {
@@ -24,6 +26,8 @@ const {
   showLoadMore = true,
   headerTitle = 'Google Reviews',
   excerptMaxChars = 200,
+  loadMoreLabel = 'Load more',
+  readMoreLabel = 'Read more',
 } = Astro.props;
 
 const galleryUid = `reviews-gallery-${reviews[0]?.id ?? 'x'}-${reviews.length}`;
@@ -94,7 +98,7 @@ const showLoadMoreBtn = showLoadMore && reviews.length > itemsPerPage;
           data-review-index={i}
           role="listitem"
         >
-          <ReviewCard review={review} excerptMaxChars={excerptMaxChars} />
+          <ReviewCard review={review} excerptMaxChars={excerptMaxChars} readMoreLabel={readMoreLabel} />
         </div>
       ))
     }
@@ -104,7 +108,7 @@ const showLoadMoreBtn = showLoadMore && reviews.length > itemsPerPage;
     showLoadMoreBtn && (
       <div class="reviews-footer">
         <button type="button" class="reviews-load-more" id={`${galleryUid}-load-more`}>
-          Load more
+          {loadMoreLabel}
         </button>
       </div>
     )

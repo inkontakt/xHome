@@ -34,4 +34,6 @@ export interface ReviewsGalleryProps {
   /** Header title, e.g. business name */
   headerTitle?: string;
   excerptMaxChars?: number;
+  loadMoreLabel?: string;
+  readMoreLabel?: string;
 }

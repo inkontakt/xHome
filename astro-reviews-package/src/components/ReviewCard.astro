@@ -12,9 +12,10 @@ import {
 interface Props {
   review: Review;
   excerptMaxChars?: number;
+  readMoreLabel?: string;
 }
 
-const { review, excerptMaxChars = 200 } = Astro.props;
+const { review, excerptMaxChars = 200, readMoreLabel = 'Read more' } = Astro.props;
 const platformLabel = mapPlatformName(review.platformName);
 const plain = stripHtml(review.reviewerText).trim();
 const hasText = plain.length > 0;
@@ -92,8 +93,8 @@ const dateStr = formatDate(review.reviewTime);
           <>
             <p>{excerpt}</p>
             {isTruncated && linkHref !== '#' && (
-              <a class="review-read-more" href={linkHref} aria-label={`${profileAria} — read more`}>
-                Read more →
+              <a class="review-read-more" href={linkHref} aria-label={`${profileAria} — ${readMoreLabel}`}>
+                {readMoreLabel} →
               </a>
             )}
           </>
