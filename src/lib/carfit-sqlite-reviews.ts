@@ -4,7 +4,7 @@ import { isAbsolute, resolve } from 'node:path'
 // @ts-ignore node:sqlite is available in the Node runtime used by this project.
 import { DatabaseSync } from 'node:sqlite'
 
-import type { Review, ReviewStats } from '../../astro-reviews-package/src/types/review'
+import type { Review, ReviewStats } from '../../new/astro-reviews-package/src/types/review'
 
 type ReviewRow = {
   id: number
@@ -23,7 +23,7 @@ type StatsRow = {
   total: number
 }
 
-const DEFAULT_SQLITE_PATH = 'wp-social-ninja-export.sqlite'
+const DEFAULT_SQLITE_PATH = 'new/wp-social-ninja-export.sqlite'
 
 const resolveSqlitePath = () => {
   const configuredPath = process.env.SQLITE_PATH?.trim()

@@ -65,6 +65,8 @@ export interface ReviewsGalleryProps {
   showLoadMore?: boolean;
   /** Header title, e.g. business name */
   headerTitle?: string;
+  /** Load more button label. */
+  loadMoreLabel?: string;
   excerptMaxChars?: number;
   /** Which part of Google review text to show when translated/original text is stored together. */
   contentLanguage?: ReviewContentLanguage;

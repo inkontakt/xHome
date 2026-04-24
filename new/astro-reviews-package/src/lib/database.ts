@@ -32,6 +32,7 @@ function resolveSqlitePath(): string | null {
     candidates.push(isAbsolute(configured) ? configured : resolve(process.cwd(), configured));
   }
   candidates.push(
+    resolve(process.cwd(), 'new', 'wp-social-ninja-export.sqlite'),
     resolve(process.cwd(), 'wp-social-ninja-export.sqlite'),
     resolve(process.cwd(), '..', 'wp-social-ninja-export.sqlite'),
     resolve(process.cwd(), '..', '..', 'wp-social-ninja-export.sqlite'),

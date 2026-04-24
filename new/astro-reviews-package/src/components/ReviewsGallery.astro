@@ -13,6 +13,7 @@ interface Props {
   showGoogleLogo?: boolean;
   showLoadMore?: boolean;
   headerTitle?: string;
+  loadMoreLabel?: string;
   excerptMaxChars?: number;
   /** Review text language to display from WP Social Ninja Google payloads. Default: original. */
   contentLanguage?: ReviewContentLanguage;
@@ -26,6 +27,7 @@ const {
   showGoogleLogo = true,
   showLoadMore = true,
   headerTitle = 'Google Reviews',
+  loadMoreLabel = 'Load more',
   excerptMaxChars = 200,
   contentLanguage = 'original',
 } = Astro.props;
@@ -112,7 +114,7 @@ const showLoadMoreBtn = showLoadMore && reviews.length > itemsPerPage;
     showLoadMoreBtn && (
       <div class="reviews-footer">
         <button type="button" class="reviews-load-more" id={`${galleryUid}-load-more`}>
-          Load more
+          {loadMoreLabel}
         </button>
       </div>
     )

@@ -1,7 +1,9 @@
 ---
-import TemplateReviewsGallery from '../../../astro-reviews-package/src/components/TemplateReviewsGallery.astro'
+import ReviewsGallery from '../../../new/astro-reviews-package/src/components/ReviewsGallery.astro'
+import { getCarfitSqliteReviews, getCarfitSqliteReviewStats } from '@/lib/carfit-sqlite-reviews'
 
-const astroReviewsTemplateId = 428
+const reviews = getCarfitSqliteReviews(100, 0)
+const stats = getCarfitSqliteReviewStats()
 ---
 
 <section class='bg-white py-14 sm:py-18'>
@@ -19,16 +21,17 @@ const astroReviewsTemplateId = 428
     </div>
 
     <div class='carfit-sqlite-reviews mt-8'>
-      <TemplateReviewsGallery
-        templateId={astroReviewsTemplateId}
+      <ReviewsGallery
+        reviews={reviews}
+        stats={stats}
         showHeader={true}
         showGoogleLogo={true}
         showLoadMore={true}
-        itemsPerPage={9}
+        itemsPerPage={6}
         headerTitle='Google Bewertungen'
+        loadMoreLabel='Mehr Laden'
         excerptMaxChars={220}
-        loadMoreLabel='Mehr laden'
-        readMoreLabel='Mehr lesen'
+        contentLanguage='original'
       />
     </div>
   </div>
