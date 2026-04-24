@@ -71,6 +71,9 @@ export default defineConfig({
   },
   vite: {
     plugins: [tailwindcss()],
+    optimizeDeps: {
+      exclude: ['better-sqlite3']
+    },
     build: {
       cssMinify: true,
       minify: 'esbuild',
@@ -83,6 +86,7 @@ export default defineConfig({
       }
     },
     ssr: {
+      external: ['better-sqlite3'],
       noExternal: ['@radix-ui/*']
     }
   },

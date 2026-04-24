@@ -6,25 +6,18 @@ import {
   truncateText,
   mapPlatformName,
   getPlaceholderAvatarDataUrl,
-  getReviewPreviewText,
+  stripHtml,
 } from '../lib/helpers.js';
-import type { ReviewContentLanguage } from '../lib/helpers.js';
 
 interface Props {
   review: Review;
   excerptMaxChars?: number;
-  contentLanguage?: ReviewContentLanguage;
   readMoreLabel?: string;
 }
 
-const {
-  review,
-  excerptMaxChars = 200,
-  contentLanguage = 'original',
-  readMoreLabel = 'Read more',
-} = Astro.props;
+const { review, excerptMaxChars = 200, readMoreLabel = 'Read more' } = Astro.props;
 const platformLabel = mapPlatformName(review.platformName);
-const plain = getReviewPreviewText(review.reviewerText, contentLanguage);
+const plain = stripHtml(review.reviewerText).trim();
 const hasText = plain.length > 0;
 const { excerpt, isTruncated } = hasText
   ? truncateText(plain, excerptMaxChars)
@@ -100,8 +93,8 @@ const dateStr = formatDate(review.reviewTime);
           <>
             <p>{excerpt}</p>
             {isTruncated && linkHref !== '#' && (
-              <a class="review-read-more" href={linkHref} aria-label={`${profileAria} - ${readMoreLabel}`}>
-                {readMoreLabel} ->
+              <a class="review-read-more" href={linkHref} aria-label={`${profileAria} — ${readMoreLabel}`}>
+                {readMoreLabel} →
               </a>
             )}
           </>

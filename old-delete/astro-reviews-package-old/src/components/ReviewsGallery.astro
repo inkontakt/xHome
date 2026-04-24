@@ -2,19 +2,17 @@
 import '../styles/reviews.css';
 import ReviewCard from './ReviewCard.astro';
 import type { Review, ReviewStats } from '../types/review.js';
-import type { ReviewContentLanguage } from '../lib/helpers.js';
 
 interface Props {
   reviews: Review[];
   stats?: ReviewStats | null;
   itemsPerPage?: number;
   showHeader?: boolean;
-  /** Show multicolour Google "G" beside the header title when the header is visible. Default: true. */
+  /** Show multicolour Google “G” beside the header title when the header is visible. Default: true. */
   showGoogleLogo?: boolean;
   showLoadMore?: boolean;
   headerTitle?: string;
   excerptMaxChars?: number;
-  contentLanguage?: ReviewContentLanguage;
   loadMoreLabel?: string;
   readMoreLabel?: string;
 }
@@ -28,7 +26,6 @@ const {
   showLoadMore = true,
   headerTitle = 'Google Reviews',
   excerptMaxChars = 200,
-  contentLanguage = 'original',
   loadMoreLabel = 'Load more',
   readMoreLabel = 'Read more',
 } = Astro.props;
@@ -101,12 +98,7 @@ const showLoadMoreBtn = showLoadMore && reviews.length > itemsPerPage;
           data-review-index={i}
           role="listitem"
         >
-          <ReviewCard
-            review={review}
-            excerptMaxChars={excerptMaxChars}
-            contentLanguage={contentLanguage}
-            readMoreLabel={readMoreLabel}
-          />
+          <ReviewCard review={review} excerptMaxChars={excerptMaxChars} readMoreLabel={readMoreLabel} />
         </div>
       ))
     }

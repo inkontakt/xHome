@@ -35,16 +35,15 @@ Relative paths are resolved from `process.cwd()` (usually the Astro project root
 
 ```astro
 ---
-import TemplateReviewsGallery from '@carfit/astro-reviews/components/TemplateReviewsGallery.astro';
+import ReviewsGallery from '@carfit/astro-reviews/components/ReviewsGallery.astro';
+import { getReviews, getReviewStats } from '@carfit/astro-reviews';
+
+const reviews = getReviews(50, 0);
+const stats = getReviewStats();
 ---
 
-<TemplateReviewsGallery templateId={428} itemsPerPage={9} />
+<ReviewsGallery reviews={reviews} stats={stats} />
 ```
-
-This is the recommended path for `[wp_social_ninja id="428" platform="reviews"]`.
-It reads the template config from SQLite and applies the WP Social Ninja platform,
-review count, ordering, include/exclude lists, star filter, selected business filter,
-empty-review filter, and original/translated review text setting.
 
 ## 5. Serverless / edge
 

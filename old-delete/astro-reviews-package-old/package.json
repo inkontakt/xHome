@@ -23,7 +23,6 @@
     "./components": "./src/components/index.ts",
     "./components/ReviewCard.astro": "./src/components/ReviewCard.astro",
     "./components/ReviewsGallery.astro": "./src/components/ReviewsGallery.astro",
-    "./components/TemplateReviewsGallery.astro": "./src/components/TemplateReviewsGallery.astro",
     "./styles/reviews.css": "./src/styles/reviews.css",
     "./lib/database": "./src/lib/database.ts",
     "./lib/helpers": "./src/lib/helpers.ts",

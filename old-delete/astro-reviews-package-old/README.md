@@ -44,30 +44,7 @@ SQLITE_PATH=/var/www/proxy.carfit-hamburg.de/wp-social-ninja-export.sqlite
 
 If the file is missing or unreadable, the library logs a warning and uses `src/data/sample-reviews.json`.
 
-**Reviewer avatars:** If your SQLite file includes table `wpsr_review_avatar_urls` (created by `scripts/export_wp_social_ninja_to_sqlite.py` or `scripts/backfill_wpsr_review_avatar_urls.py` in the site repo), `getReviews()` prefers `display_avatar_url` there (typically a same-origin URL to optimised files under `wp-content/uploads/wp-social-ninja/…`) and falls back to `reviewer_img` from `wp_wpsr_reviews`.
-
 ## Usage
-
-Recommended for the exported WP Social Ninja template:
-
-```astro
----
-import TemplateReviewsGallery from '@carfit/astro-reviews/components/TemplateReviewsGallery.astro';
----
-
-<TemplateReviewsGallery
-  templateId={428}
-  showGoogleLogo={true}
-  showLoadMore={true}
-  itemsPerPage={9}
-/>
-```
-
-This reads `_wpsr_template_config` from SQLite and applies the template's platform,
-review limit, ordering, include/exclude lists, star filter, selected business filter,
-empty-review filter, and original/translated review text setting.
-
-Manual data loading is also available:
 
 ```astro
 ---
@@ -117,28 +94,6 @@ import type { Review, ReviewsGalleryProps } from '@carfit/astro-reviews/componen
 
 ## API
 
-### `getReviewsForTemplate(templateId, options?)`
-
-Returns approved reviews filtered using the WP Social Ninja template config stored in
-`wp_postmeta._wpsr_template_config`. For template `428`, this applies the Google platform,
-`totalReviewsVal: 50`, newest-first ordering, and `contentLanguage: original`.
-
-Options:
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `limit` | `number` | Template review limit | Override the WP template review count |
-| `offset` | `number` | `0` | Offset into filtered template reviews |
-| `device` | `'desktop' \| 'mobile'` | `'desktop'` | Which responsive WP review-count setting to use |
-
-### `getReviewStatsForTemplate(templateId)`
-
-Returns average/count for the same filtered review set used by `getReviewsForTemplate()`.
-
-### `getReviewTemplateConfig(templateId)`
-
-Returns the decoded WP Social Ninja template JSON from SQLite, or `null` when missing.
-
 ### `getReviews(limit?, offset?)`
 
 Returns approved reviews (`review_approved = 1`), ordered by `review_time` descending. Maps rows to the `Review` type (camelCase fields).
@@ -159,20 +114,6 @@ Returns `{ avgRating: number, totalReviews: number }` for the optional gallery h
 | `showLoadMore` | `boolean` | `true` | Footer button when `reviews.length > itemsPerPage` |
 | `headerTitle` | `string` | `'Google Reviews'` | Heading next to the logo |
 | `excerptMaxChars` | `number` | `200` | Plain-text excerpt length before “Read more” |
-| `contentLanguage` | `'original' \| 'translated_by_google' \| 'all'` | `'original'` | Which part of Google translated/original text to show |
-
-### `TemplateReviewsGallery` props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `templateId` | `number` | required | WP Social Ninja template post ID, e.g. `428` |
-| `limit` | `number` | Template review limit | Optional override for the WP review count |
-| `offset` | `number` | `0` | Offset into filtered template reviews |
-| `device` | `'desktop' \| 'mobile'` | `'desktop'` | Which responsive WP review-count setting to use |
-| `contentLanguage` | `'original' \| 'translated_by_google' \| 'all'` | Template setting | Optional override for review text language |
-
-It also accepts the normal `ReviewsGallery` display props such as `itemsPerPage`,
-`showHeader`, `showGoogleLogo`, `showLoadMore`, `headerTitle`, and `excerptMaxChars`.
 
 ### `ReviewCard` props
 
@@ -180,7 +121,6 @@ It also accepts the normal `ReviewsGallery` display props such as `itemsPerPage`
 |------|------|---------|
 | `review` | `Review` | required |
 | `excerptMaxChars` | `number` | `200` |
-| `contentLanguage` | `'original' \| 'translated_by_google' \| 'all'` | `'original'` |
 
 ## Customisation (colours, fonts, layout)
 
@@ -203,7 +143,7 @@ The gallery root uses the class **`reviews-gallery`**. Override **CSS variables*
 
 | Page | Purpose |
 |------|---------|
-| `example/src/pages/reviews.astro` | Template-aware gallery for WP Social Ninja template `428` |
+| `example/src/pages/reviews.astro` | Default props + full list from SQLite |
 | `example/src/pages/reviews-advanced.astro` | Custom `itemsPerPage`, `excerptMaxChars`, `showGoogleLogo={false}`, and CSS variable overrides |
 
 ```bash

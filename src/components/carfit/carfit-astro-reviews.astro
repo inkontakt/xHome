@@ -1,9 +1,7 @@
 ---
-import ReviewsGallery from '../../../astro-reviews-package/src/components/ReviewsGallery.astro'
-import { getCarfitSqliteReviewStats, getCarfitSqliteReviews } from '@/lib/carfit-sqlite-reviews'
+import TemplateReviewsGallery from '../../../astro-reviews-package/src/components/TemplateReviewsGallery.astro'
 
-const reviews = getCarfitSqliteReviews(100)
-const stats = getCarfitSqliteReviewStats()
+const astroReviewsTemplateId = 428
 ---
 
 <section class='bg-white py-14 sm:py-18'>
@@ -21,28 +19,17 @@ const stats = getCarfitSqliteReviewStats()
     </div>
 
     <div class='carfit-sqlite-reviews mt-8'>
-      {
-        reviews.length > 0 ? (
-          <ReviewsGallery
-            reviews={reviews}
-            stats={stats}
-            showHeader={true}
-            showGoogleLogo={true}
-            showLoadMore={true}
-            itemsPerPage={9}
-            headerTitle='Google Bewertungen'
-            excerptMaxChars={220}
-            loadMoreLabel='Mehr laden'
-            readMoreLabel='Mehr lesen'
-          />
-        ) : (
-          <div class='rounded-sm border border-dashed border-slate-300 bg-slate-50 p-8 text-center'>
-            <p class='text-sm font-semibold text-slate-950'>
-              Es wurden keine lokalen Bewertungen gefunden.
-            </p>
-          </div>
-        )
-      }
+      <TemplateReviewsGallery
+        templateId={astroReviewsTemplateId}
+        showHeader={true}
+        showGoogleLogo={true}
+        showLoadMore={true}
+        itemsPerPage={9}
+        headerTitle='Google Bewertungen'
+        excerptMaxChars={220}
+        loadMoreLabel='Mehr laden'
+        readMoreLabel='Mehr lesen'
+      />
     </div>
   </div>
 </section>
