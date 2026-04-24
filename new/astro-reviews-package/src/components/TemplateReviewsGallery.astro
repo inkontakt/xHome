@@ -1,0 +1,39 @@
+---
+import ReviewsGallery from './ReviewsGallery.astro';
+import {
+  getReviewStatsForTemplate,
+  getReviewsForTemplate,
+  getReviewTemplateConfig,
+} from '../lib/database.js';
+import type { TemplateReviewsGalleryProps } from '../types/review.js';
+
+const {
+  templateId,
+  limit,
+  offset = 0,
+  device = 'desktop',
+  contentLanguage,
+  itemsPerPage = 9,
+  showHeader,
+  headerTitle,
+  ...galleryProps
+} = Astro.props as TemplateReviewsGalleryProps;
+
+const templateConfig = getReviewTemplateConfig(templateId);
+const reviews = getReviewsForTemplate(templateId, { limit, offset, device });
+const stats = getReviewStatsForTemplate(templateId);
+const resolvedContentLanguage = contentLanguage ?? templateConfig?.contentLanguage ?? 'original';
+const templateShowsHeader = templateConfig?.show_header === true || templateConfig?.show_header === 'true';
+const resolvedShowHeader = showHeader ?? templateShowsHeader;
+const resolvedHeaderTitle = headerTitle ?? templateConfig?.custom_title_text ?? 'Google Reviews';
+---
+
+<ReviewsGallery
+  reviews={reviews}
+  stats={stats}
+  itemsPerPage={itemsPerPage}
+  showHeader={resolvedShowHeader}
+  headerTitle={resolvedHeaderTitle}
+  contentLanguage={resolvedContentLanguage}
+  {...galleryProps}
+/>

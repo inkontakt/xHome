@@ -1,0 +1,110 @@
+---
+import '../styles/reviews.css';
+import type { Review } from '../types/review.js';
+import {
+  formatDate,
+  truncateText,
+  mapPlatformName,
+  getPlaceholderAvatarDataUrl,
+  getReviewPreviewText,
+} from '../lib/helpers.js';
+import type { ReviewContentLanguage } from '../lib/helpers.js';
+
+interface Props {
+  review: Review;
+  excerptMaxChars?: number;
+  contentLanguage?: ReviewContentLanguage;
+}
+
+const { review, excerptMaxChars = 200, contentLanguage = 'original' } = Astro.props;
+const platformLabel = mapPlatformName(review.platformName);
+const plain = getReviewPreviewText(review.reviewerText, contentLanguage);
+const hasText = plain.length > 0;
+const { excerpt, isTruncated } = hasText
+  ? truncateText(plain, excerptMaxChars)
+  : { excerpt: '', isTruncated: false };
+const avatarSrc = review.reviewerImg?.trim() ? review.reviewerImg.trim() : getPlaceholderAvatarDataUrl();
+const rating = Math.min(5, Math.max(0, Math.round(Number(review.rating) || 0)));
+const linkHref = review.reviewerUrl?.trim() || '#';
+const profileAria = `View review on ${platformLabel}`;
+const dateStr = formatDate(review.reviewTime);
+---
+
+<article class:list={['review-card', 'review-card--template-one', `review-card--${review.platformName}`]}>
+  <div class="reviewer-avatar">
+    {
+      linkHref !== '#' ? (
+        <a class="reviewer-avatar__link" href={linkHref} aria-label={profileAria}>
+          <img
+            class="reviewer-avatar__img"
+            src={avatarSrc}
+            width="80"
+            height="80"
+            alt={review.reviewerName || 'Reviewer'}
+            loading="lazy"
+          />
+        </a>
+      ) : (
+        <span class="reviewer-avatar__link">
+          <img
+            class="reviewer-avatar__img"
+            src={avatarSrc}
+            width="80"
+            height="80"
+            alt={review.reviewerName || 'Reviewer'}
+            loading="lazy"
+          />
+        </span>
+      )
+    }
+  </div>
+
+  <div class="review-info">
+    <h3 class="reviewer-name">
+      {
+        linkHref !== '#' ? (
+          <a href={linkHref} aria-label={profileAria}>
+            {review.reviewerName}
+          </a>
+        ) : (
+          <span>{review.reviewerName}</span>
+        )
+      }
+    </h3>
+
+    <ul class="star-rating" aria-label={`${rating} out of 5 stars`}>
+      {
+        [0, 1, 2, 3, 4].map((i) => (
+          <li class:list={['star', i < rating ? 'star--filled' : 'star--empty']} aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path
+                d="M12 2.5l2.8 5.7 6.3.9-4.5 4.4 1.1 6.3L12 17.9 5.3 19.8l1.1-6.3L1.9 9.1l6.3-.9L12 2.5z"
+              />
+            </svg>
+          </li>
+        ))
+      }
+    </ul>
+
+    {dateStr && <time class="review-date" datetime={review.reviewTime}>{dateStr}</time>}
+
+    <div class="review-text">
+      {
+        hasText ? (
+          <>
+            <p>{excerpt}</p>
+            {isTruncated && linkHref !== '#' && (
+              <a class="review-read-more" href={linkHref} aria-label={`${profileAria} — read more`}>
+                Read more →
+              </a>
+            )}
+          </>
+        ) : (
+          <p class="review-text--fallback">{`Review on ${platformLabel}`}</p>
+        )
+      }
+    </div>
+  </div>
+
+  <p class="review-card__platform">{platformLabel}</p>
+</article>

@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1001,
+    "reviewerName": "Sample Reviewer",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-04-01 12:00:00",
+    "reviewerText": "Excellent service and attention to detail. The team completed the work faster than expected and the results look fantastic.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1002,
+    "reviewerName": "Another Customer",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-03-28 09:15:00",
+    "reviewerText": "",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1003,
+    "reviewerName": "Maria Schmidt",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 4,
+    "reviewTime": "2026-03-22 18:40:00",
+    "reviewerText": "Sehr freundlich und professionell. Preis-Leistung stimmt. Gerne wieder.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1004,
+    "reviewerName": "Jon Example",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-03-18 11:22:00",
+    "reviewerText": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1005,
+    "reviewerName": "Alex Brandt",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-03-10 08:00:00",
+    "reviewerText": "Top Ergebnis, sehr saubere Arbeit am Lack.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1006,
+    "reviewerName": "Chris Taylor",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 3,
+    "reviewTime": "2026-02-28 16:30:00",
+    "reviewerText": "Good work overall; appointment ran a bit late but communication was clear.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1007,
+    "reviewerName": "Elena Rossi",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-02-14 10:10:00",
+    "reviewerText": "Professionali e puntuali. Consigliatissimi.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1008,
+    "reviewerName": "Sam Wilson",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-02-01 14:00:00",
+    "reviewerText": "Paint correction exceeded expectations. Car looks better than new.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1009,
+    "reviewerName": "Pat Lee",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 4,
+    "reviewTime": "2026-01-20 12:45:00",
+    "reviewerText": "Fair pricing and honest advice on what was worth fixing.",
+    "platformName": "google",
+    "reviewApproved": 1
+  },
+  {
+    "id": 1010,
+    "reviewerName": "Jordan Meyer",
+    "reviewerImg": "",
+    "reviewerUrl": "https://www.google.com/maps",
+    "rating": 5,
+    "reviewTime": "2026-01-05 09:00:00",
+    "reviewerText": "Second visit — consistent quality every time.",
+    "platformName": "google",
+    "reviewApproved": 1
+  }
+]

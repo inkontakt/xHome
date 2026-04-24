@@ -1,0 +1,38 @@
+{
+  "name": "@carfit/astro-reviews",
+  "version": "1.0.0",
+  "description": "Astro review gallery components (WP Social Ninja template 1 style) backed by SQLite or static JSON",
+  "type": "module",
+  "license": "GPL-3.0",
+  "engines": {
+    "node": ">=18.14.1"
+  },
+  "peerDependencies": {
+    "astro": ">=4.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "astro": "^4.16.0",
+    "typescript": "^5.6.3"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./components": "./src/components/index.ts",
+    "./components/ReviewCard.astro": "./src/components/ReviewCard.astro",
+    "./components/ReviewsGallery.astro": "./src/components/ReviewsGallery.astro",
+    "./components/TemplateReviewsGallery.astro": "./src/components/TemplateReviewsGallery.astro",
+    "./styles/reviews.css": "./src/styles/reviews.css",
+    "./lib/database": "./src/lib/database.ts",
+    "./lib/helpers": "./src/lib/helpers.ts",
+    "./types/review": "./src/types/review.ts"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "INTEGRATION.md",
+    ".env.example"
+  ]
+}

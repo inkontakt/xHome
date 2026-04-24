@@ -1,0 +1,58 @@
+---
+/**
+ * Advanced example: tighter excerpts, smaller first page, optional header logo off,
+ * and CSS variable overrides for typography and button colour.
+ */
+import ReviewsGallery from '@carfit/astro-reviews/components/ReviewsGallery.astro';
+import { getReviews, getReviewStats } from '@carfit/astro-reviews';
+
+const reviews = getReviews(24, 0);
+const stats = getReviewStats();
+---
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reviews — advanced example</title>
+  </head>
+  <body style="margin:0;background:#eef2f6;">
+    <main class="demo-advanced">
+      <p class="demo-advanced__intro">
+        This page uses custom props (<code>itemsPerPage</code>, <code>excerptMaxChars</code>, and{' '}
+        <code>showGoogleLogo</code> set to <code>false</code>) and local CSS overrides on the wrapper.
+      </p>
+      <ReviewsGallery
+        reviews={reviews}
+        stats={stats}
+        showHeader={true}
+        showGoogleLogo={false}
+        showLoadMore={true}
+        itemsPerPage={6}
+        headerTitle="Customer feedback"
+        excerptMaxChars={120}
+      />
+    </main>
+  </body>
+</html>
+
+<style>
+  .demo-advanced {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    padding: 24px 16px 48px;
+  }
+  .demo-advanced__intro {
+    max-width: 720px;
+    margin: 0 auto 20px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333;
+  }
+  /* Override package tokens (see README / INTEGRATION.md) */
+  .demo-advanced :global(.reviews-gallery) {
+    --review-star-filled: #c9a227;
+    --review-btn-bg: #1a2d4d;
+    --review-text: #222;
+    --review-muted: #5c5c5c;
+  }
+</style>
