@@ -44,6 +44,7 @@ const stats = getCarfitSqliteReviewStats()
     --review-muted: #64748b;
     --review-card-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     --review-btn-bg: var(--carfit-accent);
+    --carfit-review-card-height: 340px;
     max-width: none;
     padding-inline: 0;
     padding-bottom: 0;
@@ -60,12 +61,59 @@ const stats = getCarfitSqliteReviewStats()
   }
 
   .carfit-sqlite-reviews :global(.review-card) {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     border: 1px solid #e2e8f0;
     border-radius: 6px;
+    min-height: var(--carfit-review-card-height);
+    height: var(--carfit-review-card-height);
+  }
+
+  .carfit-sqlite-reviews :global(.review-info) {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .carfit-sqlite-reviews :global(.review-text) {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 140px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.35rem;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    width: 100%;
+  }
+
+  .carfit-sqlite-reviews :global(.review-text::-webkit-scrollbar) {
+    width: 6px;
+  }
+
+  .carfit-sqlite-reviews :global(.review-text::-webkit-scrollbar-track) {
+    background: transparent;
+  }
+
+  .carfit-sqlite-reviews :global(.review-text::-webkit-scrollbar-thumb) {
+    background-color: #cbd5e1;
+    border-radius: 9999px;
   }
 
   .carfit-sqlite-reviews :global(.reviews-load-more:hover) {
     background-color: var(--carfit-accent-strong);
     opacity: 1;
+  }
+
+  @media (max-width: 639px) {
+    .carfit-sqlite-reviews :global(.review-card) {
+      min-height: 320px;
+      height: 320px;
+    }
+
+    .carfit-sqlite-reviews :global(.review-text) {
+      max-height: 124px;
+    }
   }
 </style>
