@@ -94,6 +94,10 @@ const navigationData: Navigation[] = [
     href: '/carfit-hamburg'
   },
   {
+    title: 'Carfit Hamburg 2',
+    href: '/carfit-hamburg-2'
+  },
+  {
     title: 'Estimate',
     href: ESTIMATE_DETAILS_HREF
   }

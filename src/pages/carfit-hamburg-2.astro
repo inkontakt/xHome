@@ -1,0 +1,20 @@
+---
+import Layout from '@/layouts/Layout.astro'
+import CarfitHamburg2Page from '@/components/carfit-hamburg-2/carfit-hamburg-2-page.astro'
+
+const pageTitle = 'Carfit Hamburg 2'
+const pageDescription = 'Fahrzeugaufbereitung, Smart Repair, Leasing-Rückläufer und Fahrzeugpflege in Hamburg – Carfit Hamburg 2 Landingpage mit professionellen Dienstleistungen.'
+const pageKeywords = 'Carfit Hamburg 2, Fahrzeugaufbereitung Hamburg, Smart Repair Hamburg, Leasing Rückläufer, Autoaufbereitung'
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: pageTitle,
+  description: pageDescription,
+  url: `${Astro.site}carfit-hamburg-2`
+}
+---
+
+<Layout title={pageTitle} description={pageDescription} keywords={pageKeywords} schema={schema} noindex={true}>
+  <CarfitHamburg2Page />
+</Layout>

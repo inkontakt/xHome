@@ -1,0 +1,122 @@
+---
+import { CheckCircle2, Wrench } from 'lucide-react'
+
+import {
+  carfitHamburg2Benefits,
+  carfitHamburg2Services,
+  carfitHamburg2AdditionalServices
+} from '@/components/carfit-hamburg-2/carfit-hamburg-2-data'
+
+const serviceImages = [
+  'linear-gradient(135deg, #1e3a5f 0%, #0c1929 50%, #1a365d 100%)',
+  'linear-gradient(135deg, #374151 0%, #1f2937 50%, #111827 100%)',
+  'linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #334155 100%)',
+  'linear-gradient(135deg, #78350f 0%, #451a03 50%, #92400e 100%)',
+  'linear-gradient(135deg, #1e40af 0%, #1e3a8a 50%, #312e81 100%)',
+  'linear-gradient(135deg, #164e63 0%, #083344 50%, #155e75 100%)',
+  'linear-gradient(135deg, #3f3f46 0%, #18181b 50%, #27272a 100%)',
+  'linear-gradient(135deg, #065f46 0%, #064e3b 50%, #047857 100%)',
+  'linear-gradient(135deg, #1f2937 0%, #111827 50%, #374151 100%)'
+]
+---
+
+<section class='bg-white py-14 sm:py-18'>
+  <div class='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center'>
+      <div>
+        <p class='text-sm font-semibold uppercase tracking-[0.28em] text-[var(--carfit-accent)]'>Warum zu Carfit?</p>
+        <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>
+          Wir sorgen für das einwandfreie Erscheinungsbild Ihres Fahrzeugs
+        </h2>
+        <div class='mt-6 space-y-4'>
+          {carfitHamburg2Benefits.map(item => (
+            <div class='flex gap-3 text-slate-600'>
+              <CheckCircle2 className='mt-1 size-5 shrink-0 text-[var(--carfit-accent)]' />
+              <p class='text-sm leading-7 sm:text-base'>{item}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class='flex justify-center lg:justify-end'>
+        <div class='relative w-full max-w-xs'>
+          <div class='relative overflow-hidden rounded-2xl bg-gradient-to-b from-sky-100 to-white p-6 shadow-lg'>
+            <div class='relative mx-auto'>
+              <div class='mx-auto flex h-64 w-48 flex-col items-center justify-end'>
+                <div class='relative'>
+                  <div class='absolute -top-2 left-1/2 h-20 w-20 -translate-x-1/2 rounded-full bg-gradient-to-b from-amber-200 to-amber-300'></div>
+                  <div class='absolute -top-4 left-1/2 h-6 w-16 -translate-x-1/2 rounded-t-full bg-slate-700'></div>
+                  <div class='relative z-10 mt-14 h-28 w-32 rounded-t-lg bg-gradient-to-b from-blue-600 to-blue-800'>
+                    <div class='absolute left-1/2 top-2 h-12 w-20 -translate-x-1/2 rounded bg-blue-500/50'></div>
+                    <div class='absolute -left-4 top-4 h-20 w-6 rounded-full bg-gradient-to-b from-amber-200 to-amber-300'></div>
+                    <div class='absolute -right-4 top-4 h-20 w-6 rounded-full bg-gradient-to-b from-amber-200 to-amber-300'></div>
+                  </div>
+                  <div class='mx-auto -mt-1 h-8 w-28 rounded-b-lg bg-slate-700'></div>
+                </div>
+              </div>
+              <div class='absolute bottom-4 left-4 flex size-10 items-center justify-center rounded-full bg-[var(--carfit-accent)] text-white shadow-lg'>
+                <Wrench className='size-5' />
+              </div>
+            </div>
+            <div class='mt-4 rounded-xl border border-slate-200 bg-white/80 p-3 text-center backdrop-blur-sm'>
+              <p class='text-xs font-semibold uppercase tracking-[0.2em] text-slate-500'>CARFIT Team</p>
+              <p class='mt-1 text-sm font-semibold text-slate-900'>Fachkundig. Sorgfältig. Hamburg.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class='mt-14 grid gap-4 sm:grid-cols-2 xl:grid-cols-3'>
+      {carfitHamburg2Services.map((service, index) => (
+        <article class='group overflow-hidden rounded-lg border border-slate-200 bg-white shadow-md transition hover:shadow-lg'>
+          <div
+            class='relative h-44 overflow-hidden'
+            style={`background: ${serviceImages[index]}`}
+          >
+            <div class='absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.1),transparent_50%)]'></div>
+            <div class='absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent'></div>
+            <div class='absolute inset-x-4 bottom-4'>
+              <p class='text-[10px] font-semibold uppercase tracking-[0.2em] text-white/70'>Carfit Service</p>
+              <h3 class='mt-1 text-lg font-semibold text-white'>{service.title}</h3>
+            </div>
+          </div>
+          <div class='p-4'>
+            <p class='text-sm leading-6 text-slate-600'>{service.description}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class='mt-14 rounded-lg bg-[var(--carfit-dark)] px-6 py-10 text-center text-white shadow-xl sm:px-8'>
+      <h3 class='text-2xl font-semibold sm:text-3xl'>Jetzt Angebot einholen</h3>
+      <a
+        href='#online-anfrage'
+        class='mt-6 inline-flex items-center rounded-md bg-[var(--carfit-accent)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[var(--carfit-accent-strong)]'
+      >
+        Hier Preis anfragen
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class='bg-white py-14 sm:py-18'>
+  <div class='mx-auto max-w-6xl px-4 sm:px-6 lg:px-8'>
+    <div class='mx-auto max-w-3xl text-center'>
+      <p class='text-sm font-semibold uppercase tracking-[0.28em] text-[var(--carfit-accent)]'>Leistungen</p>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl'>
+        Nochmal unsere weiteren Leistungen
+      </h2>
+    </div>
+    <div class='mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3'>
+      {carfitHamburg2AdditionalServices.map(item => (
+        <div class='flex items-start gap-3 rounded-lg border border-slate-100 bg-slate-50/50 p-4'>
+          <span class='mt-0.5 inline-flex size-6 shrink-0 items-center justify-center rounded-full bg-[var(--carfit-accent)] text-white'>
+            <CheckCircle2 className='size-3.5' />
+          </span>
+          <p class='text-sm leading-6 text-slate-700'>{item}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
