@@ -11,6 +11,7 @@ import CTASection from '@/components/sections/cta-section'
 import FooterSection from '@/components/sections/footer-section'
 import StandaloneBookingSection from '@/components/sections/standalone-booking-section.astro'
 import StandaloneFormProxySection from '@/components/sections/standalone-form-proxy-section.astro'
+import WpSocialReviewsSection from '@/components/sections/wp-social-reviews-section.astro'
 import DynamicFormRenderer from '@/components/forms/DynamicFormRenderer'
 import { loadLandingContent } from '@/lib/loaders/landing-sections-loader'
 
@@ -23,6 +24,7 @@ const formId = landing.integrations?.formId
 const proxyFormId = landing.integrations?.proxyFormId
 const bookingCalendarId = landing.integrations?.bookingCalendarId
 const bookingEventId = landing.integrations?.bookingEventId
+const reviewsTemplateId = landing.reviewsProxy?.templateId
 const hasStandaloneBooking = Boolean(bookingCalendarId && bookingEventId)
 const forwardedSearch = Astro.url.search
 
@@ -48,6 +50,7 @@ const schema = {
   <WorksFeaturesSectionPage content={landing.worksFeatures} client:load />
   <UseCasesSection content={landing.useCases} client:load />
   <TestimonialsSection content={landing.testimonials} client:load />
+  {reviewsTemplateId ? <WpSocialReviewsSection templateId={reviewsTemplateId} /> : null}
   <PricingSectionPage content={landing.pricing} client:load />
   <FAQSectionPage content={landing.faq} client:load />
   <CTASection content={landing.cta} client:load />

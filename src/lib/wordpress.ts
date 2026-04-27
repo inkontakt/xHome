@@ -12,6 +12,17 @@ export type WordPressFetchOptions = {
   body?: BodyInit | null
   headers?: HeadersInit
   siteKey?: WordPressSiteKey
+  signal?: AbortSignal
+}
+
+class WordPressRequestError extends Error {
+  status: number
+
+  constructor(status: number, message: string) {
+    super(message)
+    this.name = 'WordPressRequestError'
+    this.status = status
+  }
 }
 
 export type FluentFormField =
@@ -135,6 +146,56 @@ export type FluentBookingFields = {
   fields?: Array<Record<string, unknown>>
 }
 
+export type WpSocialReviewsTemplate = {
+  id: number
+  title: string
+  platforms: string[]
+  order: string
+  minRating: number
+  hideEmptyReviews: boolean
+  desktopLimit: number
+  mobileLimit: number
+  contentLanguage: 'original' | 'translated_by_google' | 'all' | string
+}
+
+export type WpSocialReviewsHeader = {
+  showHeader: boolean
+  title: string
+  platformLabel: string
+  summaryLabel: string
+  showGoogleLogo: boolean
+  loadMoreLabel: string
+}
+
+export type WpSocialReviewsStats = {
+  avgRating: number
+  totalReviews: number
+}
+
+export type WpSocialReview = {
+  id: number
+  reviewerName: string
+  reviewerImg: string
+  reviewerUrl: string
+  rating: number
+  reviewTime: string
+  reviewerText: string
+  platformName: string
+  reviewApproved: number
+}
+
+export type WpSocialReviewsResponse = {
+  template: WpSocialReviewsTemplate
+  header: WpSocialReviewsHeader
+  stats: WpSocialReviewsStats
+  reviews: WpSocialReview[]
+  meta: {
+    source: 'wp-social-ninja'
+    apiVersion: string
+    fetchedAt?: string
+  }
+}
+
 type FluentFormsFieldResponse = {
   form?: {
     id?: number | string
@@ -231,7 +292,8 @@ async function fetchWordPress<T>(path: string, options: WordPressFetchOptions = 
   const response = await fetch(`${getWordPressApiUrl(siteKey)}${path}`, {
     method: options.method ?? 'GET',
     headers,
-    body: options.body ?? null
+    body: options.body ?? null,
+    signal: options.signal
   })
   // #region agent log
   fetch('http://localhost:7433/ingest/2b9349a0-c0a1-4e81-9aa0-918008adcca8',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'c66fb0'},body:JSON.stringify({sessionId:'c66fb0',runId:'slow-homepage-1',hypothesisId:'H3',location:'wordpress.ts:fetchWordPress',message:'wordpress_request_finished',data:{path,method:options.method??'GET',status:response.status,durationMs:Date.now()-startedAt},timestamp:Date.now()})}).catch(()=>{})
@@ -239,10 +301,94 @@ async function fetchWordPress<T>(path: string, options: WordPressFetchOptions = 
 
   if (!response.ok) {
     const errorBody = await response.text()
-    throw new Error(`WordPress request failed (${response.status}): ${errorBody}`)
+    throw new WordPressRequestError(
+      response.status,
+      `WordPress request failed (${response.status}): ${errorBody}`
+    )
   }
 
   return (await response.json()) as T
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value)
+}
+
+function isFiniteNumber(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value)
+}
+
+function validateWpSocialReviewsResponse(value: unknown): WpSocialReviewsResponse {
+  if (!isRecord(value)) {
+    throw new Error('Malformed WP Social Ninja response: root is not an object')
+  }
+
+  const template = value.template
+  const stats = value.stats
+  const reviews = value.reviews
+  const meta = value.meta
+
+  if (!isRecord(template) || !isFiniteNumber(template.id)) {
+    throw new Error('Malformed WP Social Ninja response: template.id is invalid')
+  }
+
+  if (!Array.isArray(reviews)) {
+    throw new Error('Malformed WP Social Ninja response: reviews is not an array')
+  }
+
+  if (!isRecord(stats) || !isFiniteNumber(stats.avgRating) || !isFiniteNumber(stats.totalReviews)) {
+    throw new Error('Malformed WP Social Ninja response: stats is invalid')
+  }
+
+  if (!isRecord(meta) || meta.source !== 'wp-social-ninja' || typeof meta.apiVersion !== 'string') {
+    throw new Error('Malformed WP Social Ninja response: meta is invalid')
+  }
+
+  return value as WpSocialReviewsResponse
+}
+
+async function fetchWordPressWithTimeout<T>(
+  path: string,
+  options: WordPressFetchOptions,
+  timeoutMs = 8000
+) {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), timeoutMs)
+
+  try {
+    return await fetchWordPress<T>(path, {
+      ...options,
+      signal: controller.signal
+    })
+  } finally {
+    clearTimeout(timeout)
+  }
+}
+
+export async function getWpSocialReviewsTemplate(
+  templateId: number,
+  siteKey: WordPressSiteKey = 'carfitReviews'
+) {
+  if (!Number.isInteger(templateId) || templateId <= 0) {
+    throw new Error('Invalid WP Social Ninja template ID')
+  }
+
+  const path = `/inkontakt/v1/wpsn/reviews/${templateId}`
+
+  try {
+    const response = await fetchWordPressWithTimeout<unknown>(path, { siteKey })
+    return validateWpSocialReviewsResponse(response)
+  } catch (error) {
+    if (
+      error instanceof WordPressRequestError &&
+      [502, 503, 504].includes(error.status)
+    ) {
+      const response = await fetchWordPressWithTimeout<unknown>(path, { siteKey })
+      return validateWpSocialReviewsResponse(response)
+    }
+
+    throw error
+  }
 }
 
 function toBooleanFlag(value: unknown) {

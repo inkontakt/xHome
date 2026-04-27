@@ -1,4 +1,4 @@
-export type WordPressSiteKey = 'connectCarfit' | 'carfitMain'
+export type WordPressSiteKey = 'connectCarfit' | 'carfitMain' | 'carfitReviews'
 
 type WordPressSiteConfig = {
   apiUrl?: string
@@ -31,6 +31,13 @@ const WORDPRESS_SITE_CONFIG: Record<WordPressSiteKey, WordPressSiteConfig> = {
   },
   carfitMain: {
     publicSiteUrl: getOptionalEnv('CARFIT_MAIN_PUBLIC_SITE_URL') ?? 'https://carfit-hamburg.de/'
+  },
+  carfitReviews: {
+    apiUrl: getOptionalEnv('CARFIT_REVIEWS_WORDPRESS_API_URL'),
+    publicSiteUrl: getOptionalEnv('CARFIT_REVIEWS_WORDPRESS_PUBLIC_SITE_URL'),
+    authMode: getOptionalEnv('CARFIT_REVIEWS_WP_AUTH_MODE'),
+    username: getOptionalEnv('CARFIT_REVIEWS_WP_USERNAME'),
+    appPassword: getOptionalEnv('CARFIT_REVIEWS_WP_APP_PASSWORD')
   }
 }
 

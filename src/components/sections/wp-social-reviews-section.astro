@@ -1,0 +1,135 @@
+---
+import ReviewsGallery from '../../../new/astro-reviews-package/src/components/ReviewsGallery.astro'
+import type { ReviewContentLanguage } from '../../../new/astro-reviews-package/src/lib/helpers'
+import { getWpSocialReviewsTemplate } from '@/lib/wordpress'
+
+interface Props {
+  templateId?: string | number
+}
+
+const { templateId } = Astro.props
+const parsedTemplateId =
+  typeof templateId === 'number' ? templateId : Number.parseInt(String(templateId ?? ''), 10)
+
+let response: Awaited<ReturnType<typeof getWpSocialReviewsTemplate>> | null = null
+let errorMessage = ''
+
+if (Number.isInteger(parsedTemplateId) && parsedTemplateId > 0) {
+  try {
+    response = await getWpSocialReviewsTemplate(parsedTemplateId)
+  } catch (error) {
+    console.error('[wp-social-reviews-section] Failed to load reviews', error)
+    errorMessage = 'Bewertungen sind aktuell nicht verfügbar.'
+  }
+} else {
+  errorMessage = 'Bewertungen sind noch nicht konfiguriert.'
+}
+
+const reviews = response?.reviews ?? []
+const stats = response?.stats ?? null
+const header = response?.header
+const template = response?.template
+const contentLanguage = (template?.contentLanguage ?? 'original') as ReviewContentLanguage
+const itemsPerPage = template?.mobileLimit && template.mobileLimit > 0 ? template.mobileLimit : 6
+---
+
+<section class='wp-social-reviews-section bg-white px-4 py-16 sm:px-6 lg:px-8'>
+  <div class='mx-auto max-w-7xl'>
+    <div class='reviews-section-heading mx-auto max-w-3xl text-center'>
+      <p class='text-sm font-semibold uppercase tracking-[0.22em] text-primary'>
+        Google Bewertungen
+      </p>
+      <h2 class='mt-4 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl'>
+        Was Kunden über Carfit Hamburg sagen
+      </h2>
+      <p class='mx-auto mt-4 max-w-2xl text-base leading-7 text-muted-foreground'>
+        Live aus WP Social Ninja geladen und serverseitig in diese Seite eingebunden.
+      </p>
+    </div>
+
+    {
+      response && reviews.length > 0 ? (
+        <div class='wp-social-reviews-gallery mt-8'>
+          <ReviewsGallery
+            reviews={reviews}
+            stats={stats}
+            showHeader={header?.showHeader ?? true}
+            showGoogleLogo={header?.showGoogleLogo ?? true}
+            showLoadMore={true}
+            itemsPerPage={itemsPerPage}
+            headerTitle={header?.title ?? 'Bewertungen'}
+            loadMoreLabel={header?.loadMoreLabel ?? 'Mehr Laden'}
+            contentLanguage={contentLanguage}
+          />
+        </div>
+      ) : (
+        <div class='reviews-empty-state mx-auto mt-8 max-w-2xl border border-border bg-background px-6 py-8 text-center'>
+          <p class='text-sm font-medium text-foreground'>
+            {errorMessage || 'Für diese Vorlage wurden keine passenden Bewertungen gefunden.'}
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .wp-social-reviews-section {
+    border-top: 1px solid var(--border);
+  }
+
+  .wp-social-reviews-gallery :global(.reviews-gallery) {
+    --review-star-filled: #f5b301;
+    --review-star-empty: #e5e7eb;
+    --review-text: #374151;
+    --review-muted: #6b7280;
+    --review-card-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+    --review-btn-bg: var(--primary);
+    max-width: none;
+    padding-inline: 0;
+    padding-bottom: 0;
+  }
+
+  .wp-social-reviews-gallery :global(.reviews-header) {
+    padding-top: 0;
+  }
+
+  .wp-social-reviews-gallery :global(.reviews-header__title),
+  .wp-social-reviews-gallery :global(.reviewer-name a),
+  .wp-social-reviews-gallery :global(.reviewer-name span) {
+    color: var(--foreground);
+  }
+
+  .wp-social-reviews-gallery :global(.review-card) {
+    display: flex;
+    min-height: 330px;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .wp-social-reviews-gallery :global(.review-info) {
+    min-height: 0;
+    flex: 1 1 auto;
+    width: 100%;
+  }
+
+  .wp-social-reviews-gallery :global(.review-text) {
+    max-height: 132px;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 0.35rem;
+    scrollbar-color: #cbd5e1 transparent;
+    scrollbar-width: thin;
+  }
+
+  .wp-social-reviews-gallery :global(.reviews-load-more:hover) {
+    opacity: 0.9;
+  }
+
+  .reviews-empty-state {
+    border-radius: 8px;
+  }
+</style>

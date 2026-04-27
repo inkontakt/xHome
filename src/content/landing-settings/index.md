@@ -10,4 +10,8 @@ integrations:
   proxyFormId: 11
   bookingCalendarId: 2
   bookingEventId: 6
+
+reviewsProxy:
+  templateId: 428
+  iframeHeight: 1100
 ---

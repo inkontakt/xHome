@@ -231,6 +231,7 @@ const landingSettings = defineCollection({
   schema: z.object({
     seo: seoSchema,
     integrations: integrationsSchema.optional(),
+    reviewsProxy: carfitReviewsProxySchema.optional(),
   }),
 });
 

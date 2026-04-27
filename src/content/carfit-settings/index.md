@@ -1,5 +1,5 @@
 ---
 reviewsProxy:
-  templateId: 9576
+  templateId: 428
   iframeHeight: 1100
 ---

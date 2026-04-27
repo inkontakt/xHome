@@ -13,10 +13,12 @@ type SectionById<T extends LandingSectionId> = Extract<
 >;
 type LandingSeo = LandingSettingsEntry["data"]["seo"];
 type LandingIntegrations = LandingSettingsEntry["data"]["integrations"];
+type LandingReviewsProxy = LandingSettingsEntry["data"]["reviewsProxy"];
 
 type LandingContent = {
   seo: LandingSeo;
   integrations?: LandingIntegrations;
+  reviewsProxy?: LandingReviewsProxy;
   hero: Omit<Extract<LandingSectionData, { section: "hero" }>, "section">;
   features: Omit<
     Extract<LandingSectionData, { section: "features" }>,
@@ -939,6 +941,7 @@ export async function loadLandingContent(): Promise<LandingContent> {
   return {
     seo: settingsEntry.data.seo,
     integrations: settingsEntry.data.integrations,
+    reviewsProxy: settingsEntry.data.reviewsProxy,
     hero,
     features,
     worksFeatures,
