@@ -12,6 +12,6 @@ integrations:
   bookingEventId: 6
 
 reviewsProxy:
-  templateId: 428
+  templateId: 432
   iframeHeight: 1100
 ---
