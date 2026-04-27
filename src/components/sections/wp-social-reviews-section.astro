@@ -31,6 +31,12 @@ const header = response?.header
 const template = response?.template
 const contentLanguage = (template?.contentLanguage ?? 'original') as ReviewContentLanguage
 const itemsPerPage = template?.mobileLimit && template.mobileLimit > 0 ? template.mobileLimit : 6
+const galleryReviews = reviews.map(review => ({
+  ...review,
+  reviewerImg: review.reviewerImg?.trim()
+    ? `/wp-social-review-avatar/${parsedTemplateId}/${review.id}`
+    : review.reviewerImg
+}))
 ---
 
 <section class='wp-social-reviews-section bg-white px-4 py-16 sm:px-6 lg:px-8'>
@@ -51,7 +57,7 @@ const itemsPerPage = template?.mobileLimit && template.mobileLimit > 0 ? templat
       response && reviews.length > 0 ? (
         <div class='wp-social-reviews-gallery mt-8'>
           <ReviewsGallery
-            reviews={reviews}
+            reviews={galleryReviews}
             stats={stats}
             showHeader={header?.showHeader ?? true}
             showGoogleLogo={header?.showGoogleLogo ?? true}

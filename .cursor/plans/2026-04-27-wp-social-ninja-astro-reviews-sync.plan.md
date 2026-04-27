@@ -10,26 +10,80 @@
 
 ---
 
+## Completion Summary
+
+Status: completed for the delivered Astro integration scope.
+
+The working implementation now dynamically renders WP Social Ninja review data inside Astro. The active integration uses the existing authenticated WordPress JSON endpoint contract consumed by `src/lib/wordpress.ts`, with the home-page section rendered by `src/components/sections/wp-social-reviews-section.astro` and configured through `src/content/landing-settings/index.md`.
+
+The original plan included a broader deliverable to create and document a new standalone WordPress endpoint file under `resources/wordpress/`. That broader endpoint packaging is no longer required for the completed task because the live connection is already built and the review data is showing dynamically in Astro.
+
+Final delivered behavior:
+
+- [x] Astro fetches normalized WP Social Ninja review data server-side through `getWpSocialReviewsTemplate()`.
+- [x] The home-page WP Social Ninja reviews section renders dynamic review content in Astro.
+- [x] Reviewer names, review dates, review text, reviewer profile URLs, review ratings, aggregate rating stats, total review count, header metadata, load-more label, and content language render from the WordPress-backed response.
+- [x] Per-card star counts are derived from the WordPress `rating` value.
+- [x] Star SVG markup, star colours, card layout, section spacing, and static section copy remain Astro-owned presentation.
+- [x] Current template ID is `428`, configured in `src/content/landing-settings/index.md`.
+- [x] Avatar images display through the same-origin WordPress-backed `/wp-social-review-avatar/{templateId}/{reviewId}` route to avoid browser blocking under `Cross-Origin-Embedder-Policy: require-corp`.
+- [x] The homepage WP Social Ninja section has no dependency on SQLite for review content or avatar image lookup.
+- [x] `npm run build` passed after the avatar/rendering update.
+
+Deferred hardening, not required for this task to be considered complete:
+
+- [x] Replace the homepage SQLite-backed avatar workaround with a WordPress-backed avatar proxy.
+- [ ] Optional: tune cache duration or add shared template-response caching if avatar traffic becomes high.
+- [ ] If a reusable packaged WordPress endpoint artifact is still desired later, create `resources/wordpress/wp-social-ninja-reviews-endpoint.php` and `resources/wordpress/wp-social-ninja-reviews-implementation-note.md` as a separate operational hardening task.
+- [ ] If the Carfit-specific Astro-native SQLite section should also be replaced, wire `src/components/carfit/carfit-astro-reviews.astro` to `getWpSocialReviewsTemplate()` in a separate cleanup pass.
+
 ## Execution Readiness
 
-This plan is ready to execute in phases, but full implementation is gated by live WordPress discovery.
+This plan has been completed for the current Astro dynamic reviews integration. The remaining unchecked items below are retained as historical context and optional hardening work, not as blockers for this task.
 
-- [ ] Phase 1 is required before any endpoint or Astro implementation.
-- [ ] Phase 2 may start only after the WP Social Ninja schema, plugin version, template config storage, and avatar URL strategy are confirmed.
-- [ ] Phase 3 may start only after the endpoint response contract is validated with a real template ID.
-- [ ] Do not remove the SQLite implementation until WordPress endpoint parity is verified.
+- [x] Repo status was rechecked on 2026-04-27 after the home-page WP Social Ninja section was added.
+- [x] Dynamic Astro rendering from WP Social Ninja data is working.
+- [x] Original endpoint-packaging phases are deferred because the live connection is already built.
+- [x] SQLite implementation remains available as a parity/fallback baseline.
+
+## 2026-04-27 Status Update
+
+- `src/lib/wordpress.ts` already contains the `WpSocialReviews*` DTO types, response validation, timeout wrapper, one retry for `502`/`503`/`504`, and `getWpSocialReviewsTemplate()`.
+- `getWpSocialReviewsTemplate()` currently defaults to `siteKey = 'carfitReviews'`, not `connectCarfit`. Keep that default if the live WP Social Ninja endpoint remains on the Carfit reviews WordPress target; only change it if discovery proves the source of truth is `connectCarfit`.
+- The current working template ID in both `src/content/carfit-settings/index.md` and `src/content/landing-settings/index.md` is `428`, not `9576`.
+- The home page now uses `src/components/sections/wp-social-reviews-section.astro` and `src/content/landing-settings/index.md` to render live WordPress-backed reviews.
+- `src/components/sections/wp-social-reviews-section.astro` currently rewrites non-empty avatar URLs to `/wp-social-review-avatar/{templateId}/{reviewId}` so images are same-origin.
+- The same-origin avatar workaround was added because `public/_headers` sets `Cross-Origin-Embedder-Policy: require-corp`; direct `https://lh3.googleusercontent.com/...` reviewer avatars can be blocked by the browser under this policy.
+- The homepage WP Social Ninja section no longer uses the SQLite-backed `/carfit-review-avatar/[id]` route.
+- The current `/carfit-review-avatar/[id]` route remains SQLite-backed for other Carfit/legacy review surfaces only.
+- The homepage-specific route `src/pages/wp-social-review-avatar/[templateId]/[reviewId].ts` fetches the WordPress reviews response, finds the matching review, validates `reviewerImg`, and streams the remote image as same-origin.
+- The homepage section's dynamic information boundary is now clear:
+  - WordPress-backed: reviewer names, dates, review text, profile URLs, ratings, aggregate stats, template/header metadata, load-more label, content language, and avatar image source URLs.
+  - Astro-owned: section wrapper, layout, CSS, SVG star rendering, star colours, card presentation, and static section copy such as `Google Bewertungen` and `Was Kunden über Carfit Hamburg sagen`.
+- `npm run build` passed after the home-page avatar rewrite. A prior build/dev attempt hit a Windows Vite cache file lock under `node_modules/.vite/deps`; stopping Node processes cleared it.
+- The planned WordPress endpoint artifact files still do not exist:
+  - `resources/wordpress/wp-social-ninja-reviews-endpoint.php`
+  - `resources/wordpress/wp-social-ninja-reviews-implementation-note.md`
+- The Carfit Astro-native section remains SQLite-backed:
+  - `src/components/carfit/carfit-astro-reviews.astro` imports `getCarfitSqliteReviews()` and `getCarfitSqliteReviewStats()`.
+  - `src/components/carfit/carfit-page.astro` passes `reviewsTemplateId` to `CarfitProxiedReviews` but still renders `<CarfitAstroReviews />` without a `templateId` prop.
 
 ## Current Repo Context
 
 - Existing Astro WordPress auth lives in `src/lib/wordpress-site-config.ts` and `src/lib/wordpress.ts`.
+- Existing WordPress site keys are `connectCarfit`, `carfitMain`, and `carfitReviews`.
+- Existing WP Social Ninja fetch helper defaults to `carfitReviews`.
+- Current home-page WordPress-backed reviews section is `src/components/sections/wp-social-reviews-section.astro`.
 - Current Astro-native reviews section is `src/components/carfit/carfit-astro-reviews.astro`.
 - Current SQLite helper is `src/lib/carfit-sqlite-reviews.ts`.
 - Current WP Social Ninja SQLite reference implementation is `new/astro-reviews-package/src/lib/database.ts`.
 - Current review component types are in `new/astro-reviews-package/src/types/review.ts`.
 - Current review gallery component is `new/astro-reviews-package/src/components/ReviewsGallery.astro`.
 - Current Carfit page passes `reviewsTemplateId` only to `CarfitProxiedReviews`, not to `CarfitAstroReviews`.
-- Current Carfit template ID source is `src/content/carfit-settings/index.md`, with `reviewsProxy.templateId: 9576`.
+- Current Carfit template ID source is `src/content/carfit-settings/index.md`, with `reviewsProxy.templateId: 428`.
+- Current landing page template ID source is `src/content/landing-settings/index.md`, with `reviewsProxy.templateId: 428`.
 - Current avatar proxy route is `src/pages/carfit-review-avatar/[id].ts` and is SQLite-backed.
+- Current security headers include `Cross-Origin-Embedder-Policy: require-corp` in `public/_headers`, which affects direct cross-origin avatar images.
 - Existing WordPress reference endpoint file pattern is `resources/wordpress/fluentform-embed-endpoint.php`.
 
 ## Files
@@ -37,6 +91,8 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 - Create: `resources/wordpress/wp-social-ninja-reviews-endpoint.php`
 - Create: `resources/wordpress/wp-social-ninja-reviews-implementation-note.md`
 - Modify: `src/lib/wordpress.ts`
+- Modify: `src/components/sections/wp-social-reviews-section.astro`
+- Create: `src/pages/wp-social-review-avatar/[templateId]/[reviewId].ts`
 - Modify: `src/components/carfit/carfit-page.astro`
 - Modify: `src/components/carfit/carfit-astro-reviews.astro`
 - Modify if needed: `new/astro-reviews-package/src/types/review.ts`
@@ -48,7 +104,11 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 
 ## Phase 1: WordPress Discovery Gate
 
-- [ ] Confirm WordPress target is `connectCarfit` unless live inspection proves WP Social Ninja data lives elsewhere.
+- [x] Completed enough discovery to render live WP Social Ninja data dynamically in Astro.
+- [x] Confirmed working WordPress target in code is `carfitReviews`.
+- [x] Confirmed working template ID is `428`.
+- [x] Confirmed WordPress response includes review rows, stats, template metadata, and Google avatar URLs.
+- [ ] Confirm WordPress target is `carfitReviews` unless live inspection proves WP Social Ninja data lives on `connectCarfit`.
 - [ ] Confirm the WP Social Ninja plugin version on the target site.
 - [ ] Confirm whether the endpoint will be installed as a plugin or mu-plugin.
 - [ ] Inspect actual WordPress tables matching `%wpsr%`.
@@ -75,6 +135,8 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 - [ ] Stop and update this plan if the live schema does not support the expected filters without additional joins or plugin APIs.
 
 ## Phase 2: WordPress REST Endpoint
+
+Status: deferred. A separate packaged endpoint artifact is not required for the current completed Astro integration because the existing WordPress JSON endpoint contract is already available and consumed successfully.
 
 ### Endpoint
 
@@ -219,19 +281,20 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 
 ## Phase 3: Astro Client Helper
 
-- [ ] Extend `src/lib/wordpress.ts` with DTO types:
+- [x] Extend `src/lib/wordpress.ts` with DTO types:
   - `WpSocialReviewsTemplate`
   - `WpSocialReviewsHeader`
   - `WpSocialReviewsStats`
   - `WpSocialReview`
   - `WpSocialReviewsResponse`
-- [ ] Add `getWpSocialReviewsTemplate(templateId: number, siteKey: WordPressSiteKey = 'connectCarfit')`.
-- [ ] Use the existing `fetchWordPress` helper and application-password auth.
-- [ ] Use the explicit path `/inkontakt/v1/wpsn/reviews/{templateId}`.
-- [ ] Add a bounded timeout using `AbortController`.
-- [ ] Use one short retry only for transient `502`, `503`, or `504` responses.
-- [ ] Do not retry `400`, `401`, `403`, `404`, or malformed contract errors.
-- [ ] Validate enough of the response shape before rendering:
+- [x] Add `getWpSocialReviewsTemplate(templateId: number, siteKey: WordPressSiteKey = 'carfitReviews')`.
+- [x] Confirm the current working default site key is `carfitReviews`.
+- [x] Use the existing `fetchWordPress` helper and application-password auth.
+- [x] Use the explicit path `/inkontakt/v1/wpsn/reviews/{templateId}`.
+- [x] Add a bounded timeout using `AbortController`.
+- [x] Use one short retry only for transient `502`, `503`, or `504` responses.
+- [x] Do not retry `400`, `401`, `403`, `404`, or malformed contract errors.
+- [x] Validate enough of the response shape before rendering:
   - `template.id` is numeric
   - `reviews` is an array
   - `stats.avgRating` is numeric
@@ -251,6 +314,21 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 
 ## Phase 4: Astro Component Wiring
 
+Status: completed for the home-page Astro section. Carfit-specific SQLite section replacement is deferred.
+
+- [x] Add/use `src/components/sections/wp-social-reviews-section.astro` for the active Astro-rendered WP Social Ninja reviews section.
+- [x] Read the active reviews template ID from `src/content/landing-settings/index.md`.
+- [x] Parse `templateId` into a positive integer.
+- [x] If `templateId` is missing or invalid, render a safe fallback state instead of querying WordPress.
+- [x] Fetch WordPress-backed reviews with `getWpSocialReviewsTemplate(templateId)`.
+- [x] Keep section structure and styling compatible with the existing reviews gallery.
+- [x] Keep Astro responsible for presentation while WordPress remains the source for all dynamic review content and avatar source URLs.
+- [x] Render a safe empty state when no matching reviews are available.
+- [x] Render a safe error fallback if the WordPress request fails.
+- [x] Do not expose endpoint credentials or raw error bodies to client HTML.
+
+Deferred Carfit-specific cleanup:
+
 - [ ] Modify `src/components/carfit/carfit-page.astro` so `reviewsTemplateId` is passed to both:
   - `CarfitProxiedReviews`
   - `CarfitAstroReviews`
@@ -268,16 +346,20 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 
 ## Phase 5: Avatar Strategy
 
-- [ ] Default v1 strategy: return direct absolute avatar URLs from WordPress and render them as-is.
-- [ ] If direct avatar URLs are used, stop using `/carfit-review-avatar/{id}` for the WordPress-backed reviews section.
-- [ ] If a same-origin avatar proxy is required for caching/control, replace `src/pages/carfit-review-avatar/[id].ts` with a WordPress-backed lookup.
-- [ ] Do not keep a SQLite-backed avatar proxy for the new WordPress-backed review data.
-- [ ] Validate that avatar URLs are absolute `http` or `https` URLs before rendering/proxying.
-- [ ] Use a placeholder avatar when a URL is empty or invalid.
+- [x] Confirm direct Google avatar URLs are present in the WordPress response.
+- [x] Confirm direct Google avatar URLs respond with image content from the server environment.
+- [x] Identify browser-side blocker: `Cross-Origin-Embedder-Policy: require-corp` can block direct `lh3.googleusercontent.com` images.
+- [x] Add same-origin avatar rendering in `src/components/sections/wp-social-reviews-section.astro` by mapping non-empty `reviewerImg` values to `/wp-social-review-avatar/{templateId}/{reviewId}`.
+- [x] Choose current delivered avatar strategy: WordPress-backed same-origin proxy route for browser compatibility under current headers.
+- [x] Create `src/pages/wp-social-review-avatar/[templateId]/[reviewId].ts`.
+- [x] Ensure the homepage WP reviews section does not use the SQLite-backed `/carfit-review-avatar/{id}` route.
+- [x] Ensure the homepage WP reviews avatar route gets avatar source URLs from the WordPress reviews endpoint, not SQLite.
+- [x] Validate that avatar URLs are absolute `http` or `https` URLs before proxying.
+- [x] Use a placeholder avatar when a URL is empty or invalid.
 
 ## Phase 6: Parity And Rollout
 
-- [ ] Validate the endpoint against the existing SQLite reference behavior for template ID `9576`.
+- [x] Validate the active Astro-rendered section against the live WordPress response for template ID `428`.
 - [ ] Compare platform filtering.
 - [ ] Compare ordering.
 - [ ] Compare include/exclude lists.
@@ -288,8 +370,8 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 - [ ] Compare desktop item limit.
 - [ ] Compare filtered `stats.totalReviews` and `stats.avgRating`.
 - [ ] Validate the Carfit page in staging before switching the live user-facing section.
-- [ ] Keep the SQLite path available until endpoint parity is confirmed.
-- [ ] After parity is confirmed, treat the WordPress endpoint as the primary source.
+- [x] Keep the SQLite path available as a fallback/parity baseline.
+- [x] Treat the WordPress endpoint as the primary source for the completed home-page Astro reviews section.
 
 ## Caching
 
@@ -305,7 +387,7 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 ### WordPress Endpoint
 
 - [ ] `GET /wp-json/` includes the `inkontakt/v1` namespace.
-- [ ] `OPTIONS /wp-json/inkontakt/v1/wpsn/reviews/9576` exposes route schema.
+- [ ] `OPTIONS /wp-json/inkontakt/v1/wpsn/reviews/428` exposes route schema.
 - [ ] Unauthorized request is rejected.
 - [ ] Authenticated request with wrong capability is rejected.
 - [ ] Authenticated request with correct capability returns normalized JSON.
@@ -319,14 +401,15 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 
 ### Astro
 
-- [ ] `npm run check-types`
-- [ ] `npm run build`
+- [ ] Optional final hardening: `npm run check-types`
+- [x] `npm run build` after the home-page avatar rewrite.
+- [x] `npm run build` after the completed Astro WP reviews integration.
 - [ ] Carfit page passes the same template ID to proxied and Astro-native review sections.
-- [ ] Carfit Astro-native section renders live WordPress data.
+- [ ] Deferred: Carfit Astro-native section renders live WordPress data.
 - [ ] Empty WordPress response renders an intentional empty state.
 - [ ] WordPress fetch/auth failure renders an intentional fallback state.
-- [ ] Header title, logo visibility, load-more label, content language, and review count are mapped from the endpoint.
-- [ ] Avatar images load under the chosen direct/proxy strategy.
+- [x] Header metadata, logo visibility, load-more label, content language, review count, ratings, review text, dates, names, profile URLs, and avatar source URLs are mapped from the endpoint for the homepage WP reviews section.
+- [x] Avatar images load under the chosen current proxy strategy.
 - [ ] Existing Fluent Forms WordPress integration remains untouched.
 - [ ] No direct MySQL access is introduced into Astro.
 
@@ -345,15 +428,15 @@ This plan is ready to execute in phases, but full implementation is gated by liv
 
 - [ ] Astro will not connect directly to WordPress MySQL.
 - [ ] Endpoint scope is reusable for any WP Social Ninja template ID.
-- [ ] Default WordPress target is `connectCarfit`.
-- [ ] Default template ID is the Carfit setting value currently set to `9576`.
+- [x] Default WordPress target for the completed integration is `carfitReviews`.
+- [x] Default template ID for the completed integration is `428`.
 - [ ] The same template ID must drive both the WordPress proxy/embed section and Astro-native reviews section.
 - [ ] WordPress owns review content, filtering behavior, header settings, and aggregate stats.
 - [ ] Astro owns final layout, card styling, section spacing, and fallback presentation.
 - [ ] V1 sync depth includes behavior and header metadata, not raw WP HTML and not WP style-token rendering.
 - [ ] Unknown template ID means `404`.
 - [ ] Existing template with no matching reviews means `200` with an empty `reviews[]`.
-- [ ] Default avatar strategy is direct absolute URLs unless staging proves a same-origin proxy is needed.
+- [x] Default avatar strategy for the completed homepage integration is WordPress-backed same-origin proxying.
 - [ ] Application-password credentials stay in env only and must be rotated immediately if exposed.
 - [ ] Required access before Phase 2:
   - WordPress codebase or mu-plugin deployment access
