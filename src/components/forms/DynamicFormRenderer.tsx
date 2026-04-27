@@ -700,6 +700,7 @@ function DynamicFormRenderer({ formId, bookingCalendarId, bookingEventId, bookin
 
     if (field.type === 'booking') {
       const resolvedBookingUrl = bookingUrl
+      const resolvedEventId = field.eventId ?? bookingEventId
 
       return (
         <div key={key} className='rounded-lg border border-dashed p-4'>
