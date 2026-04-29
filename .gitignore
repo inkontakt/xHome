@@ -38,6 +38,9 @@ coverage/
 # production
 build/
 
+# generated WordPress plugin packages
+Wordpress Plugin/*.zip
+
 # vercel
 .vercel
 
