@@ -2,7 +2,7 @@
 Contributors: Sumaiya
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 0.5.0
+Stable tag: 0.6.0
 
 Displays inKontakt estimate details with PDF preview/download and an image gallery.
 

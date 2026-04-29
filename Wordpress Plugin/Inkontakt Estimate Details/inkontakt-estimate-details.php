@@ -2,7 +2,7 @@
 /**
  * Plugin Name: inKontakt Estimate Details
  * Description: Displays inKontakt estimate details with PDF download/preview and an image gallery via shortcode.
- * Version: 0.5.0
+ * Version: 0.6.0
  * Author: Sumaiya
  * Text Domain: inkontakt-estimate-details
  */
@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
 
 final class Inkontakt_Estimate_Details_Plugin
 {
-    private const VERSION = '0.5.0';
+    private const VERSION = '0.6.0';
     private const OPTION_NAME = 'inkontakt_estimate_details_colors';
     private const REST_NAMESPACE = 'inkontakt-estimate-details/v1';
     private const SHORTCODE = 'inkontakt_estimate_details';
@@ -632,6 +632,7 @@ define('INKONTAKT_ESTIMATE_SUPABASE_SERVICE_KEY', 'your-service-role-or-api-key'
         $response = wp_remote_get($file_url, [
             'timeout' => 20,
             'redirection' => 3,
+            'reject_unsafe_urls' => true,
             'stream' => false,
         ]);
 
@@ -647,12 +648,14 @@ define('INKONTAKT_ESTIMATE_SUPABASE_SERVICE_KEY', 'your-service-role-or-api-key'
         }
 
         $content_type = wp_remote_retrieve_header($response, 'content-type');
-        if (!$content_type) {
-            $content_type = 'application/pdf';
+
+        if (!self::is_pdf_response($file_url, (string) $content_type, $body)) {
+            return new WP_Error('ied_invalid_pdf', 'The requested file is not a valid PDF.', ['status' => 415]);
         }
 
         status_header($status);
-        header('Content-Type: ' . $content_type);
+        header('Content-Type: application/pdf');
+        header('X-Content-Type-Options: nosniff');
         header('Cache-Control: public, max-age=600, stale-while-revalidate=86400');
 
         if ($is_download) {
@@ -1056,11 +1059,22 @@ define('INKONTAKT_ESTIMATE_SUPABASE_SERVICE_KEY', 'your-service-role-or-api-key'
             return false;
         }
 
+        $config = self::get_supabase_config();
+        if (!$config) {
+            return false;
+        }
+
         $parts = wp_parse_url($url);
         $scheme = strtolower((string) ($parts['scheme'] ?? ''));
         $host = strtolower((string) ($parts['host'] ?? ''));
+        $allowed_parts = wp_parse_url($config['url']);
+        $allowed_host = strtolower((string) ($allowed_parts['host'] ?? ''));
 
         if (!in_array($scheme, ['http', 'https'], true) || $host === '') {
+            return false;
+        }
+
+        if ($allowed_host === '' || $host !== $allowed_host) {
             return false;
         }
 
@@ -1073,6 +1087,16 @@ define('INKONTAKT_ESTIMATE_SUPABASE_SERVICE_KEY', 'your-service-role-or-api-key'
         }
 
         return true;
+    }
+
+    private static function is_pdf_response(string $url, string $content_type, string $body): bool
+    {
+        $content_type = strtolower($content_type);
+        $path = strtolower((string) (wp_parse_url($url, PHP_URL_PATH) ?? ''));
+
+        return self::string_contains($content_type, 'pdf')
+            || self::string_ends_with($path, '.pdf')
+            || strncmp($body, '%PDF', 4) === 0;
     }
 
     private static function string_contains(string $haystack, string $needle): bool
